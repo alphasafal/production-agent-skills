@@ -1,0 +1,103 @@
+[
+  {
+    "id": "debugging-investigator-pos-01",
+    "skill": "debugging-investigator",
+    "category": "positive-obvious",
+    "prompt": "My Next.js API randomly returns 500 errors. Find the root cause.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "attempts reproduction before proposing a fix",
+      "collects log/stack-trace evidence",
+      "forms and ranks explicit hypotheses"
+    ],
+    "expected_artifacts": ["DEBUG_REPORT.md"]
+  },
+  {
+    "id": "debugging-investigator-pos-02",
+    "skill": "debugging-investigator",
+    "category": "positive-obvious",
+    "prompt": "This test was passing yesterday and is now failing in CI, no idea why.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "checks recent changes around the failure window",
+      "reproduces the failing test locally before hypothesizing"
+    ],
+    "expected_artifacts": ["DEBUG_REPORT.md"]
+  },
+  {
+    "id": "debugging-investigator-pos-03",
+    "skill": "debugging-investigator",
+    "category": "positive-obvious",
+    "prompt": "Our checkout page throws 'Cannot read properties of undefined' in production but not locally.",
+    "expected_activation": true,
+    "required_behaviors": ["collects evidence before proposing a fix", "identifies a specific mechanism, not just the symptom"],
+    "expected_artifacts": ["DEBUG_REPORT.md"]
+  },
+  {
+    "id": "debugging-investigator-pos-04",
+    "skill": "debugging-investigator",
+    "category": "positive-obvious",
+    "prompt": "We're seeing a memory leak that grows over 24 hours and eventually OOMs the pod.",
+    "expected_activation": true,
+    "required_behaviors": ["forms falsifiable hypotheses", "uses profiling/resource evidence rather than guessing"],
+    "expected_artifacts": ["DEBUG_REPORT.md"]
+  },
+  {
+    "id": "debugging-investigator-pos-05",
+    "skill": "debugging-investigator",
+    "category": "positive-obvious",
+    "prompt": "Investigate why users are getting logged out randomly every few minutes.",
+    "expected_activation": true,
+    "required_behaviors": ["reproduces or attempts to reproduce the symptom", "confirms root cause with evidence before fixing"],
+    "expected_artifacts": ["DEBUG_REPORT.md"]
+  },
+  {
+    "id": "debugging-investigator-amb-01",
+    "skill": "debugging-investigator",
+    "category": "positive-ambiguous",
+    "prompt": "This passed yesterday but began failing after we upgraded Prisma.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "treats the Prisma upgrade as a lead, not a confirmed cause, until evidence supports it"
+    ],
+    "notes": "Indirect trigger: no explicit words like 'debug' or 'bug', but it's clearly a regression investigation.",
+    "expected_artifacts": ["DEBUG_REPORT.md"]
+  },
+  {
+    "id": "debugging-investigator-amb-02",
+    "skill": "debugging-investigator",
+    "category": "positive-ambiguous",
+    "prompt": "Something is off with the numbers on the analytics dashboard, they don't match the raw event counts.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "reproduces/isolates the discrepancy before hypothesizing",
+      "treats this as an investigation, not a direct 'fix the dashboard' request"
+    ],
+    "notes": "No error message or crash mentioned; still a real defect investigation.",
+    "expected_artifacts": ["DEBUG_REPORT.md"]
+  },
+  {
+    "id": "debugging-investigator-neg-01",
+    "skill": "debugging-investigator",
+    "category": "negative",
+    "prompt": "Explain what a stack trace is.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["initiating a reproduction/investigation workflow for a conceptual question"]
+  },
+  {
+    "id": "debugging-investigator-neg-02",
+    "skill": "debugging-investigator",
+    "category": "negative",
+    "prompt": "Add a new /health endpoint that returns 200 OK.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["treating a plain feature request as a bug investigation"]
+  },
+  {
+    "id": "debugging-investigator-neg-03",
+    "skill": "debugging-investigator",
+    "category": "negative",
+    "prompt": "What's the difference between an error and an exception in Python?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["invoking the debugging workflow for a definitional question"]
+  }
+]
