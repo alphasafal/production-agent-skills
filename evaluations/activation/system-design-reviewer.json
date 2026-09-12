@@ -1,0 +1,87 @@
+[
+  {
+    "id": "system-design-reviewer-pos-01",
+    "skill": "system-design-reviewer",
+    "category": "positive-obvious",
+    "prompt": "Here's our proposed architecture for the new notifications service — can you review it before we build it?",
+    "expected_activation": true,
+    "required_behaviors": ["reviews failure modes and scaling explicitly", "produces a prioritized recommendation list"],
+    "expected_artifacts": ["SYSTEM_DESIGN_REVIEW.md"]
+  },
+  {
+    "id": "system-design-reviewer-pos-02",
+    "skill": "system-design-reviewer",
+    "category": "positive-obvious",
+    "prompt": "What could go wrong with this system design?",
+    "expected_activation": true,
+    "required_behaviors": ["names specific failure scenarios, not generic advice"]
+  },
+  {
+    "id": "system-design-reviewer-pos-03",
+    "skill": "system-design-reviewer",
+    "category": "positive-obvious",
+    "prompt": "Review this RFC for our new event-driven order processing pipeline.",
+    "expected_activation": true,
+    "required_behaviors": ["reviews queue/event delivery guarantees explicitly"]
+  },
+  {
+    "id": "system-design-reviewer-pos-04",
+    "skill": "system-design-reviewer",
+    "category": "positive-obvious",
+    "prompt": "Does this database sharding strategy actually hold up at 10x our current scale?",
+    "expected_activation": true,
+    "required_behaviors": ["estimates scale explicitly", "identifies the specific bottleneck the design addresses or misses"]
+  },
+  {
+    "id": "system-design-reviewer-pos-05",
+    "skill": "system-design-reviewer",
+    "category": "positive-obvious",
+    "prompt": "We're choosing between two architectures for this new service, help us evaluate them.",
+    "expected_activation": true,
+    "required_behaviors": ["reviews both options against the same requirements and gives a comparative recommendation"]
+  },
+  {
+    "id": "system-design-reviewer-amb-01",
+    "skill": "system-design-reviewer",
+    "category": "positive-ambiguous",
+    "prompt": "We're about to spend a quarter building this, want a second pair of eyes on the plan first.",
+    "expected_activation": true,
+    "required_behaviors": ["treats this as a pre-implementation design review"],
+    "notes": "No explicit 'architecture' or 'design' keyword, but 'before building' signals a pre-implementation review."
+  },
+  {
+    "id": "system-design-reviewer-amb-02",
+    "skill": "system-design-reviewer",
+    "category": "positive-ambiguous",
+    "prompt": "Is a single Postgres instance going to be enough for what we're planning here?",
+    "expected_activation": true,
+    "required_behaviors": ["treats this as a scaling/storage review question requiring the fuller design context"],
+    "notes": "Phrased as a narrow yes/no question but requires the full design-review workflow to answer responsibly."
+  },
+  {
+    "id": "system-design-reviewer-neg-01",
+    "skill": "system-design-reviewer",
+    "category": "negative",
+    "prompt": "Review this pull request that fixes a null pointer exception.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["running an architecture review for a small bug-fix diff"],
+    "notes": "This is production-code-review's job."
+  },
+  {
+    "id": "system-design-reviewer-neg-02",
+    "skill": "system-design-reviewer",
+    "category": "negative",
+    "prompt": "What's the difference between SQL and NoSQL databases?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["treating a conceptual question as a request to review an actual proposed design"]
+  },
+  {
+    "id": "system-design-reviewer-neg-03",
+    "skill": "system-design-reviewer",
+    "category": "negative",
+    "prompt": "Map out how our existing production system is architected today.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["reviewing a not-yet-built proposal workflow for an already-built system"],
+    "notes": "This is repo-architect's job — an existing system, not a pre-implementation proposal."
+  }
+]
