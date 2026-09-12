@@ -14,7 +14,9 @@ license: MIT
 compatibility: Needs read access to the diff/PR and enough surrounding code to judge impact. No network required.
 metadata:
   category: engineering
-  composes_with: [feature-to-production, debugging-investigator]
+  composes_with:
+    - feature-to-production
+    - debugging-investigator
 ---
 
 # Purpose

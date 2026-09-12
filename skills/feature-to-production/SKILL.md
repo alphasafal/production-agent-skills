@@ -13,7 +13,11 @@ license: MIT
 compatibility: Needs filesystem/shell access to implement and test. No network required beyond what the project's own tests/build need.
 metadata:
   category: engineering
-  composes_with: [repo-architect, production-code-review, debugging-investigator, product-manager]
+  composes_with:
+    - repo-architect
+    - production-code-review
+    - debugging-investigator
+    - product-manager
 ---
 
 # Purpose

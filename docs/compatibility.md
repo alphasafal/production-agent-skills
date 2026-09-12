@@ -7,6 +7,18 @@ per that client's published documentation, not independently tested ·
 **Nothing here is marked ✅ without an actual check having been performed.**
 See each `clients/*.md` file for exactly what was checked and how.
 
+## Spec conformance (client-independent)
+
+| Check | Status |
+|---|---|
+| All 8 skills pass the official `skills-ref validate` (reference implementation of the open spec) | ✅ verified — run per skill in CI |
+| Frontmatter satisfies the spec's strict YAML subset (no flow collections, anchors, or duplicate keys) | ✅ verified — enforced by `scripts/validate_skills.py` and `tests/test_spec_strictness.py` |
+| Discovery cost for all 8 skills (`skills-ref to-prompt`) | ✅ measured — **6,346 characters**, under Codex's documented 8,000-char skill-list ceiling |
+| Tooling runs on the declared `requires-python = ">=3.9"` range | ✅ verified — full suite passes on 3.9, 3.11, and 3.13 (CI matrix) |
+| Installed copies (not just source) remain spec-valid | ✅ verified — `skills-ref validate` run against skills installed into a real cloned repository |
+
+## Per-client capability matrix
+
 | | Claude Code | OpenAI Codex / ChatGPT | GitHub Copilot |
 |---|---|---|---|
 | Skill discovered from a documented path | ✅ (installed + directory structure confirmed) | 🟡 (per docs; `.agents/skills` et al.) | 🟡 (per docs; 4 documented paths) |
@@ -21,12 +33,17 @@ See each `clients/*.md` file for exactly what was checked and how.
 
 ## What "tested" actually means here
 
-For Claude Code: `python scripts/install_skills.py` was run against a real
-target directory, and the resulting layout was confirmed file-by-file
-against Claude Code's documented `.claude/skills/<name>/SKILL.md` format.
-A live session's auto-activation was not re-confirmed in this build pass
-(that requires restarting a Claude Code session against the installed
-directory) — see `clients/claude-code.md` for the exact caveat.
+For Claude Code: `python scripts/install_skills.py` was run against real
+target directories — including `.claude/skills/` inside a freshly cloned
+copy of the Flask repository — and the resulting layout was confirmed
+file-by-file against Claude Code's documented
+`.claude/skills/<name>/SKILL.md` format. The installed copies were then
+re-validated with the official `skills-ref` CLI to confirm installation
+preserves spec validity, and the bundled `data-scientist` scripts were run
+from their installed location against a real 891-row dataset. A live
+session's auto-activation was not re-confirmed in this build pass (that
+requires restarting a Claude Code session against the installed directory)
+— see `clients/claude-code.md` for the exact caveat.
 
 For Codex and Copilot: no live session was available to test against
 during this build. Every row for those columns is sourced directly from

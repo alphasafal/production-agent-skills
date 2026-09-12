@@ -33,6 +33,34 @@ This repo's canonical `SKILL.md` files use only these six fields — no
 vendor-specific frontmatter — so the same file works unmodified everywhere
 a client reads plain Agent Skills.
 
+## Gotcha: frontmatter uses a *strict* YAML subset
+
+The reference implementation (`skills-ref`) parses frontmatter with a
+stricter YAML dialect than PyYAML and most editors accept. **Flow-style
+collections are rejected**, even though they're valid YAML 1.2:
+
+```yaml
+# REJECTED by the spec's parser — "disallowed JSONesque flow mapping"
+metadata:
+  composes_with: [debugging-investigator, repo-architect]
+```
+
+```yaml
+# ACCEPTED — block style
+metadata:
+  composes_with:
+    - debugging-investigator
+    - repo-architect
+```
+
+Every skill in this repository originally used the first form. It passed
+PyYAML, passed our own schema validation, and still failed the official
+validator on all 8 skills — which is exactly why the optional external
+check is worth running. `scripts/validate_skills.py` now enforces this
+rule locally (plus no anchors/aliases/tags and no duplicate top-level
+keys), so you get the same failure without needing the external CLI
+installed.
+
 ## Discovery mechanism (progressive disclosure)
 
 1. **Discovery**: client loads every skill's `name` + `description` at
@@ -69,3 +97,19 @@ python scripts/validate_skills.py
 If the reference `skills-ref` CLI is installed
 (`uv tool install git+https://github.com/agentskills/agentskills#subdirectory=skills-ref`),
 `validate_skills.py` also runs `skills-ref validate` per skill automatically.
+CI installs it explicitly and runs it as its own step, so every skill in
+this repo is checked against the reference implementation on each push.
+
+## Measuring what discovery actually costs
+
+Since only `name` + `description` load at startup, you can measure the
+exact context cost of carrying all 8 skills:
+
+```bash
+uvx --from "git+https://github.com/agentskills/agentskills#subdirectory=skills-ref" \
+  skills-ref to-prompt skills/*/ | wc -c
+```
+
+At the time of writing this returns **6,346 characters** for all eight
+skills — under Codex's documented ceiling of 8,000 characters (or 2% of the
+context window) for the skill list, with room to spare.

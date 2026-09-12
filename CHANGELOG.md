@@ -27,6 +27,34 @@ follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - GitHub Actions CI (`.github/workflows/validate-skills.yml`) running the
   full pytest suite and static validation on every push/PR.
 
+### Verified
+
+- All 8 skills validate against `skills-ref`, the reference implementation
+  of the open spec — enforced per-skill in CI.
+- Full test suite green on Python 3.9, 3.11, and 3.13 (CI matrix), matching
+  the declared `requires-python = ">=3.9"`.
+- Bundled `data-scientist` scripts checked against a real 891-row public
+  dataset, with outputs matched to independently-computed ground truth.
+- `examples/02-debug-a-failure` bug confirmed to reproduce 10/10 runs, with
+  the documented fix resolving it and the regression test failing pre-fix
+  and passing post-fix.
+
+### Fixed during verification
+
+- Frontmatter used flow-style YAML lists (`[a, b]`), which the spec's
+  strict parser rejects — all 8 skills failed the official validator.
+  Converted to block style and added `strict_yaml_violations()` plus
+  `tests/test_spec_strictness.py` so it cannot regress.
+- `install_skills.py` created the target directory before validating the
+  skill name, leaving an empty directory behind on a typo.
+- `check_missingness.py` printed an empty "Co-occurrence" header when no
+  columns had correlated missingness.
+- `data-scientist` scripts raised a raw `ModuleNotFoundError` traceback
+  instead of a readable install hint when pandas/numpy were absent.
+- `repo-architect` reference material assumed application layouts and would
+  have mislead an agent mapping a library (no `cmd/` in Go libraries, Python
+  `src/` layouts, Node packages with no `main` field).
+
 ### Status
 
 `evaluations/results/README.md` is intentionally unfilled

@@ -16,7 +16,10 @@ compatibility: >
   fabricating citations.
 metadata:
   category: research
-  composes_with: [product-manager, data-scientist, system-design-reviewer]
+  composes_with:
+    - product-manager
+    - data-scientist
+    - system-design-reviewer
 ---
 
 # Purpose

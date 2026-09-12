@@ -46,6 +46,23 @@ skill instead of a new one.
   tests/`, and ideally an actual run against a real agent — see
   `docs/creating-your-first-skill.md` step 10)
 
+## Frontmatter gotcha: the spec uses a strict YAML subset
+
+Write block-style lists, not flow style — the reference parser rejects
+`[a, b]` even though it's valid YAML:
+
+```yaml
+metadata:
+  composes_with:
+    - repo-architect       # correct
+# composes_with: [repo-architect]   <- rejected by the spec's parser
+```
+
+Anchors/aliases/tags and duplicate top-level keys are also rejected.
+`scripts/validate_skills.py` enforces all of this locally so you'll catch
+it before CI does. Full explanation:
+`clients/generic-agent-skills.md#gotcha-frontmatter-uses-a-strict-yaml-subset`.
+
 ## Local validation before opening a PR
 
 ```bash
@@ -56,6 +73,13 @@ pytest tests/
 
 All three should be clean (warnings are worth reading, but only errors
 block CI — see `.github/workflows/validate-skills.yml`).
+
+Optionally, check against the reference implementation exactly as CI does:
+
+```bash
+uvx --from "git+https://github.com/agentskills/agentskills#subdirectory=skills-ref" \
+  skills-ref validate skills/your-skill
+```
 
 ## Editing an existing skill
 

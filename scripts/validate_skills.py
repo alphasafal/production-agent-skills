@@ -37,6 +37,7 @@ from _lib import (  # noqa: E402
     discover_skills,
     find_relative_references,
     load_schema,
+    strict_yaml_violations,
 )
 
 MIN_SKILL_MD_LINES = 15
@@ -93,6 +94,11 @@ def check_frontmatter(skill: Skill, schema: dict, report: Report) -> None:
         report.warn(
             f"{skill.dir.name}: description should explicitly say when to use the skill"
         )
+
+
+def check_strict_yaml(skill: Skill, report: Report) -> None:
+    for problem in strict_yaml_violations(skill.raw_frontmatter):
+        report.error(f"{skill.dir.name}: {problem}")
 
 
 def check_duplicates(skills: list[Skill], report: Report) -> None:
@@ -266,6 +272,7 @@ def main() -> int:
 
     for skill in skills:
         check_frontmatter(skill, schema, report)
+        check_strict_yaml(skill, report)
         check_body_length(skill, report)
         check_references_exist(skill, report)
         check_script_dependencies(skill, report)

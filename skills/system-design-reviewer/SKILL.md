@@ -14,7 +14,9 @@ license: MIT
 compatibility: Text/diagram-based review. No filesystem or network access required unless the design doc lives in a connected tool.
 metadata:
   category: engineering
-  composes_with: [repo-architect, feature-to-production]
+  composes_with:
+    - repo-architect
+    - feature-to-production
 ---
 
 # Purpose

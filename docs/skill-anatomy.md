@@ -29,7 +29,13 @@ metadata:
 ```
 
 `name` must equal the directory name exactly, and `description` is the
-single most important line in the file:
+single most important line in the file.
+
+> **Write frontmatter in block style.** The spec's reference parser rejects
+> flow-style collections (`composes_with: [a, b]`) even though PyYAML and
+> your editor will accept them. Every skill in this repo hit this exact
+> failure before it was caught — see
+> [`clients/generic-agent-skills.md`](../clients/generic-agent-skills.md#gotcha-frontmatter-uses-a-strict-yaml-subset).
 
 ### The description field is the most important line in the file
 

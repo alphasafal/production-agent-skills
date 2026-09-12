@@ -28,6 +28,7 @@ class Skill:
     dir: Path
     frontmatter: dict = field(default_factory=dict)
     body: str = ""
+    raw_frontmatter: str = ""
 
     @property
     def name(self) -> str:
@@ -69,7 +70,7 @@ class Skill:
         return json.loads(eval_file.read_text())
 
 
-def parse_skill_md(skill_md_path: Path) -> tuple[dict, str]:
+def parse_skill_md(skill_md_path: Path) -> tuple[dict, str, str]:
     text = skill_md_path.read_text(encoding="utf-8")
     match = FRONTMATTER_RE.match(text)
     if not match:
@@ -83,7 +84,45 @@ def parse_skill_md(skill_md_path: Path) -> tuple[dict, str]:
         raise SkillParseError(f"{skill_md_path}: invalid YAML frontmatter: {exc}") from exc
     if not isinstance(frontmatter, dict):
         raise SkillParseError(f"{skill_md_path}: frontmatter must be a YAML mapping")
-    return frontmatter, body
+    return frontmatter, body, raw_frontmatter
+
+
+# The reference implementation (skills-ref, agentskills.io) parses frontmatter with a
+# strict YAML subset that PyYAML happily accepts but the spec does not. Checking for
+# these locally means CI catches them without requiring the optional external CLI.
+FLOW_COLLECTION_RE = re.compile(r"^\s*[^#\s][^:]*:\s*[\[{]")
+ANCHOR_ALIAS_TAG_RE = re.compile(r"^\s*[^#\s][^:]*:\s*[&*!]")
+
+
+def strict_yaml_violations(raw_frontmatter: str) -> list[str]:
+    """Frontmatter constructs valid in PyYAML but rejected by the open spec's parser."""
+    problems = []
+    seen_top_level_keys = set()
+
+    for lineno, line in enumerate(raw_frontmatter.splitlines(), start=1):
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+
+        if FLOW_COLLECTION_RE.match(line):
+            problems.append(
+                f"line {lineno}: flow-style collection (`[...]` / `{{...}}`) is not "
+                f"accepted by the spec's YAML parser — use a block list/mapping instead: "
+                f"{line.strip()[:70]}"
+            )
+
+        if ANCHOR_ALIAS_TAG_RE.match(line):
+            problems.append(
+                f"line {lineno}: YAML anchors/aliases/tags are not portable across "
+                f"skill clients: {line.strip()[:70]}"
+            )
+
+        if not line.startswith((" ", "\t")) and ":" in line:
+            key = line.split(":", 1)[0].strip()
+            if key in seen_top_level_keys:
+                problems.append(f"line {lineno}: duplicate top-level key '{key}'")
+            seen_top_level_keys.add(key)
+
+    return problems
 
 
 def discover_skills(skills_dir: Path = SKILLS_DIR) -> list[Skill]:
@@ -96,8 +135,10 @@ def discover_skills(skills_dir: Path = SKILLS_DIR) -> list[Skill]:
         skill_md = entry / "SKILL.md"
         if not skill_md.is_file():
             continue
-        frontmatter, body = parse_skill_md(skill_md)
-        skills.append(Skill(dir=entry, frontmatter=frontmatter, body=body))
+        frontmatter, body, raw_frontmatter = parse_skill_md(skill_md)
+        skills.append(
+            Skill(dir=entry, frontmatter=frontmatter, body=body, raw_frontmatter=raw_frontmatter)
+        )
     return skills
 
 

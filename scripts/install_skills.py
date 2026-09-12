@@ -95,13 +95,8 @@ def main() -> int:
         print(f"ERROR: --target {target_root} exists and is not a directory")
         return 1
 
-    if not target_root.exists():
-        if args.dry_run:
-            print(f"DRY-RUN: would create target directory {target_root}")
-        else:
-            target_root.mkdir(parents=True, exist_ok=True)
-            print(f"Created target directory {target_root}")
-
+    # Resolve the selection before touching the filesystem, so a typo'd skill
+    # name doesn't leave an empty target directory behind.
     by_name = {s.name: s for s in skills}
     if args.all:
         selected = skills
@@ -112,6 +107,13 @@ def main() -> int:
                 print(f"ERROR: unknown skill '{name}'. Run --list to see available skills.")
                 return 1
             selected.append(by_name[name])
+
+    if not target_root.exists():
+        if args.dry_run:
+            print(f"DRY-RUN: would create target directory {target_root}")
+        else:
+            target_root.mkdir(parents=True, exist_ok=True)
+            print(f"Created target directory {target_root}")
 
     installed = 0
     for skill in selected:

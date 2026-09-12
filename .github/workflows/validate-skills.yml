@@ -8,13 +8,19 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Brackets the range declared in pyproject.toml (requires-python = ">=3.9").
+        python-version: ["3.9", "3.11", "3.13"]
+    name: validate (py${{ matrix.python-version }})
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: pip install -e '.[dev]'
@@ -28,19 +34,81 @@ jobs:
       - name: Run static evaluation checks
         run: python scripts/run_static_evals.py
 
-      - name: Check for optional skills-ref CLI
+      # Validates against the reference implementation of the open spec, which
+      # enforces a stricter YAML subset than PyYAML accepts. Kept as a separate,
+      # network-dependent step so a registry/network outage is distinguishable
+      # from an actual skill defect.
+      - name: Install the official skills-ref validator
         id: skills_ref
+        continue-on-error: true
         run: |
-          if command -v skills-ref >/dev/null 2>&1; then
-            echo "found=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "found=false" >> "$GITHUB_OUTPUT"
-            echo "skills-ref not installed — skipping optional external validation (this is not a failure)"
-          fi
+          pip install "git+https://github.com/agentskills/agentskills#subdirectory=skills-ref"
+          skills-ref --version
 
-      - name: Run skills-ref validate (optional, only if present)
-        if: steps.skills_ref.outputs.found == 'true'
+      - name: Validate every skill against the open spec (skills-ref)
+        if: steps.skills_ref.outcome == 'success'
         run: |
+          set -e
           for dir in skills/*/; do
+            echo "::group::$dir"
             skills-ref validate "$dir"
+            echo "::endgroup::"
           done
+
+      - name: Report skills-ref unavailable
+        if: steps.skills_ref.outcome != 'success'
+        run: |
+          echo "::warning::skills-ref could not be installed (network/registry issue) — \
+          spec validation was skipped. scripts/validate_skills.py still enforces the \
+          same strict-YAML rules locally."
+
+  # The bundled data-scientist scripts are the only executable skill content in
+  # the repo, so they get exercised against a real fixture rather than only
+  # being checked for syntax by the structural tests above.
+  skill-scripts:
+    runs-on: ubuntu-latest
+    name: data-scientist scripts
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install data-scientist dependencies
+        run: pip install -e '.[data-scientist]'
+
+      - name: Every script exposes --help
+        run: |
+          set -e
+          for f in skills/data-scientist/scripts/*.py; do
+            echo "::group::$f --help"
+            python "$f" --help > /dev/null
+            echo "::endgroup::"
+          done
+
+      - name: Run scripts against the repo's own fixture
+        run: |
+          set -e
+          F=evaluations/fixtures/churn_sample.csv
+          python skills/data-scientist/scripts/profile_dataset.py "$F"
+          python skills/data-scientist/scripts/check_missingness.py "$F"
+          python skills/data-scientist/scripts/detect_duplicates.py "$F" --key customer_id
+          python skills/data-scientist/scripts/check_leakage.py "$F" --target churned
+          python skills/data-scientist/scripts/generate_summary.py "$F" --target churned --key customer_id
+
+      - name: Leakage screen must flag the fixture's known leaky column
+        run: |
+          python skills/data-scientist/scripts/check_leakage.py \
+            evaluations/fixtures/churn_sample.csv --target churned \
+            | grep -q "cancellation_reason" \
+            || { echo "check_leakage failed to flag the known leakage column"; exit 1; }
+
+      - name: Scripts fail with a readable message when dependencies are absent
+        run: |
+          python -m venv /tmp/nodeps
+          OUT=$(/tmp/nodeps/bin/python skills/data-scientist/scripts/profile_dataset.py \
+            evaluations/fixtures/churn_sample.csv 2>&1 || true)
+          echo "$OUT"
+          echo "$OUT" | grep -q "pip install pandas numpy" \
+            || { echo "expected a friendly dependency message, got a raw traceback"; exit 1; }

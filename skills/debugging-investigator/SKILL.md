@@ -16,7 +16,9 @@ compatibility: >
   cases but not required for local reproduction.
 metadata:
   category: engineering
-  composes_with: [production-code-review, repo-architect]
+  composes_with:
+    - production-code-review
+    - repo-architect
 ---
 
 # Purpose

@@ -17,7 +17,9 @@ compatibility: >
   `data-scientist` extra). Needs filesystem access to the dataset file(s).
 metadata:
   category: data
-  composes_with: [product-manager, research-to-decision]
+  composes_with:
+    - product-manager
+    - research-to-decision
 ---
 
 # Purpose

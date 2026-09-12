@@ -4,8 +4,10 @@ Reusable workflows for AI agents.
 Engineering • Data • Product • Research
 
 [![Open Agent Skills format](https://img.shields.io/badge/format-Open%20Agent%20Skills-blue)](https://agentskills.io)
+[![Spec validated](https://img.shields.io/badge/skills--ref-8%2F8%20valid-success)](docs/compatibility.md)
 [![Skills](https://img.shields.io/badge/skills-8-brightgreen)](#the-8-skills)
 [![Evaluations included](https://img.shields.io/badge/evaluations-80%20cases%20%2B%208%20workflows-orange)](evaluations/)
+[![Python](https://img.shields.io/badge/python-3.9%20%7C%203.11%20%7C%203.13-blue)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 [![CI](https://github.com/alphasafal/production-agent-skills/actions/workflows/validate-skills.yml/badge.svg)](https://github.com/alphasafal/production-agent-skills/actions/workflows/validate-skills.yml)
 
@@ -176,10 +178,21 @@ ambiguous-positive, 3 negative) and one deeper workflow scenario with a
 real fixture — see [`evaluations/`](evaluations/).
 
 ```bash
-python scripts/validate_skills.py -v     # structural + schema validation
+python scripts/validate_skills.py -v     # structural + schema + strict-YAML validation
 python scripts/run_static_evals.py       # static lexical sanity checks
-pytest tests/                            # 89 tests over the tooling's guarantees
+pytest tests/                            # 105 tests over the tooling's guarantees
 ```
+
+### What's actually been verified
+
+| Claim | Evidence |
+|---|---|
+| All 8 skills conform to the open spec | `skills-ref validate` (the reference implementation) passes 8/8, run per-skill in CI |
+| Carrying all 8 skills is cheap | Discovery prompt measures **6,346 chars** — under Codex's documented 8,000-char ceiling |
+| Tooling works on the Python range it claims | Full suite green on 3.9 / 3.11 / 3.13 (CI matrix) |
+| Installation preserves validity | Skills installed into a real cloned repo, then re-validated with `skills-ref` |
+| The bundled scripts are correct | Run against the real 891-row Titanic dataset; outputs match independently-computed ground truth |
+| The debugging example is real | Bug reproduces 10/10 runs; documented fix resolves it 10/10; regression test fails pre-fix, passes post-fix |
 
 **No fabricated benchmark numbers exist in this repository.**
 [`evaluations/results/README.md`](evaluations/results/README.md) is

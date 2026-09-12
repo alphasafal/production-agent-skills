@@ -15,7 +15,13 @@ import argparse
 import sys
 from pathlib import Path
 
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError as exc:
+    raise SystemExit(
+        f"This script needs {exc.name}. Install with:  pip install pandas numpy\n"
+        f"(or, from the repo root:  pip install -e '.[data-scientist]')"
+    ) from exc
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_leakage import check_leakage  # noqa: E402

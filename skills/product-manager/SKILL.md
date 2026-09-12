@@ -14,7 +14,10 @@ license: MIT
 compatibility: Text-based planning skill. No filesystem/network access required beyond reading any existing product docs the user provides.
 metadata:
   category: product
-  composes_with: [data-scientist, research-to-decision, feature-to-production]
+  composes_with:
+    - data-scientist
+    - research-to-decision
+    - feature-to-production
 ---
 
 # Purpose

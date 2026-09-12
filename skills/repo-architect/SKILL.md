@@ -13,7 +13,9 @@ license: MIT
 compatibility: Needs filesystem read access to the repository. No network required.
 metadata:
   category: engineering
-  composes_with: [feature-to-production, system-design-reviewer]
+  composes_with:
+    - feature-to-production
+    - system-design-reviewer
 ---
 
 # Purpose
@@ -126,6 +128,12 @@ available in the environment):
 - **Repository is too large to fully map in one pass**: map the boundaries
   and entry points fully, then go deep only on the area relevant to the
   user's stated goal — say explicitly what was scoped out.
+- **The repo is a library/framework, not an application**: there is no
+  `main`, no served route, and no request flow to trace. Map the
+  **exported public API surface** as the entry point instead, and treat
+  "no `cmd/` directory" or "no `main` field" as expected rather than as a
+  finding. Read `references/common-project-structures.md` first — its
+  opening section covers how to tell the two apart.
 
 # References
 

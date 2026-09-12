@@ -14,7 +14,13 @@ import argparse
 import sys
 from pathlib import Path
 
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError as exc:
+    raise SystemExit(
+        f"This script needs {exc.name}. Install with:  pip install pandas numpy\n"
+        f"(or, from the repo root:  pip install -e '.[data-scientist]')"
+    ) from exc
 
 
 def missingness_report(df: pd.DataFrame, threshold: float) -> str:
@@ -35,17 +41,26 @@ def missingness_report(df: pd.DataFrame, threshold: float) -> str:
 
     missing_cols = [c for c in df.columns if missing[c] > 0]
     if len(missing_cols) >= 2:
-        lines.append("\nCo-occurrence of missingness (correlation of is-null indicators):")
         null_indicators = df[missing_cols].isna().astype(int)
         corr = null_indicators.corr()
+        related = []
         for i, col_a in enumerate(missing_cols):
             for col_b in missing_cols[i + 1:]:
                 value = corr.loc[col_a, col_b]
-                if abs(value) >= 0.5:
-                    lines.append(
+                if pd.notna(value) and abs(value) >= 0.5:
+                    related.append(
                         f"  {col_a} <-> {col_b}: {value:.2f} "
                         f"(missingness likely related — investigate a shared cause, not MCAR)"
                     )
+        if related:
+            lines.append("\nCo-occurrence of missingness (correlation of is-null indicators):")
+            lines.extend(related)
+        else:
+            lines.append(
+                "\nNo pair of columns has strongly co-occurring missingness "
+                "(all |correlation| < 0.5), which is consistent with — but does not "
+                "prove — missing-at-random."
+            )
 
     return "\n".join(lines)
 
