@@ -1,0 +1,85 @@
+[
+  {
+    "id": "data-scientist-pos-01",
+    "skill": "data-scientist",
+    "category": "positive-obvious",
+    "prompt": "Here's our customer dataset, build a model to predict churn.",
+    "expected_activation": true,
+    "required_behaviors": ["establishes a naive baseline before training a model", "checks for data leakage"],
+    "forbidden_behaviors": ["jumping straight to a complex model with no baseline"]
+  },
+  {
+    "id": "data-scientist-pos-02",
+    "skill": "data-scientist",
+    "category": "positive-obvious",
+    "prompt": "Can you analyze this sales data and tell me what's driving the drop last quarter?",
+    "expected_activation": true,
+    "required_behaviors": ["performs EDA and states hypotheses before conclusions"]
+  },
+  {
+    "id": "data-scientist-pos-03",
+    "skill": "data-scientist",
+    "category": "positive-obvious",
+    "prompt": "Check this dataset for data quality issues before we use it for anything.",
+    "expected_activation": true,
+    "required_behaviors": ["runs missingness and duplicate checks", "checks schema validity"]
+  },
+  {
+    "id": "data-scientist-pos-04",
+    "skill": "data-scientist",
+    "category": "positive-obvious",
+    "prompt": "Evaluate how well our current fraud model is performing and where it's failing.",
+    "expected_activation": true,
+    "required_behaviors": ["compares against a baseline", "performs error and slice analysis"]
+  },
+  {
+    "id": "data-scientist-pos-05",
+    "skill": "data-scientist",
+    "category": "positive-obvious",
+    "prompt": "Build a regression model to predict housing prices from this CSV.",
+    "expected_activation": true,
+    "required_behaviors": ["creates a mean-predictor baseline before modeling", "chooses and states an evaluation metric"]
+  },
+  {
+    "id": "data-scientist-amb-01",
+    "skill": "data-scientist",
+    "category": "positive-ambiguous",
+    "prompt": "Something feels off about our conversion numbers this month, can you dig into the data?",
+    "expected_activation": true,
+    "required_behaviors": ["treats this as a data investigation requiring EDA and hypothesis testing"],
+    "notes": "No explicit 'analyze' or 'model' keyword, but it's a real data investigation request."
+  },
+  {
+    "id": "data-scientist-amb-02",
+    "skill": "data-scientist",
+    "category": "positive-ambiguous",
+    "prompt": "We have a spreadsheet of user signups, can you tell us which ones are likely to convert to paid?",
+    "expected_activation": true,
+    "required_behaviors": ["frames this as a classification problem needing a baseline and leakage check"],
+    "notes": "Phrased as a plain business question, but it's a predictive modeling task."
+  },
+  {
+    "id": "data-scientist-neg-01",
+    "skill": "data-scientist",
+    "category": "negative",
+    "prompt": "What's the average of this list of numbers: 4, 8, 15, 16, 23, 42?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["running the full EDA/modeling workflow for a single arithmetic question"]
+  },
+  {
+    "id": "data-scientist-neg-02",
+    "skill": "data-scientist",
+    "category": "negative",
+    "prompt": "Write an ETL script to load this CSV into our data warehouse.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["treating a pure data-engineering task as an analysis/modeling request"]
+  },
+  {
+    "id": "data-scientist-neg-03",
+    "skill": "data-scientist",
+    "category": "negative",
+    "prompt": "What's the difference between precision and recall?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["invoking the full data-science workflow for a conceptual definitional question"]
+  }
+]
