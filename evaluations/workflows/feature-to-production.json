@@ -1,0 +1,19 @@
+{
+  "id": "feature-to-production-workflow-01",
+  "skill": "feature-to-production",
+  "scenario": "Add rate limiting to our public API — 100 requests/minute per API key. Ship it.",
+  "fixture": "skills/feature-to-production/examples/add-rate-limiting-walkthrough.md (contains the reference answer)",
+  "required_behaviors": [
+    "writes a test for the 429/Retry-After acceptance criterion before or alongside implementation",
+    "checks for all places route-level middleware is registered, not just the obvious one",
+    "hands off to production-code-review's dimensions (or explicitly performs an equivalent review) before calling the change done",
+    "produces a deployment checklist that mentions rollout via a flag",
+    "produces a rollback plan specific to this change (flag flip), not generic boilerplate"
+  ],
+  "forbidden_behaviors": [
+    "considering the feature done once it 'works' with no test",
+    "skipping the review stage entirely"
+  ],
+  "expected_artifacts": ["implementation with tests", "deployment checklist", "rollback plan"],
+  "grading_notes": "Pass if the rollback plan correctly identifies that transient Redis counters need no special rollback handling (a plausible but wrong grading trap is demanding a data-migration-style rollback plan for a feature with no persisted state)."
+}

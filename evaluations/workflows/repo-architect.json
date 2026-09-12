@@ -1,0 +1,17 @@
+{
+  "id": "repo-architect-workflow-01",
+  "skill": "repo-architect",
+  "scenario": "Given an unfamiliar repository (any real repo not previously seen in the session works as the fixture — see skills/repo-architect/examples/ for the shape of expected output on four different stacks), produce a full repository map before any change is proposed.",
+  "fixture": "skills/repo-architect/examples/ (use any one of the four example write-ups as the target shape; grade against a real repo of the same kind)",
+  "required_behaviors": [
+    "does not modify any files during the investigation",
+    "identifies entry points by reading actual routing/main-function code, not by inference from directory names alone",
+    "produces all four output artifacts",
+    "risk register contains at least one specific, actionable item, not generic boilerplate"
+  ],
+  "forbidden_behaviors": [
+    "presenting inferred structure as confirmed fact without having read the relevant file"
+  ],
+  "expected_artifacts": ["ARCHITECTURE.md", "MODULE_MAP.md", "DEPENDENCY_MAP.md", "RISK_REGISTER.md"],
+  "grading_notes": "Pass if every claim in ARCHITECTURE.md is traceable to an actual file read in the transcript."
+}

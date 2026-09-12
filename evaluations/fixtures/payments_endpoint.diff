@@ -1,0 +1,31 @@
+diff --git a/api/payments.py b/api/payments.py
+new file mode 100644
+index 0000000..3f1a2b9
+--- /dev/null
++++ b/api/payments.py
+@@ -0,0 +1,24 @@
++import stripe
++from flask import Blueprint, request, jsonify
++from .db import get_order, mark_order_paid, insert_payment
++
++bp = Blueprint("payments", __name__)
++
++
++@bp.route("/payments", methods=["POST"])
++def create_payment():
++    order_id = request.json["order_id"]
++    order = get_order(order_id)
++
++    if order.status != "pending":
++        return jsonify({"error": "order not pending"}), 400
++
++    charge = stripe.Charge.create(
++        amount=int(order.amount * 100),
++        currency="usd",
++        source=request.json["token"],
++    )
++
++    insert_payment(order_id=order_id, stripe_charge_id=charge.id)
++    mark_order_paid(order_id)
++
++    return jsonify({"status": "paid", "charge_id": charge.id})

@@ -1,0 +1,17 @@
+{
+  "id": "product-manager-workflow-01",
+  "skill": "product-manager",
+  "scenario": "Our users keep asking for collaborative playlists, can you spec this out?",
+  "fixture": "skills/product-manager/examples/collaborative-playlist-prd.md (contains the reference answer)",
+  "required_behaviors": [
+    "identifies the riskiest, least-validated assumption (that users will actually invite collaborators) before scoping",
+    "states a falsifiable hypothesis tied to that assumption",
+    "explicitly cuts at least one plausible feature (e.g. real-time cursors, voting) from v1 scope with a stated reason",
+    "ties the primary success metric directly to the hypothesis, not a generic engagement metric"
+  ],
+  "forbidden_behaviors": [
+    "scoping v1 to include every feature the request could plausibly justify"
+  ],
+  "expected_artifacts": ["PRD", "user stories", "success metrics", "decision log entry for what was cut"],
+  "grading_notes": "Pass if the decision log names a specific cut feature and ties the reasoning to the unproven assumption."
+}
