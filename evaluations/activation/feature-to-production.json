@@ -1,0 +1,87 @@
+[
+  {
+    "id": "feature-to-production-pos-01",
+    "skill": "feature-to-production",
+    "category": "positive-obvious",
+    "prompt": "Add rate limiting to our public API — 100 requests per minute per API key. Ship it.",
+    "expected_activation": true,
+    "required_behaviors": ["writes tests for the acceptance criteria", "produces a deployment checklist and rollback plan"],
+    "expected_artifacts": ["implementation summary", "deployment checklist", "rollback plan"]
+  },
+  {
+    "id": "feature-to-production-pos-02",
+    "skill": "feature-to-production",
+    "category": "positive-obvious",
+    "prompt": "Implement the password-reset flow end to end, from design through deployment.",
+    "expected_activation": true,
+    "required_behaviors": ["designs smallest viable change before implementing", "hands off to production-code-review before considering it done"]
+  },
+  {
+    "id": "feature-to-production-pos-03",
+    "skill": "feature-to-production",
+    "category": "positive-obvious",
+    "prompt": "Build the CSV export feature and make sure it's production-ready.",
+    "expected_activation": true,
+    "required_behaviors": ["produces a rollback strategy", "checks affected interfaces/call sites"]
+  },
+  {
+    "id": "feature-to-production-pos-04",
+    "skill": "feature-to-production",
+    "category": "positive-obvious",
+    "prompt": "Take this ticket with clear acceptance criteria and get it shipped, including tests.",
+    "expected_activation": true,
+    "required_behaviors": ["every acceptance criterion has a corresponding test"]
+  },
+  {
+    "id": "feature-to-production-pos-05",
+    "skill": "feature-to-production",
+    "category": "positive-obvious",
+    "prompt": "We need a deployment plan and rollback strategy for this new webhook feature we just built.",
+    "expected_activation": true,
+    "required_behaviors": ["addresses external side effects explicitly in the rollback plan"]
+  },
+  {
+    "id": "feature-to-production-amb-01",
+    "skill": "feature-to-production",
+    "category": "positive-ambiguous",
+    "prompt": "This ticket is ready to go, can you take it all the way through to done?",
+    "expected_activation": true,
+    "required_behaviors": ["treats 'all the way through to done' as including tests, review, and deployment planning"],
+    "notes": "No explicit engineering-workflow keywords, but 'all the way to done' implies the full pipeline."
+  },
+  {
+    "id": "feature-to-production-amb-02",
+    "skill": "feature-to-production",
+    "category": "positive-ambiguous",
+    "prompt": "Get the dark-mode toggle feature into production safely.",
+    "expected_activation": true,
+    "required_behaviors": ["produces a deployment checklist even for a seemingly low-risk feature"],
+    "notes": "The word 'safely' signals the need for the full checklist/rollback discipline, not just code."
+  },
+  {
+    "id": "feature-to-production-neg-01",
+    "skill": "feature-to-production",
+    "category": "negative",
+    "prompt": "We want to build something to improve retention but have no idea what yet.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["starting implementation planning before the requirement is scoped"],
+    "notes": "This belongs to product-manager first — the requirement isn't clarified yet."
+  },
+  {
+    "id": "feature-to-production-neg-02",
+    "skill": "feature-to-production",
+    "category": "negative",
+    "prompt": "Users are seeing an intermittent 500 error, we don't know why.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["treating an unknown-cause bug as a feature-implementation task"],
+    "notes": "This belongs to debugging-investigator — the cause is unknown, not the implementation."
+  },
+  {
+    "id": "feature-to-production-neg-03",
+    "skill": "feature-to-production",
+    "category": "negative",
+    "prompt": "Fix this typo in the button label.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["running the full 15-step workflow for a one-line trivial fix"]
+  }
+]
