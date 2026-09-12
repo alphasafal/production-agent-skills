@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/alphasafal/production-agent-skills/schemas/evaluation.schema.json",
+  "title": "Skill Activation/Workflow Evaluation Case",
+  "description": "One test case for whether a skill should activate and how it should behave once active.",
+  "type": "object",
+  "required": ["id", "skill", "prompt", "expected_activation", "category"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Unique, kebab-case, prefixed with the skill name, e.g. debugging-investigator-pos-01."
+    },
+    "skill": {
+      "type": "string",
+      "description": "Directory name of the skill under skills/ this case belongs to."
+    },
+    "category": {
+      "type": "string",
+      "enum": ["positive-obvious", "positive-ambiguous", "negative"],
+      "description": "positive-obvious: clear trigger. positive-ambiguous: indirect/hard trigger. negative: must NOT activate."
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 5,
+      "description": "The user message this case evaluates activation against."
+    },
+    "expected_activation": {
+      "type": "boolean"
+    },
+    "required_behaviors": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Observable workflow steps or artifacts the agent must produce when the skill activates."
+    },
+    "forbidden_behaviors": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Behaviors that indicate the skill was ignored or misapplied (e.g. 'jumps to a fix before reproducing')."
+    },
+    "expected_artifacts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Output files/sections the skill's output contract requires, e.g. DEBUG_REPORT.md."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Why this case is included, especially for ambiguous/negative cases."
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/alphasafal/production-agent-skills/schemas/skill-manifest.schema.json",
+  "title": "Skill Manifest",
+  "description": "Validation schema for the YAML frontmatter of a SKILL.md file, per the agentskills.io open specification.",
+  "type": "object",
+  "required": ["name", "description"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Must equal the parent directory name exactly.",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "maxLength": 64
+    },
+    "description": {
+      "type": "string",
+      "description": "Must state WHAT the skill does and WHEN to use it. No angle brackets.",
+      "minLength": 40,
+      "maxLength": 1024
+    },
+    "license": {
+      "type": "string",
+      "description": "SPDX identifier, e.g. MIT, Apache-2.0."
+    },
+    "allowed-tools": {
+      "description": "Tools this skill is pre-approved to use, as a space-separated string or a list.",
+      "oneOf": [
+        { "type": "string" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "compatibility": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Free-text note on environment requirements (filesystem, network, MCP)."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Free-form nested metadata, e.g. category, difficulty, related skills."
+    }
+  }
+}
