@@ -1,0 +1,46 @@
+name: Validate skills
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -e '.[dev]'
+
+      - name: Run unit tests (structure, frontmatter, references, eval cases)
+        run: pytest tests/ -v
+
+      - name: Run static skill validation
+        run: python scripts/validate_skills.py -v
+
+      - name: Run static evaluation checks
+        run: python scripts/run_static_evals.py
+
+      - name: Check for optional skills-ref CLI
+        id: skills_ref
+        run: |
+          if command -v skills-ref >/dev/null 2>&1; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "skills-ref not installed — skipping optional external validation (this is not a failure)"
+          fi
+
+      - name: Run skills-ref validate (optional, only if present)
+        if: steps.skills_ref.outputs.found == 'true'
+        run: |
+          for dir in skills/*/; do
+            skills-ref validate "$dir"
+          done
