@@ -1,0 +1,86 @@
+[
+  {
+    "id": "production-code-review-pos-01",
+    "skill": "production-code-review",
+    "category": "positive-obvious",
+    "prompt": "Review this PR before I merge it: [diff attached]",
+    "expected_activation": true,
+    "required_behaviors": ["assigns severity P0-P3", "distinguishes FACT from LIKELY RISK"],
+    "forbidden_behaviors": ["style-only nitpicks presented as blocking findings"]
+  },
+  {
+    "id": "production-code-review-pos-02",
+    "skill": "production-code-review",
+    "category": "positive-obvious",
+    "prompt": "Is this diff safe to ship to production?",
+    "expected_activation": true,
+    "required_behaviors": ["ends with an explicit merge recommendation matching the severities found"]
+  },
+  {
+    "id": "production-code-review-pos-03",
+    "skill": "production-code-review",
+    "category": "positive-obvious",
+    "prompt": "Can you do a security and correctness pass on this pull request?",
+    "expected_activation": true,
+    "required_behaviors": ["checks security dimension explicitly", "provides evidence per finding"]
+  },
+  {
+    "id": "production-code-review-pos-04",
+    "skill": "production-code-review",
+    "category": "positive-obvious",
+    "prompt": "Review my changes to the checkout API for concurrency and API-contract issues.",
+    "expected_activation": true,
+    "required_behaviors": ["reads references/concurrency-and-performance.md guidance", "checks backward compatibility"]
+  },
+  {
+    "id": "production-code-review-pos-05",
+    "skill": "production-code-review",
+    "category": "positive-obvious",
+    "prompt": "Give this commit a thorough senior-engineer-level code review.",
+    "expected_activation": true,
+    "required_behaviors": ["reviews across multiple dimensions, not just one"]
+  },
+  {
+    "id": "production-code-review-amb-01",
+    "skill": "production-code-review",
+    "category": "positive-ambiguous",
+    "prompt": "I'm a little nervous about this change we're about to deploy, can you take a look?",
+    "expected_activation": true,
+    "required_behaviors": ["treats this as a review request despite no explicit 'review' keyword"],
+    "notes": "Indirect trigger phrased as a feeling, not a direct review request."
+  },
+  {
+    "id": "production-code-review-amb-02",
+    "skill": "production-code-review",
+    "category": "positive-ambiguous",
+    "prompt": "Before this goes out the door, double-check we didn't break anything for existing users.",
+    "expected_activation": true,
+    "required_behaviors": ["checks backward compatibility dimension specifically"],
+    "notes": "Framed around 'breaking existing users' rather than the word 'review'."
+  },
+  {
+    "id": "production-code-review-neg-01",
+    "skill": "production-code-review",
+    "category": "negative",
+    "prompt": "Can you explain what a race condition is?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["running a full diff review for a conceptual question with no diff"]
+  },
+  {
+    "id": "production-code-review-neg-02",
+    "skill": "production-code-review",
+    "category": "negative",
+    "prompt": "Give me an overall health assessment of this entire codebase, there's no specific PR.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["treating a whole-codebase health request as a diff review"],
+    "notes": "This belongs to repo-architect, not production-code-review, since there's no specific change."
+  },
+  {
+    "id": "production-code-review-neg-03",
+    "skill": "production-code-review",
+    "category": "negative",
+    "prompt": "Reformat this file to match our prettier config.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["invoking a full 12-dimension review for a pure formatting task"]
+  }
+]

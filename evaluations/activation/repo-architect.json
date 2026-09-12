@@ -1,0 +1,91 @@
+[
+  {
+    "id": "repo-architect-pos-01",
+    "skill": "repo-architect",
+    "category": "positive-obvious",
+    "prompt": "I just cloned this repo and have no idea how it's structured. Can you map it out for me?",
+    "expected_activation": true,
+    "required_behaviors": ["does not modify any files", "identifies entry points and modules from actual code, not guesses"],
+    "expected_artifacts": ["ARCHITECTURE.md", "MODULE_MAP.md"]
+  },
+  {
+    "id": "repo-architect-pos-02",
+    "skill": "repo-architect",
+    "category": "positive-obvious",
+    "prompt": "Explain the architecture of this codebase before I start contributing.",
+    "expected_activation": true,
+    "required_behaviors": ["produces a narrative overview plus a module breakdown"],
+    "expected_artifacts": ["ARCHITECTURE.md"]
+  },
+  {
+    "id": "repo-architect-pos-03",
+    "skill": "repo-architect",
+    "category": "positive-obvious",
+    "prompt": "Onboard me to this monorepo — what are all the packages and how do they depend on each other?",
+    "expected_activation": true,
+    "required_behaviors": ["maps package-level dependency graph before going deep on any one package"],
+    "expected_artifacts": ["DEPENDENCY_MAP.md"]
+  },
+  {
+    "id": "repo-architect-pos-04",
+    "skill": "repo-architect",
+    "category": "positive-obvious",
+    "prompt": "Document the module structure and dependencies of this Go service.",
+    "expected_activation": true,
+    "required_behaviors": ["identifies entry points from cmd/ and internal/ layout"],
+    "expected_artifacts": ["MODULE_MAP.md", "DEPENDENCY_MAP.md"]
+  },
+  {
+    "id": "repo-architect-pos-05",
+    "skill": "repo-architect",
+    "category": "positive-obvious",
+    "prompt": "Before we plan the next sprint, I want a full architectural risk register for this repo.",
+    "expected_activation": true,
+    "required_behaviors": ["names concrete, specific risks rather than generic boilerplate"],
+    "expected_artifacts": ["RISK_REGISTER.md"]
+  },
+  {
+    "id": "repo-architect-amb-01",
+    "skill": "repo-architect",
+    "category": "positive-ambiguous",
+    "prompt": "I'm about to plan a big refactor here but I've never seen this codebase before.",
+    "expected_activation": true,
+    "required_behaviors": ["maps the repository before any refactor planning begins"],
+    "notes": "No explicit 'map' or 'architecture' keyword, but understanding must precede planning.",
+    "expected_artifacts": ["ARCHITECTURE.md"]
+  },
+  {
+    "id": "repo-architect-amb-02",
+    "skill": "repo-architect",
+    "category": "positive-ambiguous",
+    "prompt": "Where would I even start if I wanted to add multi-tenancy to this app?",
+    "expected_activation": true,
+    "required_behaviors": ["builds a structural understanding before recommending where to start"],
+    "notes": "Framed as a question about starting point, but requires the same investigation as an explicit map request.",
+    "expected_artifacts": ["ARCHITECTURE.md"]
+  },
+  {
+    "id": "repo-architect-neg-01",
+    "skill": "repo-architect",
+    "category": "negative",
+    "prompt": "Fix the typo in this README file.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["running a full repository mapping workflow for a one-line edit"]
+  },
+  {
+    "id": "repo-architect-neg-02",
+    "skill": "repo-architect",
+    "category": "negative",
+    "prompt": "What does the word 'monorepo' mean?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["treating a definitional question as a request to map an actual repository"]
+  },
+  {
+    "id": "repo-architect-neg-03",
+    "skill": "repo-architect",
+    "category": "negative",
+    "prompt": "I already know this codebase well — just add a new field to the User model.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["re-mapping a repo the user has stated they already understand"]
+  }
+]
