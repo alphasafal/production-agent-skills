@@ -1,0 +1,89 @@
+[
+  {
+    "id": "product-manager-pos-01",
+    "skill": "product-manager",
+    "category": "positive-obvious",
+    "prompt": "Our users keep asking for collaborative playlists, can you spec this out into a PRD?",
+    "expected_activation": true,
+    "required_behaviors": ["ranks assumptions by risk before scoping", "explicitly cuts something from v1 scope"],
+    "expected_artifacts": ["PRD"]
+  },
+  {
+    "id": "product-manager-pos-02",
+    "skill": "product-manager",
+    "category": "positive-obvious",
+    "prompt": "We should add gamification to the app. Help me define an MVP for this.",
+    "expected_activation": true,
+    "required_behaviors": ["works backward from the vague request to a specific problem and user before scoping"],
+    "expected_artifacts": ["PRD"]
+  },
+  {
+    "id": "product-manager-pos-03",
+    "skill": "product-manager",
+    "category": "positive-obvious",
+    "prompt": "Write user stories and success metrics for a new onboarding flow.",
+    "expected_activation": true,
+    "required_behaviors": ["ties success metrics to a stated hypothesis"],
+    "expected_artifacts": ["user stories", "success metrics"]
+  },
+  {
+    "id": "product-manager-pos-04",
+    "skill": "product-manager",
+    "category": "positive-obvious",
+    "prompt": "Turn this rough feature idea into something our engineering team can actually build.",
+    "expected_activation": true,
+    "required_behaviors": ["produces a scoped MVP rather than the full original idea"]
+  },
+  {
+    "id": "product-manager-pos-05",
+    "skill": "product-manager",
+    "category": "positive-obvious",
+    "prompt": "What's the minimum version of a referral program we should launch first?",
+    "expected_activation": true,
+    "required_behaviors": ["identifies the riskiest assumption and scopes the MVP around testing it"]
+  },
+  {
+    "id": "product-manager-amb-01",
+    "skill": "product-manager",
+    "category": "positive-ambiguous",
+    "prompt": "Everyone on the team has a different idea of what we should build next quarter, can you help sort this out?",
+    "expected_activation": true,
+    "required_behaviors": ["defines problem and target user before proposing scope"],
+    "notes": "No 'PRD' or 'MVP' keyword, but it's a request to turn ambiguity into a scoped plan."
+  },
+  {
+    "id": "product-manager-amb-02",
+    "skill": "product-manager",
+    "category": "positive-ambiguous",
+    "prompt": "We want to build something that helps users stay engaged, not sure what yet.",
+    "expected_activation": true,
+    "required_behaviors": ["forces problem/user definition before jumping to feature ideas"],
+    "notes": "Extremely vague request; the skill's job is precisely to narrow this."
+  },
+  {
+    "id": "product-manager-neg-01",
+    "skill": "product-manager",
+    "category": "negative",
+    "prompt": "Here's the fully-specified ticket: implement the 'export to CSV' button per the attached spec.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["re-running problem definition and MVP scoping on an already-fully-specified ticket"],
+    "notes": "This belongs to feature-to-production."
+  },
+  {
+    "id": "product-manager-neg-02",
+    "skill": "product-manager",
+    "category": "negative",
+    "prompt": "Should we use REST or GraphQL for our new internal API?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["treating a pure technical decision with no user-facing product dimension as a PM task"],
+    "notes": "This belongs to research-to-decision."
+  },
+  {
+    "id": "product-manager-neg-03",
+    "skill": "product-manager",
+    "category": "negative",
+    "prompt": "What does MVP stand for?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["running the full product-planning workflow for a definitional question"]
+  }
+]

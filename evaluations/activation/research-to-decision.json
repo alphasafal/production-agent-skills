@@ -1,0 +1,88 @@
+[
+  {
+    "id": "research-to-decision-pos-01",
+    "skill": "research-to-decision",
+    "category": "positive-obvious",
+    "prompt": "Should we use Kafka or SQS for our order events? Research both and recommend one.",
+    "expected_activation": true,
+    "required_behaviors": ["defines evaluation criteria before scoring", "cites sources for external claims"],
+    "expected_artifacts": ["RESEARCH.md", "DECISION_MATRIX.md", "ADR.md"]
+  },
+  {
+    "id": "research-to-decision-pos-02",
+    "skill": "research-to-decision",
+    "category": "positive-obvious",
+    "prompt": "Write an ADR documenting why we chose Postgres over MongoDB for this service.",
+    "expected_activation": true,
+    "required_behaviors": ["states trade-offs given up, not just gains"],
+    "expected_artifacts": ["ADR.md"]
+  },
+  {
+    "id": "research-to-decision-pos-03",
+    "skill": "research-to-decision",
+    "category": "positive-obvious",
+    "prompt": "Build vs buy for our authentication system — help us decide.",
+    "expected_activation": true,
+    "required_behaviors": ["captures constraints before comparing options"],
+    "expected_artifacts": ["DECISION_MATRIX.md"]
+  },
+  {
+    "id": "research-to-decision-pos-04",
+    "skill": "research-to-decision",
+    "category": "positive-obvious",
+    "prompt": "Compare React Query and SWR for our data-fetching layer and recommend one with reasoning.",
+    "expected_activation": true,
+    "required_behaviors": ["separates evidence from assumption explicitly"]
+  },
+  {
+    "id": "research-to-decision-pos-05",
+    "skill": "research-to-decision",
+    "category": "positive-obvious",
+    "prompt": "We need to document the reasoning behind our decision to migrate off of Heroku.",
+    "expected_activation": true,
+    "required_behaviors": ["produces an ADR with reversibility noted"],
+    "expected_artifacts": ["ADR.md"]
+  },
+  {
+    "id": "research-to-decision-amb-01",
+    "skill": "research-to-decision",
+    "category": "positive-ambiguous",
+    "prompt": "We keep going back and forth on this vendor choice in meetings, can you help us actually settle it?",
+    "expected_activation": true,
+    "required_behaviors": ["defines explicit criteria to settle the recurring disagreement"],
+    "notes": "No 'research' or 'ADR' keyword, but this is exactly the auditable-decision use case."
+  },
+  {
+    "id": "research-to-decision-amb-02",
+    "skill": "research-to-decision",
+    "category": "positive-ambiguous",
+    "prompt": "Is it worth switching our CI provider? I don't even know where to start.",
+    "expected_activation": true,
+    "required_behaviors": ["frames this as a decision with defined criteria and alternatives, not open-ended musing"],
+    "notes": "Phrased as uncertainty about where to start, but it's a build-vs-switch decision."
+  },
+  {
+    "id": "research-to-decision-neg-01",
+    "skill": "research-to-decision",
+    "category": "negative",
+    "prompt": "What is Kafka?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["producing a decision matrix or ADR for a plain definitional question"]
+  },
+  {
+    "id": "research-to-decision-neg-02",
+    "skill": "research-to-decision",
+    "category": "negative",
+    "prompt": "Implement the SQS integration we already decided on last week.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["re-running the decision workflow when the decision is already made and implementation is requested"]
+  },
+  {
+    "id": "research-to-decision-neg-03",
+    "skill": "research-to-decision",
+    "category": "negative",
+    "prompt": "Give me a general overview of the current state of vector databases, no decision needed right now.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["forcing a decision matrix/ADR onto open-ended research with no decision requested"]
+  }
+]
