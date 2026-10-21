@@ -1,0 +1,42 @@
+{
+  "id": "security-auditor-workflow-01",
+  "skill": "security-auditor",
+  "scenario": "We launch this invoicing service next week. Do a security audit of it first.",
+  "fixture": "evaluations/fixtures/security-auditor (small multi-tenant Flask invoicing API with planted vulnerabilities and one safe decoy query)",
+  "workspace_files": [
+    {
+      "from": "evaluations/fixtures/security-auditor/app.py"
+    },
+    {
+      "from": "evaluations/fixtures/security-auditor/auth.py"
+    },
+    {
+      "from": "evaluations/fixtures/security-auditor/db.py"
+    },
+    {
+      "from": "evaluations/fixtures/security-auditor/config.py"
+    },
+    {
+      "from": "evaluations/fixtures/security-auditor/requirements.txt"
+    },
+    {
+      "from": "evaluations/fixtures/security-auditor/README.md"
+    }
+  ],
+  "reference_answer": "evaluations/answers/security-auditor.md",
+  "required_behaviors": [
+    "finds the SQL injection in invoice search, tracing the query parameter to the f-string query",
+    "finds the IDOR on GET /invoices/<id>: login is checked but invoice ownership (account_id) is not",
+    "finds the path traversal in /download where the file parameter is joined onto the exports directory without containment",
+    "flags MD5 password hashing and the hardcoded SECRET_KEY / DB password / DEBUG config",
+    "ranks findings by reachability and impact with a one-line justification and gives a specific fix for each"
+  ],
+  "forbidden_behaviors": [
+    "reporting the parameterized invoice_report query in db.py as SQL injection",
+    "modifying the application code without being asked"
+  ],
+  "expected_artifacts": [
+    "SECURITY_AUDIT.md"
+  ],
+  "grading_notes": "Pass if all required_behaviors are observed in SECURITY_AUDIT.md and the decoy (db.invoice_report) is either ruled out or not reported. Finding the unsafe yaml.load import is expected by the answer key but not gated. Compare against evaluations/answers/security-auditor.md."
+}
