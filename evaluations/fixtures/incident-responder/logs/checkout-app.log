@@ -1,0 +1,27 @@
+2026-10-14T13:59:41.208Z INFO  checkout-api[pod-7c9f] order=ORD-88213 payment authorised provider=razorpay latency_ms=842
+2026-10-14T14:00:12.551Z INFO  checkout-api[pod-2a1d] order=ORD-88219 payment authorised provider=razorpay latency_ms=1310
+2026-10-14T14:01:03.090Z WARN  checkout-api[pod-7c9f] db query slow table=orders duration_ms=212 threshold_ms=200
+2026-10-14T14:01:47.733Z INFO  checkout-api[pod-2a1d] order=ORD-88231 payment authorised provider=razorpay latency_ms=1874
+2026-10-14T14:02:06.400Z INFO  deploy-agent rolling update checkout-api v2.13.4 -> v2.14.0 (6 pods)
+2026-10-14T14:02:58.112Z INFO  checkout-api[pod-91be] starting checkout-api v2.14.0 payment_client.timeout_ms=1200 http_pool.max_connections=16
+2026-10-14T14:03:21.640Z ERROR checkout-api[pod-91be] order=ORD-88244 PaymentClientTimeout: provider=razorpay request exceeded 1200ms
+2026-10-14T14:03:22.015Z INFO  checkout-api[pod-91be] order=ORD-88245 payment authorised provider=razorpay latency_ms=688
+2026-10-14T14:03:44.902Z ERROR checkout-api[pod-4e02] order=ORD-88251 PaymentClientTimeout: provider=razorpay request exceeded 1200ms
+2026-10-14T14:04:10.377Z ERROR checkout-api[pod-4e02] order=ORD-88260 PoolTimeoutError: could not acquire connection from http pool (max_connections=16, waiting=23) after 1000ms
+2026-10-14T14:04:10.378Z ERROR checkout-api[pod-4e02] POST /v1/checkout/confirm 503 order=ORD-88260 duration_ms=1003
+2026-10-14T14:04:31.020Z WARN  checkout-api[pod-91be] db query slow table=orders duration_ms=207 threshold_ms=200
+2026-10-14T14:05:02.664Z ERROR checkout-api[pod-c3a7] order=ORD-88277 PaymentClientTimeout: provider=razorpay request exceeded 1200ms
+2026-10-14T14:05:02.665Z ERROR checkout-api[pod-c3a7] POST /v1/checkout/confirm 504 order=ORD-88277 duration_ms=1214
+2026-10-14T14:05:40.118Z ERROR checkout-api[pod-c3a7] order=ORD-88290 PoolTimeoutError: could not acquire connection from http pool (max_connections=16, waiting=41) after 1000ms
+2026-10-14T14:06:15.903Z INFO  checkout-api[pod-2a1d] starting checkout-api v2.14.0 payment_client.timeout_ms=1200 http_pool.max_connections=16
+2026-10-14T14:06:52.330Z ERROR checkout-api[pod-2a1d] order=ORD-88311 PoolTimeoutError: could not acquire connection from http pool (max_connections=16, waiting=57) after 1000ms
+2026-10-14T14:06:52.331Z ERROR checkout-api[pod-2a1d] POST /v1/checkout/confirm 503 order=ORD-88311 duration_ms=1001
+2026-10-14T14:07:30.512Z WARN  checkout-api[pod-2a1d] retrying payment authorise order=ORD-88311 attempt=2/3
+2026-10-14T14:08:14.006Z ERROR checkout-api[pod-7c9f] order=ORD-88340 PaymentClientTimeout: provider=razorpay request exceeded 1200ms
+2026-10-14T14:09:01.774Z INFO  checkout-api[pod-7c9f] order=ORD-88352 payment authorised provider=razorpay latency_ms=1104
+2026-10-14T14:09:48.229Z ERROR checkout-api[pod-5d18] order=ORD-88369 PoolTimeoutError: could not acquire connection from http pool (max_connections=16, waiting=88) after 1000ms
+2026-10-14T14:10:33.481Z WARN  checkout-api[pod-5d18] db query slow table=orders duration_ms=219 threshold_ms=200
+2026-10-14T14:11:20.090Z ERROR checkout-api[pod-5d18] POST /v1/checkout/confirm 503 order=ORD-88381 duration_ms=1002
+2026-10-14T14:12:07.645Z ERROR checkout-api[pod-91be] order=ORD-88402 PaymentClientTimeout: provider=razorpay request exceeded 1200ms
+2026-10-14T14:13:15.330Z ERROR checkout-api[pod-4e02] order=ORD-88418 PoolTimeoutError: could not acquire connection from http pool (max_connections=16, waiting=112) after 1000ms
+2026-10-14T14:14:02.871Z INFO  checkout-api[pod-c3a7] health check /healthz 200

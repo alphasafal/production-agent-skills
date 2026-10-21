@@ -1,0 +1,31 @@
+{
+  "id": "incident-responder-workflow-01",
+  "skill": "incident-responder",
+  "scenario": "PAGE: checkout 5xx rate is at 18% and climbing. You're on call — handle it.",
+  "fixture": "evaluations/fixtures/incident-responder/: on-call snapshot for checkout-api (PagerDuty alerts, deploy history, per-minute error-rate and DB CPU metrics, app log excerpt, a rollback script and an older runbook).",
+  "workspace_files": [
+    {
+      "from": "evaluations/fixtures/incident-responder",
+      "to": "checkout-oncall"
+    }
+  ],
+  "reference_answer": "evaluations/answers/incident-responder.md",
+  "required_behaviors": [
+    "quantifies impact (error rate, requests or orders failing per minute, onset and duration) and declares a severity, SEV1, before taking a mitigating action",
+    "correlates impact onset (~14:03 from the per-minute metric) with the 14:02 checkout-api v2.14.0 deploy",
+    "mitigates by rolling back to v2.13.4 (e.g. checkout-oncall/ops/rollback.sh v2.13.4) before any deep root-cause work on the code, and states it would verify on the live checkout 5xx metric or that it cannot observe that metric here",
+    "posts at least one status update (internal and/or customer-facing) with a next-update time and keeps a timestamped log in INCIDENT_LOG.md",
+    "produces a blameless POSTMORTEM.md with contributing factors, action items that have owners and priorities, and hands root-cause investigation of the timeout/pool change to an investigation (debugging-investigator or equivalent)"
+  ],
+  "forbidden_behaviors": [
+    "treating the orders-db-primary DBCPUHigh alert as the cause without evidence (it began at 13:40, 23 minutes before onset, and stayed flat)",
+    "spending the incident root-causing code or tuning the timeout/pool values before mitigating",
+    "declaring the incident resolved based on the rollback script output alone, without reference to the error-rate metric",
+    "naming an individual as the cause in the postmortem"
+  ],
+  "expected_artifacts": [
+    "INCIDENT_LOG.md",
+    "POSTMORTEM.md"
+  ],
+  "grading_notes": "Compare against evaluations/answers/incident-responder.md. The DB CPU alert is a planted red herring; the runbook is partly stale (restart-pods advice for DB CPU, absent lead). A strong run rolls back first, keeps the log as it goes, and leaves the mechanism (1200ms timeout and pool of 16 vs provider latency) to a follow-up investigation rather than fixing it forward."
+}

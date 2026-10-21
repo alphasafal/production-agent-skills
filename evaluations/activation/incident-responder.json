@@ -1,0 +1,121 @@
+[
+  {
+    "id": "incident-responder-pos-01",
+    "skill": "incident-responder",
+    "category": "positive-obvious",
+    "prompt": "I just got paged: checkout 5xx rate is at 12% and climbing. I'm on call, help me handle it.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "quantifies impact and declares a severity before acting",
+      "checks recent deploys/config/flag changes against the onset time",
+      "proposes the most reversible mitigation before any code-level root-cause work"
+    ],
+    "expected_artifacts": ["INCIDENT_LOG.md"]
+  },
+  {
+    "id": "incident-responder-pos-02",
+    "skill": "incident-responder",
+    "category": "positive-obvious",
+    "prompt": "Our site is down for most users right now, this is a sev1 outage. What do we do first?",
+    "expected_activation": true,
+    "required_behaviors": [
+      "assigns incident lead and comms roles, even if one person holds both",
+      "starts a timestamped incident log",
+      "sets an update cadence and posts a first status update"
+    ],
+    "expected_artifacts": ["INCIDENT_LOG.md"]
+  },
+  {
+    "id": "incident-responder-pos-03",
+    "skill": "incident-responder",
+    "category": "positive-obvious",
+    "prompt": "Error rate on the payments service spiked right after this afternoon's deploy and customers can't pay. Should we roll back?",
+    "expected_activation": true,
+    "required_behaviors": [
+      "checks rollback safety (migrations, data compatibility) before recommending it",
+      "recommends rollback as mitigation without first requiring a confirmed root cause",
+      "verifies recovery on the same error-rate metric that alerted"
+    ],
+    "expected_artifacts": ["INCIDENT_LOG.md"]
+  },
+  {
+    "id": "incident-responder-pos-04",
+    "skill": "incident-responder",
+    "category": "positive-obvious",
+    "prompt": "We had a 40 minute outage on the login service yesterday. Write the blameless postmortem from these notes.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "writes impact with numbers and duration from evidence",
+      "lists contributing factors rather than a single person or culprit",
+      "gives action items with owners and priorities"
+    ],
+    "expected_artifacts": ["POSTMORTEM.md"]
+  },
+  {
+    "id": "incident-responder-pos-05",
+    "skill": "incident-responder",
+    "category": "positive-obvious",
+    "prompt": "Draft a status page update for customers — orders are failing for some users and we're still mitigating.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "uses plain customer-facing language with no internal names or speculated cause",
+      "states what is affected, since when, and the next update time"
+    ],
+    "expected_artifacts": ["INCIDENT_LOG.md"]
+  },
+  {
+    "id": "incident-responder-amb-01",
+    "skill": "incident-responder",
+    "category": "positive-ambiguous",
+    "prompt": "PagerDuty keeps going off for the API, latency is through the roof and support is flooded with tickets. I don't know where to start.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "treats this as live customer impact and measures severity first",
+      "mitigates before deep investigation"
+    ],
+    "expected_artifacts": ["INCIDENT_LOG.md"],
+    "notes": "No words like 'incident' or 'outage'; the live-impact signal comes from paging and support load. Lexically close to debugging-investigator, but the user needs impact stopped first."
+  },
+  {
+    "id": "incident-responder-amb-02",
+    "skill": "incident-responder",
+    "category": "positive-ambiguous",
+    "prompt": "Something is badly wrong in prod — half of the mobile app requests are getting 503s since about ten minutes ago.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "quantifies impact and onset from metrics",
+      "correlates onset with recent changes before choosing a mitigation"
+    ],
+    "expected_artifacts": ["INCIDENT_LOG.md"],
+    "notes": "Phrased like a bug report, but ongoing customer impact makes it an incident, not a root-cause investigation."
+  },
+  {
+    "id": "incident-responder-neg-01",
+    "skill": "incident-responder",
+    "category": "negative",
+    "prompt": "This test is flaky in CI, it fails about one run in ten with a timeout. Find out why.",
+    "expected_activation": false,
+    "route_to": "debugging-investigator",
+    "forbidden_behaviors": ["declaring severity or opening an incident log for a flaky test with no customer impact"],
+    "notes": "No live impact; this is root-cause debugging, which belongs to debugging-investigator."
+  },
+  {
+    "id": "incident-responder-neg-02",
+    "skill": "incident-responder",
+    "category": "negative",
+    "prompt": "Last week's checkout bug is mitigated and nobody is affected now. Reproduce it and find the root cause in the code with a regression test.",
+    "expected_activation": false,
+    "route_to": "debugging-investigator",
+    "forbidden_behaviors": ["running incident comms or a rollback for an issue that is already mitigated"],
+    "notes": "This is the hand-off point: once impact is stopped, root-causing is debugging-investigator's job."
+  },
+  {
+    "id": "incident-responder-neg-03",
+    "skill": "incident-responder",
+    "category": "negative",
+    "prompt": "Review our new GitHub Actions deploy workflow and Helm values before we turn on auto-deploy to production.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["treating a pre-production pipeline review as a live incident"],
+    "notes": "Pre-production CI/CD review with no live impact; belongs to deploy-pipeline-reviewer where installed. No route_to because that skill is not in this catalog."
+  }
+]
