@@ -1,16 +1,17 @@
 # Production Agent Skills
 
 **Evaluated, production-grade skills for AI coding agents — organized by role.**
-Debugging, code review, incident response, deploy pipelines, threat modeling,
-security audits, system design, data science, decisions and PRDs: each a
+Test-first development, specs and plans, frontend UI review, debugging, code
+review, incident response, deploy pipelines, threat modeling, security audits,
+system design, data science, decisions and PRDs: each a
 procedure a senior engineer would follow, packaged as a portable
 [Agent Skill](https://agentskills.io) that works in Claude Code, Codex,
 Cursor, Copilot, Cline and 15+ more agents.
 
-[![Skills](https://img.shields.io/badge/skills-12-brightgreen)](#the-12-skills)
-[![Role packs](https://img.shields.io/badge/role%20packs-6-blue)](#pick-your-role)
-[![Spec validated](https://img.shields.io/badge/skills--ref-12%2F12%20valid-success)](docs/compatibility.md)
-[![Routing](https://img.shields.io/badge/routing-60%2F60%20rank--1-success)](evaluations/README.md#tier-2-routing-scriptsrun_routing_evalspy)
+[![Skills](https://img.shields.io/badge/skills-15-brightgreen)](#the-15-skills)
+[![Role packs](https://img.shields.io/badge/role%20packs-7-blue)](#pick-your-role)
+[![Spec validated](https://img.shields.io/badge/skills--ref-15%2F15%20valid-success)](docs/compatibility.md)
+[![Routing](https://img.shields.io/badge/routing-75%2F75%20rank--1-success)](evaluations/README.md#tier-2-routing-scriptsrun_routing_evalspy)
 [![Behavioral evals](https://img.shields.io/badge/benchmarked-with%20vs.%20without%20skill-orange)](evaluations/results/README.md)
 [![CI](https://github.com/alphasafal/production-agent-skills/actions/workflows/validate-skills.yml/badge.svg)](https://github.com/alphasafal/production-agent-skills/actions/workflows/validate-skills.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
@@ -29,8 +30,9 @@ agent's skill budget.
 
 | Role | Skills | Claude Code |
 |---|---|---|
-| **Backend / full-stack engineer** | [repo-architect](skills/repo-architect/), [feature-to-production](skills/feature-to-production/), [debugging-investigator](skills/debugging-investigator/), [production-code-review](skills/production-code-review/) | `/plugin install backend-engineer@alphasafal-skills` |
-| **Tech lead / architect** | [system-design-reviewer](skills/system-design-reviewer/), [research-to-decision](skills/research-to-decision/), [production-code-review](skills/production-code-review/), [repo-architect](skills/repo-architect/), [threat-modeler](skills/threat-modeler/) | `/plugin install tech-lead@alphasafal-skills` |
+| **Backend / full-stack engineer** | [repo-architect](skills/repo-architect/), [feature-to-production](skills/feature-to-production/), [test-first-developer](skills/test-first-developer/), [debugging-investigator](skills/debugging-investigator/), [production-code-review](skills/production-code-review/) | `/plugin install backend-engineer@alphasafal-skills` |
+| **Frontend engineer** | [frontend-ui-reviewer](skills/frontend-ui-reviewer/), [test-first-developer](skills/test-first-developer/), [feature-to-production](skills/feature-to-production/), [production-code-review](skills/production-code-review/) | `/plugin install frontend-engineer@alphasafal-skills` |
+| **Tech lead / architect** | [spec-and-plan](skills/spec-and-plan/), [system-design-reviewer](skills/system-design-reviewer/), [research-to-decision](skills/research-to-decision/), [production-code-review](skills/production-code-review/), [repo-architect](skills/repo-architect/), [threat-modeler](skills/threat-modeler/) | `/plugin install tech-lead@alphasafal-skills` |
 | **SRE / DevOps** | [incident-responder](skills/incident-responder/), [deploy-pipeline-reviewer](skills/deploy-pipeline-reviewer/), [debugging-investigator](skills/debugging-investigator/) | `/plugin install sre@alphasafal-skills` |
 | **Security engineer** | [threat-modeler](skills/threat-modeler/), [security-auditor](skills/security-auditor/), [production-code-review](skills/production-code-review/) | `/plugin install security@alphasafal-skills` |
 | **Data scientist / analyst** | [data-scientist](skills/data-scientist/), [research-to-decision](skills/research-to-decision/) | `/plugin install data-scientist@alphasafal-skills` |
@@ -46,9 +48,11 @@ a role above, or everything with
 
 ```bash
 # Backend / full-stack engineer
-npx skills add alphasafal/production-agent-skills --skill repo-architect --skill feature-to-production --skill debugging-investigator --skill production-code-review
+npx skills add alphasafal/production-agent-skills --skill repo-architect --skill feature-to-production --skill test-first-developer --skill debugging-investigator --skill production-code-review
+# Frontend engineer
+npx skills add alphasafal/production-agent-skills --skill frontend-ui-reviewer --skill test-first-developer --skill feature-to-production --skill production-code-review
 # Tech lead / architect
-npx skills add alphasafal/production-agent-skills --skill system-design-reviewer --skill research-to-decision --skill production-code-review --skill repo-architect --skill threat-modeler
+npx skills add alphasafal/production-agent-skills --skill spec-and-plan --skill system-design-reviewer --skill research-to-decision --skill production-code-review --skill repo-architect --skill threat-modeler
 # SRE / DevOps
 npx skills add alphasafal/production-agent-skills --skill incident-responder --skill deploy-pipeline-reviewer --skill debugging-investigator
 # Security engineer
@@ -80,10 +84,13 @@ rationalizations that keep it on track under pressure, and its own
 evaluation suite — including a benchmark against the same agent *without*
 the skill.
 
-## The 12 skills
+## The 15 skills
 
 | Skill | Role | What it makes the agent do |
 |---|---|---|
+| [test-first-developer](skills/test-first-developer/) | Engineering | Red → green → refactor: discover the repo's test runner, see every new test fail first, minimal code, full suite |
+| [spec-and-plan](skills/spec-and-plan/) | Tech lead | Scoped ticket → spec with open questions and testable acceptance criteria → vertical-slice task plan |
+| [frontend-ui-reviewer](skills/frontend-ui-reviewer/) | Frontend | Keyboard and screen-reader paths, every UI state, contrast, mobile layout, layout shift and bundle bloat; P0–P3 with fixes |
 | [debugging-investigator](skills/debugging-investigator/) | Engineering | Reproduce → evidence → competing hypotheses → confirmed root cause → minimal fix → regression test |
 | [production-code-review](skills/production-code-review/) | Engineering | Review a diff across 12 dimensions; findings ranked P0–P3, FACT vs. LIKELY RISK, and a merge verdict |
 | [feature-to-production](skills/feature-to-production/) | Engineering | Acceptance criteria → tests → smallest change → review → deployment checklist → rollback plan |
@@ -103,12 +110,14 @@ Skills activate on their own from what you ask. Commands run one now:
 
 | Command | Skill | | Command | Skill |
 |---|---|---|---|---|
-| `/investigate` | debugging-investigator | | `/incident` | incident-responder |
-| `/pr-review` | production-code-review | | `/pipeline-review` | deploy-pipeline-reviewer |
-| `/ship-feature` | feature-to-production | | `/threat-model` | threat-modeler |
-| `/map-repo` | repo-architect | | `/security-audit` | security-auditor |
-| `/design-review` | system-design-reviewer | | `/analyze-data` | data-scientist |
-| `/decide` | research-to-decision | | `/prd` | product-manager |
+| `/test-first` | test-first-developer | | `/decide` | research-to-decision |
+| `/plan` | spec-and-plan | | `/incident` | incident-responder |
+| `/ui-review` | frontend-ui-reviewer | | `/pipeline-review` | deploy-pipeline-reviewer |
+| `/investigate` | debugging-investigator | | `/threat-model` | threat-modeler |
+| `/pr-review` | production-code-review | | `/security-audit` | security-auditor |
+| `/ship-feature` | feature-to-production | | `/analyze-data` | data-scientist |
+| `/map-repo` | repo-architect | | `/prd` | product-manager |
+| `/design-review` | system-design-reviewer | |  | |
 
 ## What a skill is (and isn't)
 
@@ -220,7 +229,7 @@ methodology: [`evaluations/README.md`](evaluations/README.md).
 | Tier | Question | Command | In CI |
 |---|---|---|---|
 | Structure | Spec-valid? All 12 sections? Within the discovery budget? | `python scripts/validate_skills.py` | ✅ gated |
-| Routing | Does each prompt reach the right skill out of all 12? | `python scripts/run_routing_evals.py` | ✅ gated |
+| Routing | Does each prompt reach the right skill out of all 15? | `python scripts/run_routing_evals.py` | ✅ gated |
 | Activation | Does a real agent load the right skill? | `python scripts/run_behavioral_evals.py --mode activation` | on demand |
 | Behavior | Is the work better *with* the skill than without? | `python scripts/run_behavioral_evals.py` | on demand |
 
@@ -247,12 +256,12 @@ Full tables, per-scenario breakdown and method: [`evaluations/results/README.md`
 
 | Claim | Evidence |
 |---|---|
-| All 12 skills conform to the open spec | `skills-ref validate` (the reference implementation) passes 12/12 in CI |
+| All 15 skills conform to the open spec | `skills-ref validate` (the reference implementation) passes 15/15 in CI |
 | Every skill has all 12 sections, incl. red flags + rationalizations | `validate_skills.py` fails the build otherwise |
-| Each prompt routes to the right skill, catalog-wide | 60/60 obvious prompts rank their skill #1 of 12; 15/15 "belongs to another skill" negatives route there; CI-gated |
+| Each prompt routes to the right skill, catalog-wide | 75/75 obvious prompts rank their skill #1 of 15; 21/21 "belongs to another skill" negatives route there; CI-gated |
 | Skills change what the agent does | Blind-graded with-vs-without benchmark, 102 + 42 runs; see Results above |
-| Routing generalizes beyond the tuned prompts | 24 held-out prompts never used for tuning: 15/24 rank #1, 24/24 top-3 |
-| Every role pack is cheap to carry | Largest pack's discovery prompt is 4,747 bytes, under Codex's 8,000 ceiling — enforced per pack in CI with `skills-ref to-prompt` |
+| Routing generalizes beyond the tuned prompts | 24 held-out prompts never used for tuning: 14/24 rank #1, 23/24 top-3 |
+| Every role pack is cheap to carry | Largest pack's discovery prompt is 5,629 bytes, under Codex's 8,000 ceiling — enforced per pack in CI with `skills-ref to-prompt` |
 | Reference answers never leak to the agent | Validator rejects any scenario whose `workspace_files` include a reference answer or spoiler |
 | The bundled scripts are correct | Run against the real 891-row Titanic dataset; outputs match independently-computed ground truth |
 | The debugging example is real | Bug reproduces 10/10 runs; documented fix resolves it 10/10 |
@@ -260,7 +269,7 @@ Full tables, per-scenario breakdown and method: [`evaluations/results/README.md`
 ```bash
 python scripts/validate_skills.py -v     # structure, schema, strict YAML, sections
 python scripts/run_routing_evals.py      # catalog-wide routing (free, deterministic)
-pytest tests/                            # 186 tests over the tooling's guarantees
+pytest tests/                            # 222 tests over the tooling's guarantees
 python scripts/run_behavioral_evals.py --dry-run   # see what a real run would do
 ```
 
