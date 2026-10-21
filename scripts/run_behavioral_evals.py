@@ -95,13 +95,30 @@ def build_workspace(case: dict | None, skills_to_install: list[str]) -> Path:
             shutil.copy2(src, dst)
     by_name = {s.name: s for s in discover_skills()}
     for name in skills_to_install:
-        shutil.copytree(by_name[name].dir, ws / ".claude" / "skills" / name,
-                        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+        root = by_name[name].dir
+        shutil.copytree(root, ws / ".claude" / "skills" / name, ignore=_eval_install_ignore(root))
     subprocess.run(["git", "init", "-q"], cwd=ws, check=True)
     subprocess.run(["git", "add", "-A"], cwd=ws, check=True)
     subprocess.run(["git", "-c", "user.email=eval@local", "-c", "user.name=eval", "commit",
                     "-qm", "baseline", "--allow-empty"], cwd=ws, check=True)
     return ws
+
+
+def _eval_install_ignore(skill_root: Path):
+    """Ignore rule for installing a skill into an eval workspace.
+
+    A skill's examples/ are worked answers, and several are worked answers to the
+    very scenario being graded (e.g. the URL-shortener review). Installing them
+    would let the with-skill arm read the answer, so evals install the skill
+    without examples/. Everything the workflow actually uses — SKILL.md,
+    references/, scripts/, assets/ — is kept.
+    """
+    def ignore(directory: str, names: list[str]) -> set[str]:
+        skip = {n for n in names if n == "__pycache__" or n.endswith((".pyc", ".pyo"))}
+        if Path(directory) == skill_root:
+            skip |= {"examples"} & set(names)
+        return skip
+    return ignore
 
 
 def scenario_prompt(case: dict) -> str:

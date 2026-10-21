@@ -34,6 +34,19 @@ def test_with_skill_workspace_installs_only_that_skill():
         shutil.rmtree(ws)
 
 
+def test_installed_skill_excludes_worked_examples():
+    ws = rb.build_workspace(_debug_case(), ["debugging-investigator", "data-scientist"])
+    try:
+        for name in ("debugging-investigator", "data-scientist"):
+            installed = ws / ".claude" / "skills" / name
+            assert (installed / "SKILL.md").is_file()
+            assert not (installed / "examples").exists(), f"{name}: examples/ leaked into eval workspace"
+        assert (ws / ".claude" / "skills" / "data-scientist" / "scripts").is_dir()
+        assert (ws / ".claude" / "skills" / "data-scientist" / "references").is_dir()
+    finally:
+        shutil.rmtree(ws)
+
+
 def test_workspace_starts_as_a_clean_git_baseline():
     ws = rb.build_workspace(_debug_case(), [])
     try:
