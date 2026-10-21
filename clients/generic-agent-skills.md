@@ -110,6 +110,7 @@ uvx --from "git+https://github.com/agentskills/agentskills#subdirectory=skills-r
   skills-ref to-prompt skills/*/ | wc -c
 ```
 
-At the time of writing this returns **6,346 characters** for all eight
+At the time of writing this returns **7,355 characters** for all eight
 skills — under Codex's documented ceiling of 8,000 characters (or 2% of the
-context window) for the skill list, with room to spare.
+context window) for the skill list. CI fails the build if it ever exceeds
+8,000, so description edits can't silently blow the budget.

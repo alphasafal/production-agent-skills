@@ -19,13 +19,16 @@
 - [ ] `python scripts/validate_skills.py -v` passes with no errors
 - [ ] `pytest tests/` passes
 - [ ] `python scripts/run_static_evals.py` passes
-- [ ] Ran the skill against a real agent at least once (describe below)
+- [ ] `python scripts/run_routing_evals.py` passes (whole catalog, not just this skill)
+- [ ] Ran `python scripts/run_behavioral_evals.py --skill <name> --runs 3` (paste the summary table below)
 
-<!-- Describe the real run, if any: what prompt, what client, what happened. -->
+<!-- Paste the with/without-skill summary table, model and date. For edits to an
+existing skill, include before and after. -->
 
 ## Checklist (see CONTRIBUTING.md)
 
-- [ ] `SKILL.md` follows the standard section order
+- [ ] `SKILL.md` follows the standard section order, including `# Red flags` and `# Common rationalizations`
+- [ ] A workflow scenario in `evaluations/workflows/` (and ideally a pressure scenario)
 - [ ] At least 5 positive-obvious, 2 positive-ambiguous, 3 negative eval cases
 - [ ] At least one worked example in `examples/`
 - [ ] Output contract and quality checks are concrete, not generic

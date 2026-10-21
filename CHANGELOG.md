@@ -3,7 +3,52 @@
 All notable changes to this project are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [0.1.0] — Unreleased
+## [0.2.0] — 2026-10-21
+
+### Added
+
+- **Anti-shortcut guardrails in every skill.** New required `# Red flags`
+  and `# Common rationalizations` sections: observable signs the workflow
+  is being skipped, and the excuses agents use to skip it with why they
+  don't hold. Enforced by `validate_skills.py` (≥3 of each, standard order).
+- **Catalog-wide routing eval** (`scripts/run_routing_evals.py`, CI-gated):
+  BM25 over every skill's name and positive description. Gates obvious
+  prompts at rank #1 of all skills, ambiguous prompts in the top 3,
+  cross-routing negatives (new `route_to` field) and description
+  collisions. Reports a held-out prompt set (`evaluations/routing/`) that
+  is never used for tuning.
+- **Behavioral eval runner** (`scripts/run_behavioral_evals.py`): runs each
+  workflow scenario with and without the skill through headless Claude
+  Code in isolated workspaces, blind-graded by a separate call; plus an
+  activation mode that measures which skill a real agent loads.
+- **Pressure scenarios** (`evaluations/workflows/pressure/`, 5): time
+  pressure, authority, sunk cost, skip-the-tests, CEO scope.
+- **First real benchmark** in `evaluations/results/README.md`.
+- **Claude Code plugin + marketplace manifests** and 8 slash commands
+  (`/investigate`, `/pr-review`, `/map-repo`, `/design-review`,
+  `/analyze-data`, `/decide`, `/prd`, `/ship-feature`). Validated with
+  `claude plugin validate`.
+- `schemas/workflow.schema.json`; workflow scenarios now declare
+  `workspace_files` (agent sees) and `reference_answer` (grader only), and
+  the validator rejects any scenario that would leak an answer or spoiler.
+- `evaluations/fixtures/public-api/`, a small stdlib API with tests, so the
+  feature-to-production scenario has a real codebase to change.
+- CI: routing gate, behavioral dry-run, and an 8,000-char discovery-budget
+  check via `skills-ref to-prompt`.
+
+### Changed
+
+- All 8 descriptions widened with the vocabulary users actually use
+  ("throws", "OOM", "logged out", "vendor", "will this scale", "CSV"…).
+  Obvious-prompt routing went from 32/40 to 40/40 at rank #1; "Do not
+  use…" guidance kept intact.
+- The debugging scenario now runs against the runnable sample app instead
+  of a diff, and the repo-architect scenario against a real codebase.
+- `feature-to-production`: new red flag and rationalization for skipping
+  the review stage. Added after the behavioral eval showed the agent
+  skipping it even with the skill loaded.
+
+## [0.1.0] — 2026-09-12
 
 ### Added
 
