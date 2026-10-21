@@ -15,7 +15,12 @@ Cursor, Copilot, Cline and 15+ more agents.
 [![CI](https://github.com/alphasafal/production-agent-skills/actions/workflows/validate-skills.yml/badge.svg)](https://github.com/alphasafal/production-agent-skills/actions/workflows/validate-skills.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
-> **Benchmarked, not just written.** Each skill is run against the same agent *without* it on scenarios with planted problems, blind-graded. Results: [`evaluations/results/`](evaluations/results/README.md).
+> **Benchmarked, not just written.** On 12 scenarios with planted problems,
+> the same agent did **51%** of the required work without these skills and
+> **94%** with them (blind-graded, 3 runs per arm, `claude-sonnet-5-5`).
+> Under pressure prompts ("prod is on fire, skip the tests"): **63% → 85%**.
+> Activation: 115/120 prompts load the right skill, and the wrong one never
+> loads. [Full results and known gaps →](evaluations/results/README.md)
 
 ## Pick your role
 
@@ -221,7 +226,20 @@ methodology: [`evaluations/README.md`](evaluations/README.md).
 
 ### Results
 
-With-skill vs. without-skill results for all 12 skills and the 5 pressure scenarios, plus measured activation accuracy, are in [`evaluations/results/README.md`](evaluations/results/README.md).
+Measured 2026-10-21 with `claude-sonnet-5-5` (agent and blind grader), 3 runs per arm:
+
+| | Without skill | With skill |
+|---|---:|---:|
+| Required behaviors, 12 standard scenarios | 51% | **94%** |
+| Required behaviors, 5 pressure scenarios | 63% | **85%** |
+| Forbidden behaviors (e.g. fixing before reproducing), all standard runs | 18 | **5** |
+| Activation: right skill loads / wrong skill loads | — | **115/120 / 0** |
+
+Biggest gains: product-manager 8% → 100%, repo-architect 33% → 100%,
+debugging-investigator 27% → 87%, feature-to-production 20% → 80%. Where
+the baseline is already near-perfect (security-auditor, system-design-reviewer)
+the fixtures are too easy to show a difference; that, and every other open
+gap, is listed on the results page.
 
 Full tables, per-scenario breakdown and method: [`evaluations/results/README.md`](evaluations/results/README.md).
 
@@ -232,6 +250,7 @@ Full tables, per-scenario breakdown and method: [`evaluations/results/README.md`
 | All 12 skills conform to the open spec | `skills-ref validate` (the reference implementation) passes 12/12 in CI |
 | Every skill has all 12 sections, incl. red flags + rationalizations | `validate_skills.py` fails the build otherwise |
 | Each prompt routes to the right skill, catalog-wide | 60/60 obvious prompts rank their skill #1 of 12; 15/15 "belongs to another skill" negatives route there; CI-gated |
+| Skills change what the agent does | Blind-graded with-vs-without benchmark, 102 + 42 runs; see Results above |
 | Routing generalizes beyond the tuned prompts | 24 held-out prompts never used for tuning: 15/24 rank #1, 24/24 top-3 |
 | Every role pack is cheap to carry | Largest pack's discovery prompt is 4,607 bytes, under Codex's 8,000 ceiling — enforced per pack in CI with `skills-ref to-prompt` |
 | Reference answers never leak to the agent | Validator rejects any scenario whose `workspace_files` include a reference answer or spoiler |

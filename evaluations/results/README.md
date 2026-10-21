@@ -1,48 +1,167 @@
 # Evaluation Results
 
-**Status: NOT YET BENCHMARKED.**
+Every number on this page comes from a recorded run of
+`scripts/run_behavioral_evals.py`. Nothing is estimated or simulated.
 
-No skill in this repository has been benchmarked against a real
-without-skill baseline yet. The harness and methodology are ready
-(`evaluations/README.md`); this file is the template for recording real
-results once someone runs it. Do not fill this in with estimated,
-simulated, or assumed numbers — only numbers from an actual recorded run.
+| | |
+|---|---|
+| Date | 2026-10-21 |
+| Agent and grader model | `claude-sonnet-5-5` (all 424 transcripts), Claude Code 2.1.306 |
+| Runs | Workflows: 3 per arm per scenario. Activation: 1 per prompt. |
+| Raw output | `evaluations/results/runs/` (gitignored; run IDs listed below) |
 
-## Activation accuracy
+## Headline
 
-| Skill | Positive-obvious (5) | Positive-ambiguous (2) | Negative (3) | Runs | Date |
-|---|---|---|---|---|---|
-| repo-architect | NOT YET BENCHMARKED | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — |
-| debugging-investigator | NOT YET BENCHMARKED | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — |
-| production-code-review | NOT YET BENCHMARKED | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — |
-| system-design-reviewer | NOT YET BENCHMARKED | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — |
-| data-scientist | NOT YET BENCHMARKED | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — |
-| research-to-decision | NOT YET BENCHMARKED | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — |
-| product-manager | NOT YET BENCHMARKED | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — |
-| feature-to-production | NOT YET BENCHMARKED | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — |
+| | Without skill | With skill |
+|---|---:|---:|
+| Required behaviors observed — 12 standard scenarios | 51% | **94%** |
+| Required behaviors observed — 5 pressure scenarios | 63% | **85%** |
+| Forbidden behaviors — standard scenarios, all runs | 18 | **5** |
 
-## Workflow comparison (baseline vs. with skill)
+| Activation (all 12 skills installed together) | |
+|---|---:|
+| Obvious prompts that load the right skill | **57/60** |
+| Ambiguous prompts that load the right skill | **22/24** |
+| Negative prompts where the skill correctly stays quiet | **36/36** |
+| Times the *wrong* skill was loaded | **0** |
 
-| Skill | Baseline | With Skill | Delta | Runs | Runtime |
-|---|---|---|---|---|---|
-| repo-architect | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — | — |
-| debugging-investigator | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — | — |
-| production-code-review | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — | — |
-| system-design-reviewer | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — | — |
-| data-scientist | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — | — |
-| research-to-decision | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — | — |
-| product-manager | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — | — |
-| feature-to-production | NOT YET BENCHMARKED | NOT YET BENCHMARKED | — | — | — |
+## Method
 
-"Baseline" and "With Skill" columns should record the metric that matters
-for that skill's workflow scenario (e.g. fraction of `required_behaviors`
-observed, or a human 1-5 quality score) — pick one metric per skill and
-state it above the table when you fill this in, since a single global
-metric doesn't fit every workflow equally well.
+- **Workflow scenarios** (`evaluations/workflows/**`) run in a throwaway git
+  workspace outside the repo containing only the scenario's
+  `workspace_files` — fixtures with planted problems and decoys. The
+  **baseline** arm has no skill; the **with-skill** arm has only that skill
+  installed, *without its `examples/`* (several worked examples answer the
+  exact scenario, so including them would leak the answer).
+- A **separate grader call**, not told which arm it is reading, checks the
+  transcript and workspace diff against the scenario's
+  `required_behaviors`, `forbidden_behaviors` and `expected_artifacts`. If
+  the scenario has a `reference_answer`, only the grader sees it.
+- **"Required behaviors"** is the mean fraction of a scenario's required
+  behaviors the grader observed, across the 3 runs of that arm.
+- **Activation** installs all 12 skills in one empty workspace, sends each
+  `evaluations/activation/` prompt with a neutral line asking the agent to
+  proceed on stated assumptions if something referenced is missing (applied
+  identically to every prompt), allows 6 read-only turns, and records which
+  skill the agent loads.
 
-## How to fill this in
+## Workflow results
 
-1. Follow "Running a real before/after comparison" in `evaluations/README.md`.
-2. Record the date, the agent/model used, and the number of runs.
-3. Replace `NOT YET BENCHMARKED` cells with real measured values only.
-4. Link the raw transcripts/grading notes if kept, so results are auditable.
+### Standard scenarios
+
+| Scenario | Without skill | With skill | Δ | Forbidden behaviors (without → with) | Skill loaded | Source |
+|---|---:|---:|---:|---|---:|---|
+| `data-scientist-workflow-01` | 50% | **100%** | +50 pts | 3 → 0 | 3/3 | round 2 (round 1: 100% with skill, loaded 3/3) |
+| `debugging-investigator-workflow-01` | 27% | **87%** | +60 pts | 6 → 2 | 3/3 | round 2 (round 1: 87% with skill, loaded 3/3) |
+| `deploy-pipeline-reviewer-workflow-01` | 73% | **100%** | +27 pts | 0 → 0 | 3/3 | round 1 |
+| `feature-to-production-workflow-01` | 20% | **80%** | +60 pts | 3 → 1 | 3/3 | round 2 (round 1: 27% with skill, loaded 0/3) |
+| `incident-responder-workflow-01` | 33% | **73%** | +40 pts | 0 → 0 | 3/3 | round 1 |
+| `product-manager-workflow-01` | 8% | **100%** | +92 pts | 3 → 0 | 3/3 | round 1 |
+| `production-code-review-workflow-01` | 80% | **100%** | +20 pts | 0 → 0 | 3/3 | round 1 |
+| `repo-architect-workflow-01` | 33% | **100%** | +67 pts | 3 → 2 | 3/3 | round 1 |
+| `research-to-decision-workflow-01` | 42% | **100%** | +58 pts | 0 → 0 | 3/3 | round 1 |
+| `security-auditor-workflow-01` | 100% | **100%** | +0 pts | 0 → 0 | 3/3 | round 1 |
+| `system-design-reviewer-workflow-01` | 83% | **83%** | +0 pts | 0 → 0 | 3/3 | round 2 (round 1: 83% with skill, loaded 3/3) |
+| `threat-modeler-workflow-01` | 60% | **100%** | +40 pts | 0 → 0 | 3/3 | round 1 |
+| **Mean** | **51%** | **94%** | **+43 pts** | | | |
+
+### Pressure scenarios (the prompt argues for skipping the workflow)
+
+| Scenario | Without skill | With skill | Δ | Forbidden behaviors (without → with) | Skill loaded | Source |
+|---|---:|---:|---:|---|---:|---|
+| `data-scientist-pressure-sunk-cost` | 75% | **92%** | +17 pts | 0 → 0 | 0/3 | round 2 (round 1: 83% with skill, loaded 0/3) |
+| `debugging-investigator-pressure-time` | 58% | **100%** | +42 pts | 0 → 0 | 3/3 | round 2 (round 1: 58% with skill, loaded 0/3) |
+| `feature-to-production-pressure-skip-tests` | 75% | **75%** | +0 pts | 0 → 0 | 3/3 | round 2 (round 1: 75% with skill, loaded 0/3) |
+| `product-manager-pressure-scope` | 8% | **58%** | +50 pts | 3 → 3 | 3/3 | round 1 |
+| `production-code-review-pressure-authority` | 100% | **100%** | +0 pts | 0 → 0 | 3/3 | round 1 |
+| **Mean** | **63%** | **85%** | **+22 pts** | | | |
+
+"Source: round 2" means the scenario was re-run after the round-1 findings
+below; the round-1 figure is kept beside it.
+
+## Activation results
+
+| Skill | Obvious | Ambiguous | Negative (must stay quiet) | Round 1 obvious |
+|---|---:|---:|---:|---:|
+| data-scientist | 3/5 | 2/2 | 3/3 | 5/5 |
+| debugging-investigator | 5/5 | 2/2 | 3/3 | 5/5 |
+| deploy-pipeline-reviewer | 5/5 | 2/2 | 3/3 | 5/5 |
+| feature-to-production | 5/5 | 2/2 | 3/3 | 2/5 |
+| incident-responder | 5/5 | 2/2 | 3/3 | 4/5 |
+| product-manager | 5/5 | 2/2 | 3/3 | 4/5 |
+| production-code-review | 4/5 | 2/2 | 3/3 | 4/5 |
+| repo-architect | 5/5 | 1/2 | 3/3 | 5/5 |
+| research-to-decision | 5/5 | 2/2 | 3/3 | 5/5 |
+| security-auditor | 5/5 | 2/2 | 3/3 | 5/5 |
+| system-design-reviewer | 5/5 | 1/2 | 3/3 | 0/5 |
+| threat-modeler | 5/5 | 2/2 | 3/3 | 5/5 |
+| **Total** | **57/60** | **22/24** | **36/36** | 49/60 |
+
+Remaining misses (every one is "loaded nothing", never a wrong skill):
+
+- `data-scientist-pos-02`: expected `data-scientist`, loaded nothing
+- `data-scientist-pos-03`: expected `data-scientist`, loaded nothing
+- `production-code-review-pos-01`: expected `production-code-review`, loaded nothing
+- `repo-architect-amb-02`: expected `repo-architect`, loaded nothing
+- `system-design-reviewer-amb-01`: expected `system-design-reviewer`, loaded nothing
+
+## What round 1 found, and what changed
+
+Round 1 (run `20261021-035657-workflow`, `20261021-041549-activation`)
+surfaced three problems. Round 2 re-measured after fixing them.
+
+1. **Skills that didn't load.** `system-design-reviewer` loaded on 0/5
+   obvious prompts and `feature-to-production` on 2/5; the agent decided it
+   could review a design or add a feature without them. Part of this was the
+   harness — it capped activation at 2 turns, and agents often look for the
+   referenced file first — so the harness was fixed (6 read-only turns,
+   neutral suffix). A controlled re-run with the fixed harness and the *old*
+   descriptions still gave 1/5 and 2/5, so the descriptions were rewritten to
+   say when to load the skill ("load it first … even before you have read or
+   asked for the document"). Round 2: **5/5 and 5/5**.
+2. **Skills that didn't load under pressure.** In round 1, three pressure
+   prompts ("URGENT … just push a quick fix", "skip the tests", "just write
+   it up") never loaded the skill (0/3 each), so those rows measured nothing.
+   Descriptions now name those request shapes. Round 2: debugging under time
+   pressure loads 3/3 and goes **58% → 100%**; feature-to-production loads
+   3/3. data-scientist under sunk-cost pressure **still loads 0/3** — open
+   problem below.
+3. **The feature-to-production review step.** Even with the skill loaded,
+   the agent skipped the review stage and said so. A red flag and a
+   rationalization for exactly that were added; with the skill now loading,
+   the standard scenario went **27% → 80%**.
+
+## Known gaps (honest list)
+
+- **data-scientist under sunk-cost pressure doesn't load the skill** (0/3).
+  The agent still scores 92% vs. 75% without it, but that comes from the
+  model, not the skill. Its activation also dipped from 5/5 to 3/5 between
+  rounds on two obvious prompts.
+- **No measurable difference where the baseline is already perfect:**
+  `security-auditor` (standard scenario) and `production-code-review` under
+  authority pressure both score 100% without the skill. Those fixtures are
+  too easy to show what the skill adds and need harder versions.
+- **`system-design-reviewer` shows no difference** (83% → 83%) on the URL
+  shortener scenario; the baseline catches most of it unaided.
+- **`feature-to-production` under skip-the-tests pressure**: the skill now
+  loads but the score didn't move (75% → 75%).
+- One run per activation prompt: treat single misses as noise until repeated.
+- Same model as agent and grader. A different grader model would
+  strengthen the result.
+
+## Run IDs
+
+| Run | What |
+|---|---|
+| `20261021-035657-workflow` | Round 1: all 17 scenarios × 2 arms × 3 runs |
+| `20261021-041549-activation` | Round 1: all 120 activation prompts |
+| `20261021-041928`, `-041959`, `-042105`, `-042143` (activation) | Harness checks on two skills: fixed harness with old descriptions |
+| `20261021-042315-activation` | Round 2: all 120 activation prompts |
+| `20261021-043053`, `-043226`, `-043354`, `-044646` (workflow) | Round 2: feature-to-production, debugging-investigator, data-scientist, system-design-reviewer |
+
+## Reproduce
+
+```bash
+python scripts/run_behavioral_evals.py --runs 3              # all workflow scenarios
+python scripts/run_behavioral_evals.py --mode activation     # all activation prompts
+```
