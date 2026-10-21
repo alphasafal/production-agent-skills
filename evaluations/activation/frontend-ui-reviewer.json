@@ -1,0 +1,98 @@
+[
+  {
+    "id": "frontend-ui-reviewer-pos-01",
+    "skill": "frontend-ui-reviewer",
+    "category": "positive-obvious",
+    "prompt": "Review this new checkout modal component before we ship it.",
+    "expected_activation": true,
+    "required_behaviors": ["traces the keyboard path through every interactive element, including dialog focus and Escape", "ranks findings P0-P3 with file:line, affected users and a concrete fix"],
+    "forbidden_behaviors": ["approving the modal after checking only the happy-path render"],
+    "expected_artifacts": ["UI_REVIEW.md"]
+  },
+  {
+    "id": "frontend-ui-reviewer-pos-02",
+    "skill": "frontend-ui-reviewer",
+    "category": "positive-obvious",
+    "prompt": "Can you do an accessibility check on our signup form? We want to meet WCAG AA.",
+    "expected_activation": true,
+    "required_behaviors": ["checks every input for a label or accessible name", "computes contrast for resolved text/background pairs and quotes the ratio"],
+    "forbidden_behaviors": ["calling a control accessible just because it has an aria attribute"],
+    "expected_artifacts": ["UI_REVIEW.md"]
+  },
+  {
+    "id": "frontend-ui-reviewer-pos-03",
+    "skill": "frontend-ui-reviewer",
+    "category": "positive-obvious",
+    "prompt": "Check this React page for a11y problems — keyboard navigation, screen reader labels, focus.",
+    "expected_activation": true,
+    "required_behaviors": ["inventories clickable non-button elements and checks keyboard operability", "lists what needs a browser or screen reader to verify"],
+    "expected_artifacts": ["UI_REVIEW.md"]
+  },
+  {
+    "id": "frontend-ui-reviewer-pos-04",
+    "skill": "frontend-ui-reviewer",
+    "category": "positive-obvious",
+    "prompt": "The product page layout breaks on mobile and Lighthouse shows bad layout shift. Can you review the component and CSS?",
+    "expected_activation": true,
+    "required_behaviors": ["flags unsized images or embeds as layout-shift causes with a fix", "checks fixed widths and overflow at narrow viewports"],
+    "expected_artifacts": ["UI_REVIEW.md"]
+  },
+  {
+    "id": "frontend-ui-reviewer-pos-05",
+    "skill": "frontend-ui-reviewer",
+    "category": "positive-obvious",
+    "prompt": "Give my Vue dialog component a UI review: loading and error states, keyboard focus, mobile layout.",
+    "expected_activation": true,
+    "required_behaviors": ["checks loading, error, empty and submitting states for each async action", "checks focus moves into the dialog, is trapped, and returns on close"],
+    "expected_artifacts": ["UI_REVIEW.md"]
+  },
+  {
+    "id": "frontend-ui-reviewer-amb-01",
+    "skill": "frontend-ui-reviewer",
+    "category": "positive-ambiguous",
+    "prompt": "Just make this payment form work, skip the a11y stuff — we need it live tonight.",
+    "expected_activation": true,
+    "required_behaviors": ["still flags blocking keyboard and double-submit problems as P0", "keeps the review short by deferring P3 items rather than skipping it"],
+    "expected_artifacts": ["UI_REVIEW.md"],
+    "notes": "Rushed build request that explicitly asks to skip accessibility; the skill should load and keep the P0 checks, since a control the keyboard can't reach doesn't work."
+  },
+  {
+    "id": "frontend-ui-reviewer-amb-02",
+    "skill": "frontend-ui-reviewer",
+    "category": "positive-ambiguous",
+    "prompt": "Users on phones say the Pay button sometimes charges them twice and the screen jumps. Look at the component?",
+    "expected_activation": true,
+    "required_behaviors": ["identifies the missing submitting/disabled state as the double-submit cause", "looks for unsized images or late-inserted content causing the jump"],
+    "expected_artifacts": ["UI_REVIEW.md"],
+    "notes": "Reads like a bug report (debugging-investigator territory), but both symptoms are UI-state and layout-shift defects in the component; top-3 is the bar."
+  },
+  {
+    "id": "frontend-ui-reviewer-neg-01",
+    "skill": "frontend-ui-reviewer",
+    "category": "negative",
+    "route_to": "production-code-review",
+    "prompt": "Review this pull request that adds retry logic to the payments API handler before we merge.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["producing a UI review for a backend diff with no user-facing surface"],
+    "notes": "Backend/API diff with no UI; production-code-review owns it."
+  },
+  {
+    "id": "frontend-ui-reviewer-neg-02",
+    "skill": "frontend-ui-reviewer",
+    "category": "negative",
+    "route_to": "feature-to-production",
+    "prompt": "Build the wishlist feature from the ticket end to end — API, database, tests — and ship it.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["treating an end-to-end feature build as a UI review"],
+    "notes": "Building and shipping a feature end to end is feature-to-production; it may call this skill for its UI stage."
+  },
+  {
+    "id": "frontend-ui-reviewer-neg-03",
+    "skill": "frontend-ui-reviewer",
+    "category": "negative",
+    "prompt": "What's the difference between flexbox and grid, and when should I use each?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["writing a UI_REVIEW.md for a conceptual CSS question"],
+    "notes": "Conceptual question with no code to review; answer directly."
+  }
+]

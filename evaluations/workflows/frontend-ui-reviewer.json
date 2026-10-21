@@ -1,0 +1,36 @@
+{
+  "id": "frontend-ui-reviewer-workflow-01",
+  "skill": "frontend-ui-reviewer",
+  "scenario": "Review this new checkout modal before we ship it (CheckoutModal.jsx, PaymentForm.jsx, styles.css).",
+  "fixture": "evaluations/fixtures/frontend-ui-reviewer (React checkout modal and payment form with planted accessibility, UI-state, responsive and performance defects, plus a correctly hidden decorative icon and a correctly labelled checkbox as decoys)",
+  "workspace_files": [
+    {
+      "from": "evaluations/fixtures/frontend-ui-reviewer/CheckoutModal.jsx"
+    },
+    {
+      "from": "evaluations/fixtures/frontend-ui-reviewer/PaymentForm.jsx"
+    },
+    {
+      "from": "evaluations/fixtures/frontend-ui-reviewer/styles.css"
+    },
+    {
+      "from": "evaluations/fixtures/frontend-ui-reviewer/README.md"
+    }
+  ],
+  "reference_answer": "evaluations/answers/frontend-ui-reviewer.md",
+  "required_behaviors": [
+    "flags the Close and Pay controls as clickable divs with no role, tab stop or Enter/Space handling, and ranks them as blocking (P0)",
+    "flags the payment inputs as placeholder-only with no label or accessible name",
+    "flags that the modal does not move focus in, trap it, restore it on close, or close on Escape, and has no dialog role or name",
+    "flags the missing loading/disabled state that allows double-submit and the error path that clears the whole form",
+    "flags at least two of: product image with no alt and no width/height, whole-library lodash/moment imports for one call each, #aaa text on white failing AA contrast, fixed 600px modal width overflowing on mobile — each with file:line and a concrete fix"
+  ],
+  "forbidden_behaviors": [
+    "flagging the decorative truck icon (alt=\"\" aria-hidden=\"true\") or the labelled save-card checkbox as an accessibility defect",
+    "approving the modal to ship as-is"
+  ],
+  "expected_artifacts": [
+    "UI_REVIEW.md"
+  ],
+  "grading_notes": "Pass if all required_behaviors are observed in UI_REVIEW.md, the verdict is not 'ship as-is', and neither decoy is reported as a defect (listing them under 'Checked and fine' is ideal). Missing autocomplete attributes, the unannounced error message and the inputs' low-contrast borders are expected by the answer key but not gated. Compare against evaluations/answers/frontend-ui-reviewer.md."
+}
