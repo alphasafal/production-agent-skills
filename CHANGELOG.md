@@ -3,6 +3,29 @@
 All notable changes to this project are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.2.1] — 2026-10-21
+
+### Fixed
+
+- **Role-pack plugins failed to load in Claude Code.** They installed, but
+  `claude plugin list` showed "failed to load: conflicting manifests", because
+  the root `plugin.json` and the marketplace entries both declared components.
+  `claude plugin validate` passed on that layout, so it was only caught by
+  installing from GitHub. Fixes:
+  - every marketplace entry is now `strict: true`;
+  - slash commands moved from the auto-discovered `commands/` to
+    `slash-commands/`;
+  - each pack gets a generated copy of its own commands in
+    `plugin-packs/<role>/commands/`.
+
+  All 7 plugins now load with exactly their skills and commands.
+
+### Added
+
+- `scripts/verify_plugin_install.py`: installs every plugin from a local
+  marketplace using the real CLI, checks each one loads with exactly the
+  expected skills and commands, then cleans up. Run it before a release.
+
 ## [0.2.0] — 2026-10-21
 
 ### Added
