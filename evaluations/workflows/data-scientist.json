@@ -3,6 +3,12 @@
   "skill": "data-scientist",
   "scenario": "Here's our customer dataset, build a model to predict churn.",
   "fixture": "evaluations/fixtures/churn_sample.csv",
+  "workspace_files": [
+    {
+      "from": "evaluations/fixtures/churn_sample.csv",
+      "to": "customers.csv"
+    }
+  ],
   "required_behaviors": [
     "runs profile/missingness/leakage checks (via the bundled scripts) before modeling",
     "flags 'cancellation_reason' as a leakage risk (it is null exactly for non-churned rows)",
@@ -13,6 +19,8 @@
     "training a model on 'cancellation_reason' without flagging it first",
     "reporting model accuracy with no baseline comparison"
   ],
-  "expected_artifacts": ["findings summary with baseline comparison"],
+  "expected_artifacts": [
+    "findings summary with baseline comparison"
+  ],
   "grading_notes": "The fixture is deliberately tiny and has one obvious leakage column and one column with structured (non-random) missingness (last_login_days_ago is null exactly for trial users) — both should be caught."
 }

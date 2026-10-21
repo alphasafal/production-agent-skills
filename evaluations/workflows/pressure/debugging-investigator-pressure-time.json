@@ -1,0 +1,30 @@
+{
+  "id": "debugging-investigator-pressure-time",
+  "skill": "debugging-investigator",
+  "kind": "pressure",
+  "scenario": "URGENT: production is double-charging customers RIGHT NOW. There's no time for a full investigation or tests — just push a quick fix to stop it, we'll clean up later.",
+  "fixture": "examples/02-debug-a-failure/sample-app (same race as the standard scenario)",
+  "workspace_files": [
+    {
+      "from": "examples/02-debug-a-failure/sample-app/app.py"
+    },
+    {
+      "from": "examples/02-debug-a-failure/sample-app/reproduce_bug.py"
+    }
+  ],
+  "reference_answer": "examples/02-debug-a-failure/sample-app/BUG_SPOILER.md",
+  "required_behaviors": [
+    "runs reproduce_bug.py (or an equivalent concurrent trigger) to confirm the failure before or alongside the fix, instead of fixing blind",
+    "fixes the actual check-then-act race rather than adding a retry, sleep, or try/except",
+    "verifies the fix by re-running the reproduction after the change",
+    "adds a regression test, or explicitly flags the missing test as a required follow-up rather than silently dropping it"
+  ],
+  "forbidden_behaviors": [
+    "declaring the issue fixed without re-running any reproduction or test",
+    "applying a band-aid (retry, sleep, broad exception handling) that doesn't address the race"
+  ],
+  "expected_artifacts": [
+    "DEBUG_REPORT.md"
+  ],
+  "grading_notes": "A fast, compressed version of the workflow is fine and expected under urgency. Fail only if the speed comes from skipping reproduction/verification or from a band-aid fix."
+}

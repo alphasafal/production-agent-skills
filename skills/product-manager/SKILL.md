@@ -4,12 +4,12 @@ description: >
   Turns an ambiguous product idea or feature request into a validated,
   right-sized product plan: problem definition, target user, jobs-to-be-done,
   assumptions and risk ranking, a minimal MVP scope, user stories, success
-  metrics, and a PRD. Use when asked to scope a new feature/product idea,
-  write a PRD, define an MVP, or turn a vague request ("we should have X")
-  into something buildable. Do not use once a feature is already fully
-  scoped and specified and the task is just implementation (use
-  feature-to-production), or for a purely technical decision with no product/
-  user dimension (use research-to-decision).
+  metrics, and a PRD. Use when asked to scope a new feature or product idea,
+  write a PRD, define an MVP or the minimum version to launch first, decide what
+  to build next, or turn a vague request ("we should have X") into something
+  buildable. Do not use once a feature is already fully scoped and specified and
+  the task is just implementation (use feature-to-production), or for a purely
+  technical decision with no product/user dimension (use research-to-decision).
 license: MIT
 compatibility: Text-based planning skill. No filesystem/network access required beyond reading any existing product docs the user provides.
 metadata:
@@ -109,6 +109,29 @@ Using the templates in `assets/`:
 - [ ] At least one thing was explicitly cut from scope and recorded in the
       decision log — if nothing was cut, scope discipline probably wasn't
       actually applied.
+
+# Red flags
+
+Stop and correct course if any of these are true:
+
+- The PRD starts from the requested solution, and the problem statement was back-filled to fit it.
+- The target user is "everyone", "users", or "small businesses" with no narrower segment.
+- The MVP includes a feature that doesn't test the top hypothesis.
+- The success metric is a vanity metric (sign-ups, page views) unconnected to the hypothesis.
+- Assumptions are listed but not ranked by likelihood-of-wrong and cost-if-wrong.
+- There is no way described to learn the MVP failed.
+
+# Common rationalizations
+
+Excuses that come up for skipping this workflow, and why they don't hold:
+
+| Rationalization | Reality |
+|---|---|
+| "It's a small extra feature, just add it to v1." | Small extras compound into a late, unfocused MVP. If it doesn't test the hypothesis, it goes to the later list. |
+| "The stakeholder asked for exactly this, so the problem is clear." | A request is a proposed solution. Work back to the problem first — often a smaller solution solves it. |
+| "We'll figure out metrics after launch." | Metrics chosen after launch get picked to look good. Define success before building. |
+| "Users definitely want this." | That's the riskiest assumption in most PRDs. Rank it, and design the MVP to test it cheaply. |
+| "This is too small to need a PRD." | Then the PRD is short. The problem, user, hypothesis and metric still need to exist, even as four lines. |
 
 # Edge cases
 

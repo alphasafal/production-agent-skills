@@ -7,6 +7,8 @@ paths each client documents). Examples:
 
     python scripts/install_skills.py --list
 
+    python scripts/install_skills.py --pack sre --target ./my-project/.claude/skills
+
     python scripts/install_skills.py \\
         --skill debugging-investigator \\
         --target ./my-project/.claude/skills
@@ -30,13 +32,18 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _lib import discover_skills  # noqa: E402
+from _lib import discover_skills, load_packs  # noqa: E402
 
 
 def print_available(skills) -> None:
     print("Available skills:")
     for skill in skills:
         print(f"  ✓ {skill.name}")
+    packs = load_packs()
+    if packs:
+        print("\nRole packs (--pack NAME):")
+        for name, spec in packs.items():
+            print(f"  {name:<18} {spec['title']}: {', '.join(spec['skills'])}")
 
 
 def install_one(skill, target_root: Path, dry_run: bool, force: bool) -> bool:
@@ -72,6 +79,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--list", action="store_true", help="list available skills and exit")
     parser.add_argument("--skill", action="append", default=[], help="skill name to install (repeatable)")
+    parser.add_argument("--pack", action="append", default=[],
+                        help="install a role pack from packs.json (repeatable); see --list")
     parser.add_argument("--all", action="store_true", help="install every skill")
     parser.add_argument("--target", type=Path, help="destination skills directory")
     parser.add_argument("--dry-run", action="store_true", help="print what would happen without doing it")
@@ -84,8 +93,8 @@ def main() -> int:
         print_available(skills)
         return 0
 
-    if not args.all and not args.skill:
-        parser.error("pass --skill NAME (repeatable), --all, or --list")
+    if not args.all and not args.skill and not args.pack:
+        parser.error("pass --skill NAME, --pack NAME (both repeatable), --all, or --list")
 
     if args.target is None:
         parser.error("--target is required unless using --list")
@@ -98,11 +107,20 @@ def main() -> int:
     # Resolve the selection before touching the filesystem, so a typo'd skill
     # name doesn't leave an empty target directory behind.
     by_name = {s.name: s for s in skills}
+    packs = load_packs()
+    requested = list(args.skill)
+    for pack in args.pack:
+        if pack not in packs:
+            print(f"ERROR: unknown pack '{pack}'. Available: {', '.join(packs)}")
+            return 1
+        requested += packs[pack]["skills"]
+    requested = list(dict.fromkeys(requested))  # de-duplicate, keep order
+
     if args.all:
         selected = skills
     else:
         selected = []
-        for name in args.skill:
+        for name in requested:
             if name not in by_name:
                 print(f"ERROR: unknown skill '{name}'. Run --list to see available skills.")
                 return 1

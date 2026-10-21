@@ -21,7 +21,15 @@ skill instead of a new one.
 1. **`SKILL.md`** following the structure in `docs/skill-anatomy.md`
    (`# Purpose`, `# When to use`, `# When NOT to use`, `# Required
    inputs`, `# Workflow`, `# Tool & resource guidance`, `# Output
-   contract`, `# Quality checks`, `# Edge cases`, `# References`).
+   contract`, `# Quality checks`, `# Red flags`, `# Common
+   rationalizations`, `# Edge cases`, `# References`). The validator
+   enforces all twelve, in order.
+   - **Red flags** (≥3): observable signs the agent is skipping the
+     workflow ("you are editing code and can't name the command that
+     reproduces the failure").
+   - **Common rationalizations** (≥3 table rows): the excuses an agent uses
+     to skip steps, each with why it doesn't hold. Agents rarely fail by
+     not knowing a procedure; they fail by talking themselves out of it.
 2. **At least 5 positive (obvious-trigger) activation cases** and
    **at least 3 negative (must-not-trigger) activation cases** in
    `evaluations/activation/<your-skill>.json`, matching
@@ -35,6 +43,15 @@ skill instead of a new one.
    run produces (see step 1).
 5. **Quality checks** — a short checklist a reviewer (human or agent) can
    run against the output.
+6. **A workflow scenario** in `evaluations/workflows/<your-skill>.json`
+   (schema: `schemas/workflow.schema.json`) with `workspace_files` the agent
+   gets and, if you have one, a `reference_answer` only the grader sees.
+   Pressure scenarios (`evaluations/workflows/pressure/`) are encouraged:
+   a prompt that argues for skipping your workflow, to check it holds.
+7. **Routing passes**: `python scripts/run_routing_evals.py` must stay
+   green for the *whole catalog* — your description has to win its own
+   prompts without stealing other skills'. For a negative case that belongs
+   to another skill, set `route_to` so the gate checks it.
 
 ## PR checklist (mirrors `.github/PULL_REQUEST_TEMPLATE.md`)
 
@@ -68,10 +85,11 @@ it before CI does. Full explanation:
 ```bash
 python scripts/validate_skills.py -v
 python scripts/run_static_evals.py
+python scripts/run_routing_evals.py
 pytest tests/
 ```
 
-All three should be clean (warnings are worth reading, but only errors
+All four should be clean (warnings are worth reading, but only errors
 block CI — see `.github/workflows/validate-skills.yml`).
 
 Optionally, check against the reference implementation exactly as CI does:
@@ -88,6 +106,25 @@ new domain detail, put it in `references/` with a conditional pointer from
 `SKILL.md` rather than growing `SKILL.md` itself — see
 `docs/progressive-disclosure.md`. If your change affects how the skill
 activates, update its `evaluations/activation/<skill>.json` cases too.
+
+### Description changes and the held-out set
+
+`evaluations/routing/holdout.json` holds prompts that were written *after*
+the descriptions were last tuned. Never edit a description just to fix a
+holdout miss — that turns the holdout into training data and the number
+stops meaning anything. If a miss reveals a real gap, add a new case to
+`evaluations/activation/` and fix against that. Description edits also
+spend the discovery budget: CI fails if `skills-ref to-prompt` for all
+skills exceeds 8,000 characters.
+
+### Measuring a change for real
+
+```bash
+python scripts/run_behavioral_evals.py --skill your-skill --runs 3
+```
+
+runs the workflow scenarios with and without the skill and grades both
+blind. Put before/after numbers for behavior-changing edits in the PR.
 
 ## Reporting a skill that didn't work well
 

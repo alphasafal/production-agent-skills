@@ -34,6 +34,15 @@ jobs:
       - name: Run static evaluation checks
         run: python scripts/run_static_evals.py
 
+      - name: Plugin marketplace is in sync with packs.json
+        run: python scripts/build_marketplace.py --check
+
+      - name: Run routing evals (catalog-wide, deterministic)
+        run: python scripts/run_routing_evals.py
+
+      - name: Behavioral eval runner plans cleanly (no model calls)
+        run: python scripts/run_behavioral_evals.py --dry-run
+
       # Validates against the reference implementation of the open spec, which
       # enforces a stricter YAML subset than PyYAML accepts. Kept as a separate,
       # network-dependent step so a registry/network outage is distinguishable
@@ -54,6 +63,22 @@ jobs:
             skills-ref validate "$dir"
             echo "::endgroup::"
           done
+
+      # Codex caps the initial skill list at ~8,000 chars. Every description edit
+      # spends this budget, so it's enforced rather than just documented.
+      - name: Every role pack fits the 8,000-byte discovery budget
+        if: steps.skills_ref.outcome == 'success'
+        run: |
+          set -e
+          FAIL=0
+          for pack in $(python -c "import json;print(' '.join(json.load(open('packs.json'))['packs']))"); do
+            DIRS=$(python -c "import json,sys;print(' '.join('skills/'+s for s in json.load(open('packs.json'))['packs'][sys.argv[1]]['skills']))" "$pack")
+            SIZE=$(skills-ref to-prompt $DIRS | wc -c)
+            echo "pack $pack: $SIZE bytes (limit 8000)"
+            [ "$SIZE" -le 8000 ] || { echo "::error::pack $pack discovery prompt is $SIZE bytes, over 8,000"; FAIL=1; }
+          done
+          echo "all skills together: $(skills-ref to-prompt skills/*/ | wc -c) bytes (Claude Code: fine; Codex: install by pack)"
+          exit $FAIL
 
       - name: Report skills-ref unavailable
         if: steps.skills_ref.outcome != 'success'

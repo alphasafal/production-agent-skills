@@ -11,7 +11,7 @@ for a specific kind of task.
 
 ## Skills in this repo don't require MCP
 
-None of the eight skills in this repository hard-depend on an MCP server.
+None of the skills in this repository hard-depend on an MCP server.
 Each one's `compatibility` frontmatter field and `Tool & resource
 guidance` section says explicitly what's needed (filesystem, shell,
 sometimes a research/web tool) and calls out where an MCP connection would

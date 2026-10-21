@@ -44,6 +44,11 @@
       "items": { "type": "string" },
       "description": "Output files/sections the skill's output contract requires, e.g. DEBUG_REPORT.md."
     },
+    "route_to": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Negative cases only: the skill this prompt belongs to instead. run_routing_evals.py gates that this skill outranks the case's own skill."
+    },
     "notes": {
       "type": "string",
       "description": "Why this case is included, especially for ambiguous/negative cases."

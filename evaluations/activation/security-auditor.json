@@ -1,0 +1,98 @@
+[
+  {
+    "id": "security-auditor-pos-01",
+    "skill": "security-auditor",
+    "category": "positive-obvious",
+    "prompt": "We launch next week — can you do a security audit of this service first?",
+    "expected_activation": true,
+    "required_behaviors": ["maps the attack surface before listing findings", "ranks findings by reachability and impact with a fix for each"],
+    "forbidden_behaviors": ["modifying application code without being asked"],
+    "expected_artifacts": ["SECURITY_AUDIT.md"]
+  },
+  {
+    "id": "security-auditor-pos-02",
+    "skill": "security-auditor",
+    "category": "positive-obvious",
+    "prompt": "Check our Flask app for SQL injection, IDOR, and path traversal vulnerabilities.",
+    "expected_activation": true,
+    "required_behaviors": ["traces each lead from request parameter to the risky operation", "checks per-object ownership on every route taking an ID"],
+    "forbidden_behaviors": ["reporting grep hits as findings without tracing them"],
+    "expected_artifacts": ["SECURITY_AUDIT.md"]
+  },
+  {
+    "id": "security-auditor-pos-03",
+    "skill": "security-auditor",
+    "category": "positive-obvious",
+    "prompt": "An external pentest is booked for March. Do a vulnerability assessment of the codebase so we fix the obvious stuff beforehand.",
+    "expected_activation": true,
+    "required_behaviors": ["runs or attempts dependency and secret scans and treats output as leads", "lists what was not covered"],
+    "expected_artifacts": ["SECURITY_AUDIT.md"]
+  },
+  {
+    "id": "security-auditor-pos-04",
+    "skill": "security-auditor",
+    "category": "positive-obvious",
+    "prompt": "Scan this repo for hardcoded secrets, weak password hashing, and other OWASP Top 10 vulnerabilities.",
+    "expected_activation": true,
+    "required_behaviors": ["checks password storage and secret sources", "justifies each severity by who can reach it"],
+    "expected_artifacts": ["SECURITY_AUDIT.md"]
+  },
+  {
+    "id": "security-auditor-pos-05",
+    "skill": "security-auditor",
+    "category": "positive-obvious",
+    "prompt": "We need a security audit of the API for our SOC 2 compliance review — find what's actually vulnerable.",
+    "expected_activation": true,
+    "required_behaviors": ["separates CONFIRMED findings from LIKELY RISK", "includes a leads-ruled-out section"],
+    "expected_artifacts": ["SECURITY_AUDIT.md"]
+  },
+  {
+    "id": "security-auditor-amb-01",
+    "skill": "security-auditor",
+    "category": "positive-ambiguous",
+    "prompt": "Could a logged-in customer see another company's data in this app? I'm nervous before we go live.",
+    "expected_activation": true,
+    "required_behaviors": ["checks ownership on every object lookup, not just login", "reports which routes are and are not tenant-scoped"],
+    "expected_artifacts": ["SECURITY_AUDIT.md"],
+    "notes": "Phrased as a worry about tenant isolation with no 'audit' keyword; it is an authorization audit of existing code."
+  },
+  {
+    "id": "security-auditor-amb-02",
+    "skill": "security-auditor",
+    "category": "positive-ambiguous",
+    "prompt": "Our scanner spat out 140 vulnerability warnings for this service. Which ones are actually real?",
+    "expected_activation": true,
+    "required_behaviors": ["traces scanner hits to confirm reachability", "lists ruled-out leads with the control that neutralizes them"],
+    "expected_artifacts": ["SECURITY_AUDIT.md"],
+    "notes": "Triage of scanner output on an existing codebase is the lead-confirmation step of an audit."
+  },
+  {
+    "id": "security-auditor-neg-01",
+    "skill": "security-auditor",
+    "category": "negative",
+    "route_to": "production-code-review",
+    "prompt": "Review this pull request before I merge it — it changes the login handler.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["running a whole-codebase security audit for a single PR"],
+    "notes": "One diff before merge is production-code-review's job; its security dimension covers the change."
+  },
+  {
+    "id": "security-auditor-neg-02",
+    "skill": "security-auditor",
+    "category": "negative",
+    "route_to": "repo-architect",
+    "prompt": "I just joined the team — help me understand this codebase and map its architecture and modules.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["producing a vulnerability report when only an architecture map was asked for"],
+    "notes": "Understanding an unfamiliar codebase with no security ask belongs to repo-architect."
+  },
+  {
+    "id": "security-auditor-neg-03",
+    "skill": "security-auditor",
+    "category": "negative",
+    "prompt": "Explain what cross-site request forgery is and how SameSite cookies help.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["auditing a codebase for a conceptual question"],
+    "notes": "Conceptual security question with no code to audit; a design-stage threat model would go to threat-modeler, not this skill."
+  }
+]

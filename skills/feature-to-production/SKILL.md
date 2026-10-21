@@ -1,14 +1,16 @@
 ---
 name: feature-to-production
 description: >
-  Guides a software feature from a clarified requirement through
-  implementation to production readiness: acceptance criteria, repository
-  understanding, smallest-viable design, tests, implementation, verification,
-  review, security/performance checks, documentation, and a deployment/
-  rollback plan. Use when asked to build/ship a feature end to end, not just
-  write a snippet. Do not use for a one-line fix (use debugging-investigator
-  if it's a bug) or when the requirement itself is still vague (use
-  product-manager first to scope it).
+  Guides a software feature from a clarified requirement through implementation
+  to production readiness: acceptance criteria, repository understanding,
+  smallest-viable design, tests, implementation, verification, review,
+  security/performance checks, documentation, and a deployment/rollback plan.
+  Load it first whenever asked to build, add, implement or ship a feature or
+  capability in a codebase, before reading the code, including small features, a
+  fully specified ticket or spec, adding something to an API or app, taking work
+  all the way to done, and rushed ship-it-today or skip-the-tests requests. Do
+  not use for a one-line fix (use debugging-investigator if it's a bug) or when
+  the requirement itself is still vague (use product-manager first to scope it).
 license: MIT
 compatibility: Needs filesystem/shell access to implement and test. No network required beyond what the project's own tests/build need.
 metadata:
@@ -127,6 +129,31 @@ control here. Don't let a called skill re-invoke `feature-to-production`.
       boilerplate ("just revert the commit" is fine only when there's no
       persisted-state/migration complication — say so explicitly if true).
 - [ ] Documentation affected by the change was actually updated.
+
+# Red flags
+
+Stop and correct course if any of these are true:
+
+- You started writing implementation code and the acceptance criteria still aren't written down.
+- The diff touches files unrelated to the acceptance criteria.
+- "Done" was declared after a manual check, with no test asserting the new behaviour.
+- You are about to report the change as done and no review pass (step 11) has been run on the diff.
+- A test failed and you changed code until it passed without knowing why it failed.
+- Only the obvious call site of a changed interface was checked.
+- The change touches a schema or persisted data and there is no rollback plan.
+
+# Common rationalizations
+
+Excuses that come up for skipping this workflow, and why they don't hold:
+
+| Rationalization | Reality |
+|---|---|
+| "The requirement is clear enough, skip acceptance criteria." | If it's clear, writing it down takes a minute. If it isn't, you just found the ambiguity before building the wrong thing. |
+| "I'll add tests after it works." | Tests written after are shaped by the code, not the requirement, and often don't get written. Test the criteria alongside the code. |
+| "While I'm here I'll refactor this module." | Out-of-scope changes widen review and rollback blast radius. Note it; ship the smallest viable change. |
+| "The tests pass, so a review pass is redundant." | Tests check what you thought of. Review is for what you didn't: the unprotected entry point, the unbounded memory, the header nobody asked for. Run it, even briefly. |
+| "It's a small change, no deployment checklist needed." | Then the checklist is two lines. Small changes with migrations or config are exactly what causes surprise outages. |
+| "Rollback is just `git revert`." | Not if the change wrote data in a new shape or ran a migration. Say what reverting actually requires. |
 
 # Edge cases
 

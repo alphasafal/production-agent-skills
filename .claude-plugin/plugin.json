@@ -1,0 +1,26 @@
+{
+  "name": "production-agent-skills",
+  "version": "0.2.0",
+  "description": "Twelve evaluated Agent Skills for engineering, SRE, security, data and product work: debugging, code review, incident response, deploy pipeline review, threat modeling, security audits, repo mapping, system design review, data science, decisions with ADRs, PRDs and shipping features.",
+  "author": {
+    "name": "Safal",
+    "url": "https://github.com/alphasafal"
+  },
+  "homepage": "https://github.com/alphasafal/production-agent-skills",
+  "repository": "https://github.com/alphasafal/production-agent-skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "debugging",
+    "code-review",
+    "incident-response",
+    "security",
+    "threat-modeling",
+    "devops",
+    "data-science",
+    "prd",
+    "evals"
+  ],
+  "commands": "./commands",
+  "skills": "./skills"
+}

@@ -55,7 +55,7 @@ metadata:
 
 Every skill in this repository originally used the first form. It passed
 PyYAML, passed our own schema validation, and still failed the official
-validator on all 8 skills — which is exactly why the optional external
+validator on all 12 skills — which is exactly why the optional external
 check is worth running. `scripts/validate_skills.py` now enforces this
 rule locally (plus no anchors/aliases/tags and no duplicate top-level
 keys), so you get the same failure without needing the external CLI
@@ -103,13 +103,19 @@ this repo is checked against the reference implementation on each push.
 ## Measuring what discovery actually costs
 
 Since only `name` + `description` load at startup, you can measure the
-exact context cost of carrying all 8 skills:
+exact context cost of carrying a set of skills:
 
 ```bash
 uvx --from "git+https://github.com/agentskills/agentskills#subdirectory=skills-ref" \
   skills-ref to-prompt skills/*/ | wc -c
 ```
 
-At the time of writing this returns **6,346 characters** for all eight
-skills — under Codex's documented ceiling of 8,000 characters (or 2% of the
-context window) for the skill list, with room to spare.
+At the time of writing, every role pack in `packs.json` is well under Codex's
+documented ceiling of 8,000 characters (or 2% of the context window) for the
+skill list — the largest, tech-lead, is 4,747 bytes. All 12 skills together
+are 11194 bytes: fine for Claude Code, but Codex users should install by
+role pack (`python scripts/install_skills.py --pack <role>`). CI measures
+every pack with `skills-ref to-prompt` and fails the build if one goes over.
+
+Description tip: `skills-ref` HTML-escapes the description, so each `"` and
+each `'` costs 6 bytes (`&quot;`, `&#x27;`) against the budget.

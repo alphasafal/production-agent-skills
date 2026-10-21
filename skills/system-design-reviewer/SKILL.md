@@ -2,14 +2,17 @@
 name: system-design-reviewer
 description: >
   Reviews a proposed system or service architecture before implementation
-  begins — requirements, API design, data model, storage, consistency,
-  caching, queues/events, scaling, failure modes, security, observability,
-  deployment, and cost. Use when evaluating a design doc, RFC, or proposed
-  architecture for a new system/service, or when asked "does this design hold
-  up," "what could go wrong with this architecture," or "review this system
-  design." Do not use once implementation is already underway and the
-  question is about the code itself (use production-code-review), or for
-  reviewing an existing, already-built system's structure (use repo-architect).
+  begins: requirements, API design, data model, storage, consistency, caching,
+  queues/events, scaling, failure modes, security, observability, deployment,
+  and cost. Load it first whenever someone asks to review, evaluate, compare,
+  sanity-check or poke holes in a design doc, RFC, technical plan or proposed
+  architecture for a new system, or when choosing between candidate
+  architectures for a new service, even before you have read or asked for the
+  document, and for questions like will this scale, is this database enough for
+  what we are planning, or what could go wrong with this architecture. Do not
+  use once implementation is already underway and the question is about the code
+  itself (use production-code-review), or for reviewing an existing,
+  already-built system's structure (use repo-architect).
 license: MIT
 compatibility: Text/diagram-based review. No filesystem or network access required unless the design doc lives in a connected tool.
 metadata:
@@ -137,6 +140,29 @@ Produce `SYSTEM_DESIGN_REVIEW.md` with these sections:
       generic ("failure handling could be improved").
 - [ ] Assumptions are stated, not silently baked into the review.
 - [ ] Recommendations are prioritized, not a flat undifferentiated list.
+
+# Red flags
+
+Stop and correct course if any of these are true:
+
+- You are critiquing the design before writing down the requirements it has to meet.
+- You state latency, throughput, or cost numbers as facts without labelling them estimates.
+- The design has a cache and no stated invalidation strategy, and you didn't flag it.
+- "Exactly-once" is accepted without asking which mechanism delivers it.
+- No failure mode is described for what happens when a dependency is slow, not just down.
+- Your risks are unranked, or every risk is "high".
+
+# Common rationalizations
+
+Excuses that come up for skipping this workflow, and why they don't hold:
+
+| Rationalization | Reality |
+|---|---|
+| "It looks like how big companies do it, so it's fine." | Their scale and team aren't this system's. Judge against *these* requirements — often the finding is that the design is over-built. |
+| "Scale estimates are guesses anyway, skip them." | Rough numbers decide which trade-offs matter. An order-of-magnitude estimate, labelled as such, beats none. |
+| "The cloud provider handles failures." | Managed services fail and slow down too. What does *this* system do when they do? |
+| "Security and cost are someone else's review." | They are review dimensions here. A short "no new exposure" line is fine; skipping them is not. |
+| "The author already decided; I'll just approve." | A design review that can't change anything is a formality. Say what's risky and what would change your mind. |
 
 # Edge cases
 

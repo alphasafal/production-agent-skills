@@ -74,6 +74,8 @@ under [skills/](../skills/) for a full example):
 # Tool & resource guidance
 # Output contract
 # Quality checks
+# Red flags
+# Common rationalizations
 # Edge cases
 # References
 ```
@@ -86,6 +88,16 @@ under [skills/](../skills/) for a full example):
   output is checkable, not just "reasonable-sounding."
 - **Quality checks** is a checklist the agent (or a reviewer) can run
   against the output before calling the task done.
+- **Red flags** lists observable signs that the workflow is being skipped
+  *right now* — things the agent can check about its own state ("I'm
+  editing code and can't name the reproduction command"), not vague advice.
+- **Common rationalizations** is a `| Rationalization | Reality |` table of
+  the excuses an agent produces to cut corners ("it's obviously the X",
+  "the user is in a hurry, skip the test") with the rebuttal. Capable
+  models rarely skip a step out of ignorance; they skip it because a
+  plausible-sounding reason appeared. Naming the reason in advance is what
+  makes the workflow hold under pressure — see the pressure scenarios in
+  `evaluations/workflows/pressure/`.
 - **Edge cases** names the specific situations that would otherwise cause
   the workflow to silently do the wrong thing.
 

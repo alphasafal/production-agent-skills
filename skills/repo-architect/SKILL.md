@@ -2,13 +2,15 @@
 name: repo-architect
 description: >
   Builds a structured map of an unfamiliar repository — entry points, modules,
-  dependencies, data flow, persistence, external integrations, and
-  architectural risks — before any code is changed. Use when starting work in
-  a codebase you haven't worked in before, onboarding to a new repo, preparing
-  to plan a non-trivial change, or when asked to "understand this codebase" or
-  "explain the architecture." Do not use for a codebase you already understand
-  well, for a single well-scoped file edit, or as a substitute for actually
-  implementing a change (it produces a map, not a fix).
+  dependencies, data flow, persistence, external integrations, and architectural
+  risks — before any code is changed. Use when starting work in a codebase you
+  haven't worked in before, onboarding to a new repo, preparing to plan a
+  non-trivial change, or when asked to "understand this codebase", "explain the
+  architecture", "map how the existing system works", document a codebase's
+  module structure and dependencies, or assess the overall health of an entire
+  codebase. Do not use for a codebase you already understand well, for a single
+  well-scoped file edit, or as a substitute for actually implementing a change
+  (it produces a map, not a fix).
 license: MIT
 compatibility: Needs filesystem read access to the repository. No network required.
 metadata:
@@ -114,6 +116,29 @@ available in the environment):
 - [ ] The risk register names concrete unknowns, not generic boilerplate
       ("tests could be better") — each item should be actionable.
 - [ ] No code was modified during this investigation.
+
+# Red flags
+
+Stop and correct course if any of these are true:
+
+- You have edited, created, or deleted a file in the repository being mapped.
+- The tech stack in your map came from file extensions, not manifest or lockfiles.
+- Your data-flow description doesn't name a real entry point (route, CLI command, worker, `main`).
+- Vendored or generated code is described as first-party architecture.
+- The map states how something works with no file path behind it.
+- The risks section is empty.
+
+# Common rationalizations
+
+Excuses that come up for skipping this workflow, and why they don't hold:
+
+| Rationalization | Reality |
+|---|---|
+| "I'll just fix this small thing I noticed while mapping." | This skill's output is a map, not a change. Note it as a risk; edits belong to a change-making skill, after the map exists. |
+| "The README explains the architecture already." | READMEs drift. Treat it as a claim to verify against entry points and imports, and flag where they disagree. |
+| "It's a standard Next.js / Django app, I know the layout." | Frameworks set defaults; teams override them. Check the actual structure before describing it. |
+| "No risks jumped out." | Every real repo has untested critical paths, unclear ownership, or stale dependencies. Absence means you haven't looked yet. |
+| "Mapping everything would take too long; I'll describe the top-level folders." | A folder list isn't a map. Follow at least one request from entry point to persistence — that's what makes the map useful. |
 
 # Edge cases
 

@@ -1,0 +1,7 @@
+# deploy history - production - times UTC
+# timestamp              service          version   actor            change
+2026-10-12T10:15:03Z     catalog-api      v4.8.1    ci/main          "add size-chart field to product response"
+2026-10-13T16:42:27Z     checkout-api     v2.13.4   ci/main          "fix rounding on INR GST line items"
+2026-10-14T09:30:11Z     search-indexer   v1.22.0   ci/main          "nightly reindex schedule moved to 02:00"
+2026-10-14T11:58:49Z     feature-flags    -         r.mehta          "enable flag gift_wrap_upsell for 10% of web users"
+2026-10-14T14:02:06Z     checkout-api     v2.14.0   ci/main          "payment-client: lower request timeout 5000ms->1200ms; http pool max_connections 64->16; bump payments-sdk 3.2.0->3.3.1"

@@ -9,3 +9,10 @@ venv/
 node_modules/
 .coverage
 htmlcov/
+
+# Raw behavioral-eval output (transcripts can be large). Publish numbers in
+# evaluations/results/README.md instead.
+evaluations/results/runs/
+
+# Local agent worktrees
+.claude/worktrees/

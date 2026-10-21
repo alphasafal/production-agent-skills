@@ -1,0 +1,101 @@
+{
+  "_readme": "Held-out routing prompts. Written AFTER descriptions were last tuned and never used to tune them. Do not edit a description to fix a miss here — that turns this into a training set. If a miss reveals a real gap, add a NEW case to evaluations/activation/ and fix against that. Batch 2 (4 SRE/security skills) added 2026-10-21 after those skills' descriptions were finalized.",
+  "cases": [
+    {
+      "skill": "debugging-investigator",
+      "prompt": "Our nightly cron job silently stopped sending emails sometime last week."
+    },
+    {
+      "skill": "debugging-investigator",
+      "prompt": "The app gets really slow after a few hours and CPU is pinned at 100%."
+    },
+    {
+      "skill": "feature-to-production",
+      "prompt": "Implement SSO login with Google for our dashboard and get it deployed."
+    },
+    {
+      "skill": "feature-to-production",
+      "prompt": "Build the CSV export endpoint described in the ticket, with tests."
+    },
+    {
+      "skill": "product-manager",
+      "prompt": "Our users keep asking for a mobile app — what should v1 actually include?"
+    },
+    {
+      "skill": "product-manager",
+      "prompt": "Write the PRD for a loyalty points feature for our restaurant clients."
+    },
+    {
+      "skill": "production-code-review",
+      "prompt": "Can you review my PR that changes how we store session tokens?"
+    },
+    {
+      "skill": "production-code-review",
+      "prompt": "Here's the diff for the billing migration — anything risky?"
+    },
+    {
+      "skill": "repo-architect",
+      "prompt": "I just joined this team, walk me through how this codebase is organized."
+    },
+    {
+      "skill": "repo-architect",
+      "prompt": "Explain the architecture of this Django project and where the risky parts are."
+    },
+    {
+      "skill": "research-to-decision",
+      "prompt": "Supabase or Firebase for our new app? Need a recommendation we can defend."
+    },
+    {
+      "skill": "research-to-decision",
+      "prompt": "Should we self-host Postgres or use a managed provider?"
+    },
+    {
+      "skill": "system-design-reviewer",
+      "prompt": "Here's our RFC for a real-time chat service, poke holes in it."
+    },
+    {
+      "skill": "system-design-reviewer",
+      "prompt": "Will this queue-based design handle 10k orders per second?"
+    },
+    {
+      "skill": "data-scientist",
+      "prompt": "Here's a CSV of loan applications — which features predict default?"
+    },
+    {
+      "skill": "data-scientist",
+      "prompt": "Our model's accuracy looks great but I don't trust it, can you evaluate it properly?"
+    },
+    {
+      "skill": "incident-responder",
+      "prompt": "Payments are failing for everyone since about ten minutes ago. What do we do right now?"
+    },
+    {
+      "skill": "incident-responder",
+      "prompt": "Our API latency went from 200ms to 9 seconds after lunch and customers are emailing support."
+    },
+    {
+      "skill": "deploy-pipeline-reviewer",
+      "prompt": "Can you check our GitHub Actions release workflow before we give it production credentials?"
+    },
+    {
+      "skill": "deploy-pipeline-reviewer",
+      "prompt": "We wrote a Helm chart and a rollout script for the new service, anything dangerous in there?"
+    },
+    {
+      "skill": "threat-modeler",
+      "prompt": "Before we build the public API keys feature, what could an attacker do with it?"
+    },
+    {
+      "skill": "threat-modeler",
+      "prompt": "We're adding SSO and tenant invites next quarter. Where are the security holes in this plan?"
+    },
+    {
+      "skill": "security-auditor",
+      "prompt": "Go through our Django codebase and find vulnerabilities before the pentest next month."
+    },
+    {
+      "skill": "security-auditor",
+      "prompt": "Is our existing login and password reset code actually secure?"
+    }
+  ]
+}

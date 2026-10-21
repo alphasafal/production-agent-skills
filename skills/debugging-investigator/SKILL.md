@@ -3,12 +3,16 @@ name: debugging-investigator
 description: >
   Investigates software failures using evidence-driven debugging: reproduction,
   hypothesis generation and ranking, targeted hypothesis testing, root-cause
-  identification, minimal fixes, and regression verification. Use when diagnosing
-  bugs, crashes, failing tests, intermittent errors, unexpected behavior,
-  production incidents, or performance regressions — especially when the cause
-  is not already obvious. Do not use for writing new features, general code
-  review with no reported failure, or answering conceptual questions about how
-  something works (e.g. "what is a stack trace" or "explain this error type").
+  identification, minimal fixes, and regression verification. Use when something
+  is broken or wrong and the cause is unknown: bugs, errors or exceptions being
+  thrown, crashes, memory leaks or OOMs, hangs, failing or flaky tests, wrong or
+  mismatched numbers, users being logged out,
+  works-locally-but-not-in-production, intermittent errors, production
+  incidents, or performance regressions — whenever asked to investigate why,
+  including urgent just-push-a-quick-fix requests. Do not use for writing new
+  features, general code review with no reported failure, or answering
+  conceptual questions about how something works (e.g. "what is a stack trace"
+  or "explain this error type").
 license: MIT
 compatibility: >
   Needs shell/filesystem access to reproduce and run tests. Log/metrics/tracing
@@ -137,6 +141,29 @@ environment has no file output) with these sections, in order:
 - [ ] A regression test exists and fails against the pre-fix code, passes after.
 - [ ] No step was skipped silently — if reproduction wasn't possible, that's
       stated, not glossed over.
+
+# Red flags
+
+Stop and correct course if any of these are true:
+
+- You are editing code and cannot yet name the exact command that reproduces the failure.
+- Your hypothesis names an area ("something in the payment code") instead of a mechanism.
+- You have one hypothesis and have not written down what evidence would reject it.
+- The fix adds a retry, a try/except, a sleep, or a null check, and you cannot say why the bad state happens.
+- The "fix" diff also renames, reformats, or refactors unrelated code.
+- You are about to say "fixed" and no test failed before your change and passes after it.
+
+# Common rationalizations
+
+Excuses that come up for skipping this workflow, and why they don't hold:
+
+| Rationalization | Reality |
+|---|---|
+| "It's obviously the X, I'll just fix it." | Obvious causes are the ones most often wrong. If it's obvious, confirming it costs one check — do the check. |
+| "I can't reproduce it, so I'll make a defensive fix." | Then the goal is reproduction, not a fix. A defensive change you can't verify hides the bug and makes the next report harder to debug. |
+| "Adding a retry / try-catch makes it go away." | Making a symptom go away is not a root cause. Retries around a race usually make duplicates *more* likely. |
+| "The user is in a hurry — skip the regression test." | Without a failing-then-passing test you can't show the fix works, and the bug can silently return. The test is the shortest proof you have. |
+| "While I'm in here I'll clean this up too." | Bundled cleanup makes the fix harder to review, harder to revert, and blurs which change actually fixed the bug. |
 
 # Edge cases
 

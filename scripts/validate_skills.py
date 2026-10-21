@@ -5,12 +5,18 @@ Checks performed:
   - SKILL.md frontmatter parses and matches schemas/skill-manifest.schema.json
   - name: matches the parent directory name exactly; no duplicates across skills/
   - description: present, within length bounds, states what+when
+  - SKILL.md body: has every required section (incl. Red flags + Common rationalizations,
+    each with a minimum number of entries), in the standard order
   - SKILL.md body: not absurdly long (progressive disclosure — detail belongs in references/)
   - every references/scripts/assets path mentioned in the body actually exists
   - every file under references/scripts/assets/examples is reachable (no orphaned dead weight)
   - scripts/*.py that import third-party packages document that in a header comment
   - no empty directories anywhere under skills/
   - evaluations/activation/<skill>.json validates against schemas/evaluation.schema.json
+  - evaluations/workflows/**/*.json validate against schemas/workflow.schema.json; their
+    workspace files exist and never include a reference answer or spoiler
+  - packs.json: every pack lists real skills, every skill is in a pack, and each pack's
+    discovery prompt fits the 8,000-byte budget
   - optional: shells out to `skills-ref validate` per skill if that CLI is on PATH
 
 Exit code 0 if no errors (warnings are non-fatal). Run with -v for warnings too.
@@ -33,10 +39,20 @@ from _lib import (  # noqa: E402
     REPO_ROOT,
     SKILLS_DIR,
     Skill,
+    REQUIRED_SECTIONS,
+    MIN_RATIONALIZATIONS,
+    MIN_RED_FLAGS,
     SkillParseError,
+    count_bullets,
+    count_table_rows,
+    DISCOVERY_BUDGET_CHARS,
     discover_skills,
+    estimate_discovery_chars,
+    load_packs,
     find_relative_references,
     load_schema,
+    section_headings,
+    section_text,
     strict_yaml_violations,
 )
 
@@ -120,6 +136,30 @@ def check_body_length(skill: Skill, report: Report) -> None:
         report.error(
             f"{skill.dir.name}: SKILL.md body is {n_lines} lines (max {MAX_SKILL_MD_LINES}) — "
             f"move detail into references/ (progressive disclosure)"
+        )
+
+
+def check_required_sections(skill: Skill, report: Report) -> None:
+    headings = section_headings(skill.body)
+    missing = [s for s in REQUIRED_SECTIONS if s not in headings]
+    for section in missing:
+        report.error(f"{skill.dir.name}: missing required section '# {section}'")
+    if not missing:
+        order = [h for h in headings if h in REQUIRED_SECTIONS]
+        if order != REQUIRED_SECTIONS:
+            report.warn(f"{skill.dir.name}: required sections are out of the standard order")
+
+    n_flags = count_bullets(section_text(skill.body, "Red flags"))
+    if "Red flags" in headings and n_flags < MIN_RED_FLAGS:
+        report.error(
+            f"{skill.dir.name}: '# Red flags' has {n_flags} bullet(s), needs ≥{MIN_RED_FLAGS} "
+            f"concrete, observable signs the workflow is being skipped"
+        )
+    n_rats = count_table_rows(section_text(skill.body, "Common rationalizations"))
+    if "Common rationalizations" in headings and n_rats < MIN_RATIONALIZATIONS:
+        report.error(
+            f"{skill.dir.name}: '# Common rationalizations' has {n_rats} table row(s), "
+            f"needs ≥{MIN_RATIONALIZATIONS} | Rationalization | Reality | rows"
         )
 
 
@@ -235,6 +275,73 @@ def check_evaluations(skills: list[Skill], report: Report) -> None:
             report.warn(f"{skill.dir.name}: fewer than 3 negative eval cases")
 
 
+def check_workflows(skills: list[Skill], report: Report) -> None:
+    schema = load_schema("workflow.schema.json")
+    skill_names = {s.name for s in skills}
+    workflows_dir = EVALUATIONS_DIR / "workflows"
+    seen_ids: set[str] = set()
+    for path in sorted(workflows_dir.rglob("*.json")):
+        rel = path.relative_to(REPO_ROOT)
+        try:
+            data = json.loads(path.read_text())
+        except json.JSONDecodeError as exc:
+            report.error(f"{rel}: malformed JSON: {exc}")
+            continue
+        for case in data if isinstance(data, list) else [data]:
+            try:
+                jsonschema.validate(instance=case, schema=schema)
+            except jsonschema.ValidationError as exc:
+                report.error(f"{rel}: {exc.message}")
+                continue
+            if case["skill"] not in skill_names:
+                report.error(f"{rel}: unknown skill '{case['skill']}'")
+            if case["id"] in seen_ids:
+                report.error(f"{rel}: duplicate workflow id '{case['id']}'")
+            seen_ids.add(case["id"])
+            for item in case.get("workspace_files", []):
+                if not (REPO_ROOT / item["from"]).exists():
+                    report.error(f"{rel}: workspace file '{item['from']}' does not exist")
+                if "SPOILER" in item["from"].upper() or item["from"] == case.get("reference_answer"):
+                    report.error(f"{rel}: '{item['from']}' would leak the answer into the agent's workspace")
+            ref = case.get("reference_answer")
+            if ref and not (REPO_ROOT / ref).exists():
+                report.error(f"{rel}: reference_answer '{ref}' does not exist")
+
+
+def check_packs(skills: list[Skill], report: Report) -> None:
+    packs = load_packs()
+    if not packs:
+        report.warn("packs.json missing or empty — no role packs defined")
+        return
+    by_name = {s.name: s for s in skills}
+    in_a_pack: set[str] = set()
+    for pack, spec in packs.items():
+        unknown = [n for n in spec.get("skills", []) if n not in by_name]
+        for n in unknown:
+            report.error(f"packs.json: pack '{pack}' lists unknown skill '{n}'")
+        members = [by_name[n] for n in spec.get("skills", []) if n in by_name]
+        in_a_pack |= {s.name for s in members}
+        if not members:
+            report.error(f"packs.json: pack '{pack}' has no skills")
+            continue
+        size = estimate_discovery_chars(members)
+        if size > DISCOVERY_BUDGET_CHARS:
+            report.error(
+                f"packs.json: pack '{pack}' discovery prompt is ~{size} bytes, over the "
+                f"{DISCOVERY_BUDGET_CHARS}-byte budget — split the pack or shorten descriptions"
+            )
+    for s in skills:
+        if s.name not in in_a_pack:
+            report.error(f"{s.dir.name}: not in any role pack in packs.json")
+    full = estimate_discovery_chars(skills)
+    if full > DISCOVERY_BUDGET_CHARS:
+        report.warn(
+            f"all {len(skills)} skills together are ~{full} bytes of discovery prompt, over the "
+            f"{DISCOVERY_BUDGET_CHARS}-byte Codex budget — fine for Claude Code; Codex users "
+            f"should install by role pack"
+        )
+
+
 def run_skills_ref(skills: list[Skill], report: Report) -> None:
     binary = shutil.which("skills-ref")
     if not binary:
@@ -274,12 +381,15 @@ def main() -> int:
         check_frontmatter(skill, schema, report)
         check_strict_yaml(skill, report)
         check_body_length(skill, report)
+        check_required_sections(skill, report)
         check_references_exist(skill, report)
         check_script_dependencies(skill, report)
 
     check_duplicates(skills, report)
     check_empty_dirs(report)
     check_evaluations(skills, report)
+    check_workflows(skills, report)
+    check_packs(skills, report)
     run_skills_ref(skills, report)
 
     print(f"Validated {len(skills)} skill(s).\n")

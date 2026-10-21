@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/alphasafal/production-agent-skills/schemas/workflow.schema.json",
+  "title": "Skill Workflow Evaluation Scenario",
+  "description": "One end-to-end scenario run by scripts/run_behavioral_evals.py, with and without the skill, and graded against required/forbidden behaviors.",
+  "type": "object",
+  "required": ["id", "skill", "scenario", "required_behaviors", "forbidden_behaviors", "expected_artifacts", "grading_notes"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"},
+    "skill": {"type": "string"},
+    "kind": {
+      "type": "string",
+      "enum": ["standard", "pressure"],
+      "description": "pressure: the prompt argues for skipping the workflow (time pressure, authority, sunk cost). The skill should hold anyway."
+    },
+    "scenario": {"type": "string", "minLength": 10, "description": "The prompt sent verbatim to the agent."},
+    "fixture": {"type": "string", "description": "Human-readable note on the fixture. Machine-readable inputs live in workspace_files / reference_answer."},
+    "workspace_files": {
+      "type": "array",
+      "description": "Repo paths (files or directories) copied into the agent's throwaway workspace. Never put reference answers here.",
+      "items": {
+        "type": "object",
+        "required": ["from"],
+        "additionalProperties": false,
+        "properties": {
+          "from": {"type": "string"},
+          "to": {"type": "string", "description": "Destination path inside the workspace (default: basename of `from`)."}
+        }
+      }
+    },
+    "reference_answer": {"type": "string", "description": "Repo path shown ONLY to the grader, never to the agent."},
+    "required_behaviors": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "forbidden_behaviors": {"type": "array", "items": {"type": "string"}},
+    "expected_artifacts": {"type": "array", "items": {"type": "string"}},
+    "grading_notes": {"type": "string"},
+    "max_turns": {"type": "integer", "minimum": 1, "description": "Override the runner's default turn limit for this scenario."}
+  }
+}

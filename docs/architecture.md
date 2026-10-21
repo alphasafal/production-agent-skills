@@ -16,7 +16,8 @@ vendor's extensions.
 ## Repository layout and why
 
 ```
-skills/          the 8 canonical skills — the actual product
+skills/          the canonical skills — the actual product
+packs.json       role packs: which skills each role installs
 evaluations/     proof the skills behave as specified (activation + workflow)
 examples/        end-to-end walkthroughs, one per skill, for humans reading the repo
 docs/            conceptual + reference documentation

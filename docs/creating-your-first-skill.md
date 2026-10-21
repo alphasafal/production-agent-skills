@@ -53,6 +53,15 @@ are an expert in X" — write the actual sequence of things to do.
 What file(s) or structured output does a correct run produce? If you can't
 answer this, the workflow probably isn't concrete enough yet.
 
+### 4b. Write the red flags and rationalizations
+
+Imagine a capable agent that *wants* to skip your workflow. What would it
+tell itself? "It's obviously X." "The user is in a hurry." "Tests can come
+later." Write those down in `# Common rationalizations` with the reason
+each one doesn't hold, and list in `# Red flags` the observable signs that
+it's already happening. The validator requires at least three of each —
+these are what keep the workflow intact when a prompt pushes against it.
+
 ### 5. Move detail out of SKILL.md
 
 If a section is getting long and only matters in some cases, it belongs in
@@ -74,7 +83,14 @@ At minimum, per `CONTRIBUTING.md`: 5 obvious positive triggers, 2 harder/
 ambiguous positive triggers, 3 negative triggers (prompts that must NOT
 activate it). Put them in `evaluations/activation/my-skill.json` following
 `schemas/evaluation.schema.json` — copy the shape from any existing file
-in that directory.
+in that directory. Then run `python scripts/run_routing_evals.py`: your
+description must win its own obvious prompts against every other skill in
+the catalog, and must not steal theirs.
+
+Add one scenario to `evaluations/workflows/my-skill.json` (schema:
+`schemas/workflow.schema.json`) with the files the agent works on in
+`workspace_files` and any reference answer in `reference_answer` — the
+grader sees that, the agent never does.
 
 ### 8. Write at least one worked example
 
@@ -86,6 +102,7 @@ regression check for future edits to the skill.
 
 ```bash
 python scripts/validate_skills.py -v
+python scripts/run_routing_evals.py
 pytest tests/
 python scripts/inspect_skill.py my-skill
 ```
@@ -100,3 +117,10 @@ Install it into an actual client (`python scripts/install_skills.py
 run your positive-trigger prompts against it. A skill that's never
 actually been exercised by an agent is unverified, no matter how clean it
 looks on paper.
+
+The automated version of this step:
+
+```bash
+python scripts/run_behavioral_evals.py --skill my-skill --runs 3          # with vs. without, blind-graded
+python scripts/run_behavioral_evals.py --mode activation --skill my-skill # does it actually get loaded?
+```

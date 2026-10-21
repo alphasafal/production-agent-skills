@@ -1,0 +1,10 @@
+# PagerDuty export - service: checkout-platform - times UTC - 2026-10-14
+2026-10-14T13:41:12Z  TRIGGERED  P3  [orders-db-primary] DBCPUHigh: cpu_pct > 80 for 1m (current 83.8)          incident=PD-48811  assignee=dba-oncall
+2026-10-14T13:46:12Z  ACK        P3  [orders-db-primary] DBCPUHigh acknowledged by dba-oncall                    incident=PD-48811
+2026-10-14T13:51:12Z  NOTE       P3  [orders-db-primary] dba-oncall: "weekly analytics export job started 13:40, expected ~60m, query latency normal"  incident=PD-48811
+2026-10-14T14:04:40Z  TRIGGERED  P2  [checkout-api] CheckoutErrorRateWarning: 5xx_rate > 1% for 1m (current 2.11%)  incident=PD-48817  assignee=checkout-oncall
+2026-10-14T14:06:40Z  TRIGGERED  P2  [checkout-api] CheckoutLatencyP99: p99 > 1000ms for 3m (current 1411ms)     incident=PD-48818  assignee=checkout-oncall
+2026-10-14T14:07:40Z  ESCALATED  P1  [checkout-api] CheckoutErrorRateCritical: 5xx_rate > 10% for 1m (current 10.61%)  incident=PD-48817  assignee=checkout-oncall
+2026-10-14T14:09:40Z  NOTE       P1  [checkout-api] no acknowledgement after 5m, re-paging checkout-oncall      incident=PD-48817
+2026-10-14T14:11:05Z  TRIGGERED  P2  [support-desk] ContactRateSpike: "payment failed" tickets 9x baseline in 10m  incident=PD-48820  assignee=support-lead
+2026-10-14T14:14:40Z  ESCALATED  P1  [checkout-api] CheckoutErrorRateCritical: 5xx_rate 18.38% and rising       incident=PD-48817  assignee=checkout-oncall

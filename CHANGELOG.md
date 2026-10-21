@@ -3,7 +3,73 @@
 All notable changes to this project are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [0.1.0] — Unreleased
+## [0.2.0] — 2026-10-21
+
+### Added
+
+- **Four new skills for two new roles.** SRE/DevOps: `incident-responder`
+  (mitigate first, status updates, blameless postmortem) and
+  `deploy-pipeline-reviewer` (CI/CD, Dockerfiles, migrations, rollout).
+  Security: `threat-modeler` (STRIDE threats as concrete attacks, testable
+  requirements) and `security-auditor` (input-to-sink traced findings).
+  Each one ships with a fixture containing planted problems and decoys, plus
+  a grader-only answer key.
+- **Role packs** (`packs.json`): backend, tech-lead, sre, security,
+  data-scientist, product-manager. Each installs with one command per role
+  (Claude Code plugin, `npx skills`, or `install_skills.py --pack`), and CI
+  checks that every pack fits the 8,000-byte discovery budget.
+- **Benchmark results** (`evaluations/results/README.md`): 12 standard
+  scenarios 51% → 94% of required behaviors with the skill; 5 pressure
+  scenarios 63% → 85%; activation 115/120 with zero wrong-skill loads.
+  Model: claude-sonnet-5-5.
+- **Anti-shortcut guardrails in every skill.** New required `# Red flags`
+  and `# Common rationalizations` sections: observable signs the workflow
+  is being skipped, and the excuses agents use to skip it with why they
+  don't hold. Enforced by `validate_skills.py` (≥3 of each, standard order).
+- **Catalog-wide routing eval** (`scripts/run_routing_evals.py`, CI-gated):
+  BM25 over every skill's name and positive description. Gates obvious
+  prompts at rank #1 of all skills, ambiguous prompts in the top 3,
+  cross-routing negatives (new `route_to` field) and description
+  collisions. Reports a held-out prompt set (`evaluations/routing/`) that
+  is never used for tuning.
+- **Behavioral eval runner** (`scripts/run_behavioral_evals.py`): runs each
+  workflow scenario with and without the skill through headless Claude
+  Code in isolated workspaces, blind-graded by a separate call; plus an
+  activation mode that measures which skill a real agent loads.
+- **Pressure scenarios** (`evaluations/workflows/pressure/`, 5): time
+  pressure, authority, sunk cost, skip-the-tests, CEO scope.
+- **Claude Code plugin marketplace**, generated from `packs.json`: one
+  plugin with everything plus one per role. Ships with 12 slash commands.
+  Validated with `claude plugin validate`, and a pack plugin was installed
+  end to end.
+- `schemas/workflow.schema.json`; workflow scenarios now declare
+  `workspace_files` (agent sees) and `reference_answer` (grader only), and
+  the validator rejects any scenario that would leak an answer or spoiler.
+- `evaluations/fixtures/public-api/`, a small stdlib API with tests, so the
+  feature-to-production scenario has a real codebase to change.
+- CI: routing gate, behavioral dry-run, and an 8,000-char discovery-budget
+  check via `skills-ref to-prompt`.
+
+### Changed
+
+- All 8 descriptions widened with the vocabulary users actually use
+  ("throws", "OOM", "logged out", "vendor", "will this scale", "CSV"…).
+  Obvious-prompt routing went from 32/40 to 40/40 at rank #1; "Do not
+  use…" guidance kept intact.
+- The debugging scenario now runs against the runnable sample app instead
+  of a diff, and the repo-architect scenario against a real codebase.
+- `feature-to-production`: new red flag and rationalization for skipping
+  the review stage. Added after the behavioral eval showed the agent
+  skipping it even with the skill loaded.
+- Descriptions for `system-design-reviewer`, `feature-to-production`,
+  `debugging-investigator`, `data-scientist` and `repo-architect` now say
+  when to load the skill. Round-1 activation showed some skills not loading
+  at all; round 2 raised system-design-reviewer from 0/5 to 5/5 and
+  feature-to-production from 2/5 to 5/5.
+- Behavioral evals exclude a skill's `examples/` from the installed copy,
+  because several examples answered the exact scenario being graded.
+
+## [0.1.0] — 2026-09-12
 
 ### Added
 

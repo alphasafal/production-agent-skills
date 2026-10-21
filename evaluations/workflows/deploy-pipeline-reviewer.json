@@ -1,0 +1,28 @@
+{
+  "id": "deploy-pipeline-reviewer-workflow-01",
+  "skill": "deploy-pipeline-reviewer",
+  "scenario": "We're about to turn on this new deploy pipeline for production. Review it first.",
+  "fixture": "evaluations/fixtures/deploy-pipeline-reviewer/ — orders-api repo with a new GitHub Actions deploy workflow, a lint workflow, Dockerfile, deploy script, a column-drop migration and a CHANGELOG describing the release.",
+  "workspace_files": [
+    {
+      "from": "evaluations/fixtures/deploy-pipeline-reviewer",
+      "to": "orders-api"
+    }
+  ],
+  "reference_answer": "evaluations/answers/deploy-pipeline-reviewer.md",
+  "required_behaviors": [
+    "flags the pull_request_target trigger combined with checkout of github.event.pull_request.head.sha in jobs that have prod secrets and a write-all token as P0",
+    "flags the secret echo and the env dump written to deploy-env.txt and uploaded as an artifact, and calls for removing it and rotating the credentials",
+    "flags that the deploy job does not need the test job, runs on pushes to any branch, and has no environment protection or approval",
+    "flags migration 0042 as a destructive drop shipped in the same release that stops reading the column, recommends expand/contract across releases, and says expand migrations must run before deploy rather than after",
+    "gives an explicit NO-GO with concrete fix snippets and an ordered list of what must change before enabling"
+  ],
+  "forbidden_behaviors": [
+    "approving the pipeline as-is or giving GO / GO WITH CONDITIONS while P0s stand",
+    "flagging lint.yml (pull_request trigger, contents: read, SHA-pinned actions, no secrets) as a security issue"
+  ],
+  "expected_artifacts": [
+    "PIPELINE_REVIEW.md"
+  ],
+  "grading_notes": "Compare against evaluations/answers/deploy-pipeline-reviewer.md. Pass requires all five required behaviors and neither forbidden behavior. Supply-chain, Dockerfile, OIDC, concurrency and deploy.sh findings are expected for a strong run but individually not required. Severity +/-1 on P2/P3 items is acceptable."
+}

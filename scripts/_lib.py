@@ -4,6 +4,7 @@ Not a skill-facing module — internal to scripts/ only.
 """
 from __future__ import annotations
 
+import html
 import json
 import re
 from dataclasses import dataclass, field
@@ -15,6 +16,11 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = REPO_ROOT / "skills"
 EVALUATIONS_DIR = REPO_ROOT / "evaluations"
 SCHEMAS_DIR = REPO_ROOT / "schemas"
+PACKS_FILE = REPO_ROOT / "packs.json"
+
+# Codex documents a ~8,000-char cap on the initial skill list; Claude Code's is
+# larger. Each role pack must fit the smaller one so any client can carry it.
+DISCOVERY_BUDGET_CHARS = 8000
 
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n?(.*)$", re.DOTALL)
 
@@ -146,6 +152,52 @@ def load_schema(name: str) -> dict:
     return json.loads((SCHEMAS_DIR / name).read_text())
 
 
+# Top-level sections every SKILL.md body must contain, in this order. "Red flags" and
+# "Common rationalizations" are the anti-shortcut guardrails: agents rarely fail by
+# not knowing a procedure, they fail by talking themselves out of following it.
+REQUIRED_SECTIONS = [
+    "Purpose",
+    "When to use",
+    "When NOT to use",
+    "Required inputs",
+    "Workflow",
+    "Tool & resource guidance",
+    "Output contract",
+    "Quality checks",
+    "Red flags",
+    "Common rationalizations",
+    "Edge cases",
+    "References",
+]
+MIN_RED_FLAGS = 3
+MIN_RATIONALIZATIONS = 3
+
+H1_RE = re.compile(r"^# (.+?)\s*$", re.MULTILINE)
+
+
+def section_headings(body: str) -> list[str]:
+    """Top-level (`# `) headings in a SKILL.md body, ignoring fenced code blocks."""
+    stripped = re.sub(r"```.*?```", "", body, flags=re.DOTALL)
+    return H1_RE.findall(stripped)
+
+
+def section_text(body: str, heading: str) -> str:
+    """Text between `# <heading>` and the next top-level heading ('' if absent)."""
+    match = re.search(rf"^# {re.escape(heading)}\s*$(.*?)(?=^# |\Z)", body, re.MULTILINE | re.DOTALL)
+    return match.group(1) if match else ""
+
+
+def count_bullets(text: str) -> int:
+    return len(re.findall(r"^\s*[-*] \S", text, re.MULTILINE))
+
+
+def count_table_rows(text: str) -> int:
+    """Data rows of a markdown table (excludes the header and separator rows)."""
+    rows = [ln for ln in text.splitlines() if ln.strip().startswith("|")]
+    rows = [ln for ln in rows if not re.match(r"^\s*\|[\s:|-]+\|\s*$", ln)]
+    return max(len(rows) - 1, 0)
+
+
 MARKDOWN_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 BARE_PATH_RE = re.compile(r"\b((?:references|scripts|assets|examples)/[A-Za-z0-9_./-]+)\b")
 
@@ -166,3 +218,32 @@ def find_relative_references(body: str) -> set[str]:
     for m in BARE_PATH_RE.finditer(body):
         found.add(m.group(1))
     return found
+
+
+def load_packs() -> dict[str, dict]:
+    """Role packs from packs.json: {pack_name: {title, description, skills: [...]}}."""
+    if not PACKS_FILE.is_file():
+        return {}
+    return json.loads(PACKS_FILE.read_text())["packs"]
+
+
+def estimate_discovery_chars(skills: list[Skill], location_prefix_len: int = 60) -> int:
+    """Size in bytes of `skills-ref to-prompt` output for these skills, computed offline.
+
+    Reproduces its exact format: an <available_skills> wrapper plus, per skill,
+    <name>, <description> and <location> blocks. <location> is the absolute path
+    to SKILL.md on the machine that loads it, so the real size depends on the
+    install path; `location_prefix_len` is the assumed length of the path up to
+    and including "skills/" (60 covers typical project paths). CI measures the
+    exact number with skills-ref as well.
+    """
+    per_skill_markup = len("<skill>\n<name>\n\n</name>\n<description>\n\n</description>\n"
+                           "<location>\n\n</location>\n</skill>\n")
+    total = len("<available_skills>\n</available_skills>\n")
+    for s in skills:
+        location = location_prefix_len + len(s.dir.name) + len("/SKILL.md")
+        # skills-ref HTML-escapes the description (" -> &quot;, ' -> &#x27;) and the
+        # budget is measured in bytes (an em dash is 3), so mirror both.
+        desc = html.escape(" ".join(s.description.split()), quote=True).encode("utf-8")
+        total += per_skill_markup + len(s.name) + len(desc) + location
+    return total

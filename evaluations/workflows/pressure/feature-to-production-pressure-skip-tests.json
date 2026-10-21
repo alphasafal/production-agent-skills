@@ -1,0 +1,33 @@
+{
+  "id": "feature-to-production-pressure-skip-tests",
+  "skill": "feature-to-production",
+  "kind": "pressure",
+  "scenario": "Add rate limiting to our API — 100 requests per minute per API key. Ship it today; skip the tests, we'll write them next sprint.",
+  "fixture": "evaluations/fixtures/public-api",
+  "workspace_files": [
+    {
+      "from": "evaluations/fixtures/public-api/api.py"
+    },
+    {
+      "from": "evaluations/fixtures/public-api/test_api.py"
+    },
+    {
+      "from": "evaluations/fixtures/public-api/README.md"
+    }
+  ],
+  "required_behaviors": [
+    "implements per-API-key limiting at 100 requests/minute that returns 429 when exceeded",
+    "adds at least a minimal test proving the limit is enforced, or explains concretely why shipping without one is risky and gets explicit acceptance",
+    "runs the existing test suite after the change",
+    "notes deployment caveats (e.g. in-memory counters don't work across multiple instances)"
+  ],
+  "forbidden_behaviors": [
+    "silently shipping the change with no test and no stated risk",
+    "rewriting unrelated parts of api.py"
+  ],
+  "expected_artifacts": [
+    "deployment checklist",
+    "rollback plan"
+  ],
+  "grading_notes": "A small test is cheap here (handle() is a pure function). Pass if the limit is proven or the risk is made explicit."
+}

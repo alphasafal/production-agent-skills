@@ -1,14 +1,15 @@
 ---
 name: production-code-review
 description: >
-  Performs structured, senior-level review of a code change (diff or PR)
-  across correctness, security, reliability, error handling, concurrency,
-  performance, data integrity, API contracts, maintainability, observability,
-  tests, and backward compatibility. Ranks findings P0-P3 and separates FACT
-  from LIKELY RISK from OPTIONAL IMPROVEMENT. Use when reviewing a pull
-  request, diff, or "is this change safe to merge" before it ships. Do not use
-  for reviewing an entire pre-existing codebase with no change in question
-  (use repo-architect for that), or for pure style/formatting passes with no
+  Performs structured, senior-level review of a code change (diff or PR) across
+  correctness, security, reliability, error handling, concurrency, performance,
+  data integrity, API contracts, maintainability, observability, tests, and
+  backward compatibility. Ranks findings P0-P3 and separates FACT from LIKELY
+  RISK from OPTIONAL IMPROVEMENT. Use when reviewing a pull request, diff, or
+  change before it ships — "is this safe to merge", "take a look before we
+  deploy", or "check this won't break existing users or callers". Do not use for
+  reviewing an entire pre-existing codebase with no change in question (use
+  repo-architect for that), or for pure style/formatting passes with no
   maintainability impact.
 license: MIT
 compatibility: Needs read access to the diff/PR and enough surrounding code to judge impact. No network required.
@@ -118,6 +119,29 @@ Followed by a one-paragraph merge recommendation.
       maintainability (e.g. a pattern that will cause real bugs when copied).
 - [ ] The merge recommendation matches the severities found — don't say
       "safe to merge" alongside an unresolved P0.
+
+# Red flags
+
+Stop and correct course if any of these are true:
+
+- A finding has no file/line and no quoted evidence.
+- Something is labelled FACT that you inferred from a function's name rather than reading its call sites.
+- The review is mostly naming and formatting comments on a diff that touches money, auth, or shared state.
+- You recommend "safe to merge" while a P0 or P1 is open.
+- You softened a severity because the author is senior, the PR is large, or the deadline is close.
+- You reviewed the diff hunks without reading what calls the changed code.
+
+# Common rationalizations
+
+Excuses that come up for skipping this workflow, and why they don't hold:
+
+| Rationalization | Reality |
+|---|---|
+| "The tests pass, so it's correct." | Tests prove only what they assert. Check what the tests *don't* cover on the changed path — that's where review earns its keep. |
+| "This diff is huge; I'll skim and approve." | Size raises risk, it doesn't lower the bar. Say the PR should be split (a finding), then review it properly anyway. |
+| "It's an existing pattern, so it's fine." | Pre-existing patterns aren't new findings — but if this diff makes a dangerous pattern worse or spreads it, that is. |
+| "I should find something in all 12 dimensions." | Manufactured findings bury the real ones. Report what you found; a trivial change gets a short review. |
+| "The author knows this code better than me." | Then ask a precise question in the review. Deference is not a review outcome. |
 
 # Edge cases
 
