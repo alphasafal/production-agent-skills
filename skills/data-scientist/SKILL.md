@@ -1,16 +1,16 @@
 ---
 name: data-scientist
 description: >
-  Runs an end-to-end structured tabular data science workflow: problem
-  framing, schema/leakage/missingness checks, EDA, baseline before modeling,
-  feature engineering, model comparison against the baseline, and error/slice
-  analysis. Use when asked to analyze a dataset, build a predictive model,
-  evaluate a model's performance, or investigate a data quality issue in
-  tabular data. Do not use for pure data engineering/ETL with no analysis or
-  modeling question, for unstructured data (images/audio/free text at scale)
-  without a tabular framing, or when the task is answerable by a single
-  summary statistic with no need for the full workflow — say so and just
-  answer it.
+  Runs an end-to-end structured tabular data science workflow: problem framing,
+  schema/leakage/missingness checks, EDA, baseline before modeling, feature
+  engineering, model comparison against the baseline, and error/slice analysis.
+  Use when asked to analyze a dataset, CSV, or spreadsheet; predict an outcome
+  such as which users will convert or churn; build or evaluate a predictive
+  model; or dig into a data quality issue in tabular data. Do not use for pure
+  data engineering/ETL with no analysis or modeling question, for unstructured
+  data (images/audio/free text at scale) without a tabular framing, or when the
+  task is answerable by a single summary statistic with no need for the full
+  workflow — say so and just answer it.
 license: MIT
 compatibility: >
   Scripts require Python with pandas/numpy installed (see pyproject.toml's
@@ -146,6 +146,29 @@ same contract minus the modeling-specific sections.
       only an aggregate metric reported.
 - [ ] If the task didn't actually need modeling, that was recognized and
       modeling was skipped rather than forced.
+
+# Red flags
+
+Stop and correct course if any of these are true:
+
+- You are training a model and there is no naive baseline score yet.
+- A feature is suspiciously predictive and you haven't checked whether it exists at prediction time.
+- Rows with missing values were dropped without looking at whether missingness relates to the target.
+- The metric is accuracy on an imbalanced target, chosen because it's the default.
+- You only report one aggregate number — no error analysis, no slices.
+- The data has a time dimension and you used a random train/test split.
+
+# Common rationalizations
+
+Excuses that come up for skipping this workflow, and why they don't hold:
+
+| Rationalization | Reality |
+|---|---|
+| "The baseline is obviously bad, skip it." | Then it costs seconds and proves your model's lift. Without it, "92% accuracy" might mean nothing on a 92/8 split. |
+| "This feature is the best predictor — great!" | Too-good features are the first leakage suspect. Run `scripts/check_leakage.py` and ask when the value becomes known. |
+| "Just drop the nulls." | If missingness correlates with the target you've just biased the dataset. Check the pattern first. |
+| "Let's try XGBoost straight away." | Complexity has to beat the next-simplest model, not just the baseline. Start with linear/logistic and make the fancy model earn its place. |
+| "The overall metric is good, we're done." | Aggregates hide subgroups where the model is useless or harmful. Slice by the segments the decision cares about. |
 
 # Edge cases
 

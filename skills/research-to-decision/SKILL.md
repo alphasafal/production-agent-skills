@@ -1,14 +1,16 @@
 ---
 name: research-to-decision
 description: >
-  Turns research into an auditable technical or product decision: defines
-  the decision and constraints, gathers evidence with sources, separates
-  evidence from assumption, compares alternatives against explicit criteria,
-  and produces an ADR. Use when choosing between technologies/approaches
-  ("Kafka vs SQS", "build vs buy"), documenting the reasoning behind a
-  decision already made, or when asked to "research this and recommend one."
-  Do not use for implementing the chosen option (that's a separate skill),
-  or for open-ended research with no decision to make at the end.
+  Turns research into an auditable technical or product decision: defines the
+  decision and constraints, gathers evidence with sources, separates evidence
+  from assumption, compares alternatives against explicit criteria, and produces
+  an ADR. Use when choosing between technologies, tools, vendors, or providers
+  ("Kafka vs SQS", "REST or GraphQL", "build vs buy"), deciding whether a switch
+  is worth it, settling a choice a team keeps debating, documenting the
+  reasoning behind a decision already made, or when asked to "research this and
+  recommend one." Do not use for implementing the chosen option (that's a
+  separate skill), or for open-ended research with no decision to make at the
+  end.
 license: MIT
 compatibility: >
   Benefits from web research/search tools for external evidence; without
@@ -111,6 +113,29 @@ Three artifacts:
       what's gained.
 - [ ] The ADR is understandable on its own, without the full research doc,
       to someone reading it in a year.
+
+# Red flags
+
+Stop and correct course if any of these are true:
+
+- A factual claim (a price, a limit, a benchmark) has no citation and isn't marked as an assumption.
+- Evaluation criteria were written after you'd seen which option wins on them.
+- A citation points to a source you didn't actually open.
+- One option wins on every criterion with no stated trade-off.
+- The recommendation doesn't mention the constraints captured earlier (budget, team skills, compliance).
+- There is no "what would change this decision" section.
+
+# Common rationalizations
+
+Excuses that come up for skipping this workflow, and why they don't hold:
+
+| Rationalization | Reality |
+|---|---|
+| "Everyone knows Postgres / Kafka / X is better for this." | Then it's easy to source. Popular wisdom is an assumption until a primary source backs it for *this* workload. |
+| "I'm fairly sure about this number, I'll state it." | Confidence isn't a citation. Mark it as an assumption or verify it — never present it as sourced fact. |
+| "We already know what we want; just write the ADR." | An ADR that records a pre-made choice without the alternatives and trade-offs is a press release. Record what was given up. |
+| "The blog post summarizes the docs well enough." | Summaries drift and go stale. Prefer the primary source, especially for limits and pricing. |
+| "There's too much uncertainty to recommend anything." | Recommend the best option under stated uncertainty and say what would flip it. "It depends" is not a decision. |
 
 # Edge cases
 

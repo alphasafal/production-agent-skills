@@ -146,6 +146,52 @@ def load_schema(name: str) -> dict:
     return json.loads((SCHEMAS_DIR / name).read_text())
 
 
+# Top-level sections every SKILL.md body must contain, in this order. "Red flags" and
+# "Common rationalizations" are the anti-shortcut guardrails: agents rarely fail by
+# not knowing a procedure, they fail by talking themselves out of following it.
+REQUIRED_SECTIONS = [
+    "Purpose",
+    "When to use",
+    "When NOT to use",
+    "Required inputs",
+    "Workflow",
+    "Tool & resource guidance",
+    "Output contract",
+    "Quality checks",
+    "Red flags",
+    "Common rationalizations",
+    "Edge cases",
+    "References",
+]
+MIN_RED_FLAGS = 3
+MIN_RATIONALIZATIONS = 3
+
+H1_RE = re.compile(r"^# (.+?)\s*$", re.MULTILINE)
+
+
+def section_headings(body: str) -> list[str]:
+    """Top-level (`# `) headings in a SKILL.md body, ignoring fenced code blocks."""
+    stripped = re.sub(r"```.*?```", "", body, flags=re.DOTALL)
+    return H1_RE.findall(stripped)
+
+
+def section_text(body: str, heading: str) -> str:
+    """Text between `# <heading>` and the next top-level heading ('' if absent)."""
+    match = re.search(rf"^# {re.escape(heading)}\s*$(.*?)(?=^# |\Z)", body, re.MULTILINE | re.DOTALL)
+    return match.group(1) if match else ""
+
+
+def count_bullets(text: str) -> int:
+    return len(re.findall(r"^\s*[-*] \S", text, re.MULTILINE))
+
+
+def count_table_rows(text: str) -> int:
+    """Data rows of a markdown table (excludes the header and separator rows)."""
+    rows = [ln for ln in text.splitlines() if ln.strip().startswith("|")]
+    rows = [ln for ln in rows if not re.match(r"^\s*\|[\s:|-]+\|\s*$", ln)]
+    return max(len(rows) - 1, 0)
+
+
 MARKDOWN_LINK_RE = re.compile(r"\[[^\]]*\]\(([^)\s]+)\)")
 BARE_PATH_RE = re.compile(r"\b((?:references|scripts|assets|examples)/[A-Za-z0-9_./-]+)\b")
 
