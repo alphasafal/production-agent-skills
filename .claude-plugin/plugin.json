@@ -20,7 +20,5 @@
     "data-science",
     "prd",
     "evals"
-  ],
-  "commands": "./commands",
-  "skills": "./skills"
+  ]
 }
