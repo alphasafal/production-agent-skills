@@ -117,6 +117,17 @@ stops meaning anything. If a miss reveals a real gap, add a new case to
 spend the discovery budget: CI fails if `skills-ref to-prompt` for all
 skills exceeds 8,000 characters.
 
+### Changing plugins, packs or commands
+
+Slash commands live in `slash-commands/`. After editing `packs.json`, a
+command, or a skill's name, run `python scripts/build_marketplace.py`. It
+regenerates `.claude-plugin/marketplace.json` and `plugin-packs/`, and CI
+fails if they're stale. Before a release, run
+`python scripts/verify_plugin_install.py`. It installs every plugin with the
+real Claude Code CLI and checks that each one loads with exactly the right
+skills and commands. This catches load failures that
+`claude plugin validate` misses.
+
 ### Measuring a change for real
 
 ```bash
