@@ -1,0 +1,10 @@
+---
+description: "Review CI/CD workflows, Dockerfiles, deploy scripts and migrations before they run against production"
+argument-hint: "[workflow file or directory — defaults to .github/workflows and deploy config]"
+---
+
+Use the `deploy-pipeline-reviewer` skill for this task and follow its workflow, red flags and output contract exactly.
+
+Trace every job end to end; treat anything with secret access as production.
+
+Task: $ARGUMENTS

@@ -15,6 +15,8 @@ Checks performed:
   - evaluations/activation/<skill>.json validates against schemas/evaluation.schema.json
   - evaluations/workflows/**/*.json validate against schemas/workflow.schema.json; their
     workspace files exist and never include a reference answer or spoiler
+  - packs.json: every pack lists real skills, every skill is in a pack, and each pack's
+    discovery prompt fits the 8,000-byte budget
   - optional: shells out to `skills-ref validate` per skill if that CLI is on PATH
 
 Exit code 0 if no errors (warnings are non-fatal). Run with -v for warnings too.
@@ -43,7 +45,10 @@ from _lib import (  # noqa: E402
     SkillParseError,
     count_bullets,
     count_table_rows,
+    DISCOVERY_BUDGET_CHARS,
     discover_skills,
+    estimate_discovery_chars,
+    load_packs,
     find_relative_references,
     load_schema,
     section_headings,
@@ -303,6 +308,40 @@ def check_workflows(skills: list[Skill], report: Report) -> None:
                 report.error(f"{rel}: reference_answer '{ref}' does not exist")
 
 
+def check_packs(skills: list[Skill], report: Report) -> None:
+    packs = load_packs()
+    if not packs:
+        report.warn("packs.json missing or empty — no role packs defined")
+        return
+    by_name = {s.name: s for s in skills}
+    in_a_pack: set[str] = set()
+    for pack, spec in packs.items():
+        unknown = [n for n in spec.get("skills", []) if n not in by_name]
+        for n in unknown:
+            report.error(f"packs.json: pack '{pack}' lists unknown skill '{n}'")
+        members = [by_name[n] for n in spec.get("skills", []) if n in by_name]
+        in_a_pack |= {s.name for s in members}
+        if not members:
+            report.error(f"packs.json: pack '{pack}' has no skills")
+            continue
+        size = estimate_discovery_chars(members)
+        if size > DISCOVERY_BUDGET_CHARS:
+            report.error(
+                f"packs.json: pack '{pack}' discovery prompt is ~{size} bytes, over the "
+                f"{DISCOVERY_BUDGET_CHARS}-byte budget — split the pack or shorten descriptions"
+            )
+    for s in skills:
+        if s.name not in in_a_pack:
+            report.error(f"{s.dir.name}: not in any role pack in packs.json")
+    full = estimate_discovery_chars(skills)
+    if full > DISCOVERY_BUDGET_CHARS:
+        report.warn(
+            f"all {len(skills)} skills together are ~{full} bytes of discovery prompt, over the "
+            f"{DISCOVERY_BUDGET_CHARS}-byte Codex budget — fine for Claude Code; Codex users "
+            f"should install by role pack"
+        )
+
+
 def run_skills_ref(skills: list[Skill], report: Report) -> None:
     binary = shutil.which("skills-ref")
     if not binary:
@@ -350,6 +389,7 @@ def main() -> int:
     check_empty_dirs(report)
     check_evaluations(skills, report)
     check_workflows(skills, report)
+    check_packs(skills, report)
     run_skills_ref(skills, report)
 
     print(f"Validated {len(skills)} skill(s).\n")
