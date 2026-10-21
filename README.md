@@ -252,7 +252,7 @@ Full tables, per-scenario breakdown and method: [`evaluations/results/README.md`
 | Each prompt routes to the right skill, catalog-wide | 60/60 obvious prompts rank their skill #1 of 12; 15/15 "belongs to another skill" negatives route there; CI-gated |
 | Skills change what the agent does | Blind-graded with-vs-without benchmark, 102 + 42 runs; see Results above |
 | Routing generalizes beyond the tuned prompts | 24 held-out prompts never used for tuning: 15/24 rank #1, 24/24 top-3 |
-| Every role pack is cheap to carry | Largest pack's discovery prompt is 4,607 bytes, under Codex's 8,000 ceiling — enforced per pack in CI with `skills-ref to-prompt` |
+| Every role pack is cheap to carry | Largest pack's discovery prompt is 4,747 bytes, under Codex's 8,000 ceiling — enforced per pack in CI with `skills-ref to-prompt` |
 | Reference answers never leak to the agent | Validator rejects any scenario whose `workspace_files` include a reference answer or spoiler |
 | The bundled scripts are correct | Run against the real 891-row Titanic dataset; outputs match independently-computed ground truth |
 | The debugging example is real | Bug reproduces 10/10 runs; documented fix resolves it 10/10 |

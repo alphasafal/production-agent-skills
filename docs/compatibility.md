@@ -13,7 +13,7 @@ See each `clients/*.md` file for exactly what was checked and how.
 |---|---|
 | All 12 skills pass the official `skills-ref validate` (reference implementation of the open spec) | ✅ verified — run per skill in CI |
 | Frontmatter satisfies the spec's strict YAML subset (no flow collections, anchors, or duplicate keys) | ✅ verified — enforced by `scripts/validate_skills.py` and `tests/test_spec_strictness.py` |
-| Discovery cost per role pack (`skills-ref to-prompt`) | ✅ measured — largest pack (tech-lead) **4,607 bytes**, every pack under Codex's documented 8,000-char skill-list ceiling; enforced per pack in CI. All 12 together: 10,901 bytes (fine for Claude Code; Codex users install by pack) |
+| Discovery cost per role pack (`skills-ref to-prompt`) | ✅ measured — largest pack (tech-lead) **4,747 bytes**, every pack under Codex's documented 8,000-char skill-list ceiling; enforced per pack in CI. All 12 together: 11194 bytes (fine for Claude Code; Codex users install by pack) |
 | Tooling runs on the declared `requires-python = ">=3.9"` range | ✅ verified — full suite passes on 3.9, 3.11, and 3.13 (CI matrix) |
 | Installed copies (not just source) remain spec-valid | ✅ verified — `skills-ref validate` run against skills installed into a real cloned repository |
 

@@ -112,8 +112,8 @@ uvx --from "git+https://github.com/agentskills/agentskills#subdirectory=skills-r
 
 At the time of writing, every role pack in `packs.json` is well under Codex's
 documented ceiling of 8,000 characters (or 2% of the context window) for the
-skill list — the largest, tech-lead, is 4,607 bytes. All 12 skills together
-are 10,901 bytes: fine for Claude Code, but Codex users should install by
+skill list — the largest, tech-lead, is 4,747 bytes. All 12 skills together
+are 11194 bytes: fine for Claude Code, but Codex users should install by
 role pack (`python scripts/install_skills.py --pack <role>`). CI measures
 every pack with `skills-ref to-prompt` and fails the build if one goes over.
 
