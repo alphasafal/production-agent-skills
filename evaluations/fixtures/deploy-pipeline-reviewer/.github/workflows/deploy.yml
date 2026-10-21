@@ -1,0 +1,81 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions: write-all
+
+env:
+  AWS_REGION: ap-south-1
+  ECR_REPOSITORY: orders-api
+  CLUSTER: orders-prod
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Debug deploy context
+        run: |
+          echo "branch: ${GITHUB_REF_NAME}"
+          echo "deploying with key $AWS_ACCESS_KEY_ID / $AWS_SECRET_ACCESS_KEY"
+          env | sort > deploy-env.txt
+
+      - name: Install deploy CLI
+        run: curl -fsSL https://get.shipctl.dev/install.sh | bash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Build and push image
+        run: |
+          aws ecr get-login-password | docker login --username AWS --password-stdin "${{ secrets.ECR_REGISTRY }}"
+          docker build -t "${{ secrets.ECR_REGISTRY }}/${ECR_REPOSITORY}:${GITHUB_SHA}" .
+          docker push "${{ secrets.ECR_REGISTRY }}/${ECR_REPOSITORY}:${GITHUB_SHA}"
+
+      - name: Deploy to production
+        run: ./scripts/deploy.sh "${GITHUB_SHA}"
+
+      - name: Run database migrations
+        run: npx knex migrate:latest --env production
+
+      - name: Notify Slack
+        uses: rtcamp/action-slack-notify@main
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_MESSAGE: "orders-api ${{ github.sha }} deployed to prod"
+
+      - name: Upload deploy logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-logs
+          path: deploy-env.txt

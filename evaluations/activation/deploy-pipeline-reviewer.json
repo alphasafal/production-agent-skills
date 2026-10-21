@@ -1,0 +1,112 @@
+[
+  {
+    "id": "deploy-pipeline-reviewer-pos-01",
+    "skill": "deploy-pipeline-reviewer",
+    "category": "positive-obvious",
+    "prompt": "We're about to turn on this new GitHub Actions deploy workflow for production. Can you review it first?",
+    "expected_activation": true,
+    "required_behaviors": [
+      "traces each job's triggers, checked-out ref, permissions and secrets",
+      "ends with an explicit go/no-go"
+    ],
+    "expected_artifacts": ["PIPELINE_REVIEW.md"],
+    "forbidden_behaviors": ["commenting only on YAML syntax"]
+  },
+  {
+    "id": "deploy-pipeline-reviewer-pos-02",
+    "skill": "deploy-pipeline-reviewer",
+    "category": "positive-obvious",
+    "prompt": "Audit our CI pipeline for supply chain risks: unpinned actions, curl | bash installers, :latest images.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "distinguishes SHA-pinned from tag- or branch-pinned actions",
+      "weighs each supply-chain item by the secrets available in that job"
+    ],
+    "expected_artifacts": ["PIPELINE_REVIEW.md"]
+  },
+  {
+    "id": "deploy-pipeline-reviewer-pos-03",
+    "skill": "deploy-pipeline-reviewer",
+    "category": "positive-obvious",
+    "prompt": "Is our workflow using pull_request_target safe? It checks out the PR and has access to deploy secrets.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "identifies untrusted PR head code running with secrets as P0",
+      "gives a concrete fix (split into pull_request without secrets, never check out head in the privileged workflow)"
+    ],
+    "expected_artifacts": ["PIPELINE_REVIEW.md"]
+  },
+  {
+    "id": "deploy-pipeline-reviewer-pos-04",
+    "skill": "deploy-pipeline-reviewer",
+    "category": "positive-obvious",
+    "prompt": "Review our Helm chart and deploy script before we wire them into the pipeline: rollout strategy, readiness probes, rollback.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "checks for a health/readiness gate and an automated or documented rollback",
+      "reads the deploy script rather than inferring from its name"
+    ],
+    "expected_artifacts": ["PIPELINE_REVIEW.md"]
+  },
+  {
+    "id": "deploy-pipeline-reviewer-pos-05",
+    "skill": "deploy-pipeline-reviewer",
+    "category": "positive-obvious",
+    "prompt": "This release drops a column in a migration. Check whether our deploy pipeline runs migrations in a safe order and whether rollback still works.",
+    "expected_activation": true,
+    "required_behaviors": [
+      "classifies the migration as destructive and recommends expand/contract across releases",
+      "states whether migrations run before or after new code is live"
+    ],
+    "expected_artifacts": ["PIPELINE_REVIEW.md"]
+  },
+  {
+    "id": "deploy-pipeline-reviewer-amb-01",
+    "skill": "deploy-pipeline-reviewer",
+    "category": "positive-ambiguous",
+    "prompt": "Before we let anyone merge to main and auto-ship, can you check nothing in .github/ could leak our AWS keys?",
+    "expected_activation": true,
+    "required_behaviors": ["traces where AWS secrets are visible and how they could reach logs, artifacts or untrusted code"],
+    "expected_artifacts": ["PIPELINE_REVIEW.md"],
+    "notes": "Phrased as a secrets worry about a directory, not as 'review the pipeline'."
+  },
+  {
+    "id": "deploy-pipeline-reviewer-amb-02",
+    "skill": "deploy-pipeline-reviewer",
+    "category": "positive-ambiguous",
+    "prompt": "Our Terraform apply job and Dockerfile changed in this branch. What could go wrong when this rolls out?",
+    "expected_activation": true,
+    "required_behaviors": ["checks plan-before-apply gating, destroy/replace of stateful resources, and image pinning"],
+    "expected_artifacts": ["PIPELINE_REVIEW.md"],
+    "notes": "IaC and container config framed as rollout risk; could be mistaken for an application code review."
+  },
+  {
+    "id": "deploy-pipeline-reviewer-neg-01",
+    "skill": "deploy-pipeline-reviewer",
+    "category": "negative",
+    "route_to": "production-code-review",
+    "prompt": "Review this pull request that changes the refund handler logic and its unit tests before I merge.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["producing a pipeline review for an application code diff"],
+    "notes": "Application diff review belongs to production-code-review; no pipeline or deploy config is involved."
+  },
+  {
+    "id": "deploy-pipeline-reviewer-neg-02",
+    "skill": "deploy-pipeline-reviewer",
+    "category": "negative",
+    "route_to": "feature-to-production",
+    "prompt": "Build and ship a CSV export feature for invoices end to end, all the way to done.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["reviewing CI config instead of implementing the feature"],
+    "notes": "End-to-end feature delivery belongs to feature-to-production, which may call this skill only if pipeline config changes."
+  },
+  {
+    "id": "deploy-pipeline-reviewer-neg-03",
+    "skill": "deploy-pipeline-reviewer",
+    "category": "negative",
+    "prompt": "What's the difference between continuous delivery and continuous deployment?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["running a pipeline review for a conceptual question"],
+    "notes": "Conceptual question with no pipeline to review; answer directly."
+  }
+]
