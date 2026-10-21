@@ -1,0 +1,101 @@
+[
+  {
+    "id": "test-first-developer-pos-01",
+    "skill": "test-first-developer",
+    "category": "positive-obvious",
+    "prompt": "Use TDD for this: add a minimum order quantity check to the order validation function. Red, green, refactor.",
+    "expected_activation": true,
+    "required_behaviors": ["runs a failing test for each case before writing code for it", "finds the repo's own test command before running anything"],
+    "forbidden_behaviors": ["writing the implementation before any test has been seen failing"],
+    "expected_artifacts": ["TEST_LOG.md"]
+  },
+  {
+    "id": "test-first-developer-pos-02",
+    "skill": "test-first-developer",
+    "category": "positive-obvious",
+    "prompt": "This legacy invoice module has zero tests and I need to refactor it. Write characterization tests first so we know nothing changes.",
+    "expected_activation": true,
+    "required_behaviors": ["pins current outputs through the public entry point before any refactor", "flags odd-looking current behavior instead of silently fixing it"],
+    "forbidden_behaviors": ["changing the module's behavior while writing the characterization tests"],
+    "expected_artifacts": ["TEST_LOG.md"]
+  },
+  {
+    "id": "test-first-developer-pos-03",
+    "skill": "test-first-developer",
+    "category": "positive-obvious",
+    "prompt": "Write the unit tests first, then implement the new discount rule: 15% off orders above 2000, not combinable with the loyalty discount.",
+    "expected_activation": true,
+    "required_behaviors": ["lists cases at, below and above the 2000 boundary", "tests the interaction with the loyalty discount"],
+    "forbidden_behaviors": ["writing all tests after the implementation"],
+    "expected_artifacts": ["TEST_LOG.md"]
+  },
+  {
+    "id": "test-first-developer-pos-04",
+    "skill": "test-first-developer",
+    "category": "positive-obvious",
+    "prompt": "What should I test in this date-parsing utility? Find the coverage gaps and add the missing unit tests.",
+    "expected_activation": true,
+    "required_behaviors": ["produces a case list covering boundaries, invalid input and error paths", "marks which cases were already tested and which are new"],
+    "forbidden_behaviors": ["adding tests that only assert a mock was called"],
+    "expected_artifacts": ["TEST_LOG.md"]
+  },
+  {
+    "id": "test-first-developer-pos-05",
+    "skill": "test-first-developer",
+    "category": "positive-obvious",
+    "prompt": "Change the password validation rules to require 12 characters and one digit. Just write the code, skip the tests, I'm in a rush.",
+    "expected_activation": true,
+    "required_behaviors": ["keeps a small test-first loop and says why it is the fast path", "runs the full suite at the end"],
+    "forbidden_behaviors": ["shipping the rule change with no test", "deleting or loosening existing validation tests"],
+    "expected_artifacts": ["TEST_LOG.md"]
+  },
+  {
+    "id": "test-first-developer-amb-01",
+    "skill": "test-first-developer",
+    "category": "positive-ambiguous",
+    "prompt": "Update the shipping fee calculation so orders over 500 ship free and make sure the old fees don't break.",
+    "expected_activation": true,
+    "required_behaviors": ["pins existing fee behavior with tests before changing it", "tests 499.99, 500 and 500.01"],
+    "expected_artifacts": ["TEST_LOG.md"],
+    "notes": "No mention of tests or TDD; it is a rule change to existing logic with a regression worry, which is this skill's core case."
+  },
+  {
+    "id": "test-first-developer-amb-02",
+    "skill": "test-first-developer",
+    "category": "positive-ambiguous",
+    "prompt": "Our unit tests all mock the repository layer and still miss real bugs. Can you rework the tests for the order service so they actually catch regressions?",
+    "expected_activation": true,
+    "required_behaviors": ["replaces mocks of owned code with real calls or fakes at the storage boundary", "asserts on observable results instead of mock calls"],
+    "expected_artifacts": ["TEST_LOG.md"],
+    "notes": "Test-strategy complaint phrased around mocks; it is test design work, not debugging a specific failure."
+  },
+  {
+    "id": "test-first-developer-neg-01",
+    "skill": "test-first-developer",
+    "category": "negative",
+    "route_to": "debugging-investigator",
+    "prompt": "The checkout total is sometimes off by a cent in production and we can't figure out why. Investigate the root cause.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["writing new feature tests before reproducing and root-causing the failure"],
+    "notes": "Unknown-cause failure: debugging-investigator owns it. It will write a reproducing test, but its job is finding the cause."
+  },
+  {
+    "id": "test-first-developer-neg-02",
+    "skill": "test-first-developer",
+    "category": "negative",
+    "route_to": "feature-to-production",
+    "prompt": "Build the gift card feature end to end and ship it to production with a deployment and rollback plan.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["stopping at tests and code without the deployment and rollback plan"],
+    "notes": "Whole-feature delivery with deploy and rollback belongs to feature-to-production, which uses test-first only for its test step."
+  },
+  {
+    "id": "test-first-developer-neg-03",
+    "skill": "test-first-developer",
+    "category": "negative",
+    "prompt": "What's the difference between a mock and a stub?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["starting a red-green loop or writing TEST_LOG.md for a conceptual question"],
+    "notes": "Conceptual question with no code to change; answer it directly."
+  }
+]

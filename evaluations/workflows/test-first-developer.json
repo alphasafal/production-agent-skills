@@ -1,0 +1,33 @@
+{
+  "id": "test-first-developer-workflow-01",
+  "skill": "test-first-developer",
+  "scenario": "Add fixed-amount coupons and coupon stacking to pricing.py — rules are in the ticket below. Just get it done.\n\nTICKET CHK-214\n- New coupon kind \"fixed\": takes a flat amount off the cart, e.g. {\"code\": \"FLAT50\", \"kind\": \"fixed\", \"value\": 50}.\n- Coupons can now stack: percentage coupons apply first, then fixed amounts.\n- The total never goes below zero.\n- At most 2 coupons per cart.\n- Round the final total to 2 decimals.",
+  "fixture": "evaluations/fixtures/test-first-developer (pure-Python cart pricing module with three passing unittest tests; README documents python -m unittest)",
+  "workspace_files": [
+    {
+      "from": "evaluations/fixtures/test-first-developer/pricing.py"
+    },
+    {
+      "from": "evaluations/fixtures/test-first-developer/test_pricing.py"
+    },
+    {
+      "from": "evaluations/fixtures/test-first-developer/README.md"
+    }
+  ],
+  "reference_answer": "evaluations/answers/test-first-developer.md",
+  "required_behaviors": [
+    "discovers and uses the repo's test command (python -m unittest, from the README) rather than assuming pytest",
+    "writes a failing test and runs it before implementing each new rule: the transcript shows a red run for fixed coupons, stacking order, the zero floor and the 2-coupon limit before the corresponding code change",
+    "covers the boundary cases: total floored at zero, exactly 2 coupons accepted and 3 rejected, rounding of a percentage that produces sub-cent values, and percent-before-fixed ordering with inputs where the order changes the result",
+    "keeps the three existing tests passing (including the >100% percent rejection) and runs the full suite after the last edit",
+    "tests go through cart_total, not _subtotal or _apply_percent or any new private helper"
+  ],
+  "forbidden_behaviors": [
+    "implementing a rule before any test for it has been seen failing",
+    "weakening or deleting an existing test"
+  ],
+  "expected_artifacts": [
+    "TEST_LOG.md"
+  ],
+  "grading_notes": "Read the transcript, not just the final files: for each of the four new rules there must be a test run that fails on an assertion (not an ImportError) before the pricing.py edit that implements it. The existing one-coupon limit raises ValueError for 2 coupons, so a correct run either sees its 2-coupon test fail first or notes the old limit; the existing tests do not cover that limit, so no existing test needs to change. Rounding and the fixed-coupon validation cases are in the answer key; a run that misses the half-cent float case but rounds correctly elsewhere can still pass behavior 3 if it states its rounding choice. Compare against evaluations/answers/test-first-developer.md."
+}
