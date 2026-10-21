@@ -1,0 +1,101 @@
+[
+  {
+    "id": "spec-and-plan-pos-01",
+    "skill": "spec-and-plan",
+    "category": "positive-obvious",
+    "prompt": "Here's the PRD for bulk CSV import. Write a tech spec and break it down into tasks for the team.",
+    "expected_activation": true,
+    "required_behaviors": ["lists ambiguities in the PRD as open questions or labelled assumptions", "breaks the work into vertical slices starting with an end-to-end walking skeleton"],
+    "forbidden_behaviors": ["writing implementation code", "tasks split by layer such as 'backend' and 'frontend'"],
+    "expected_artifacts": ["SPEC.md", "PLAN.md"]
+  },
+  {
+    "id": "spec-and-plan-pos-02",
+    "skill": "spec-and-plan",
+    "category": "positive-obvious",
+    "prompt": "Can you split this epic into tickets with estimates and dependencies so we can plan the sprint?",
+    "expected_activation": true,
+    "required_behaviors": ["gives each task a size, dependencies and a definition of done", "marks which tasks can run in parallel"],
+    "forbidden_behaviors": ["a plan where no task can be merged on its own"],
+    "expected_artifacts": ["PLAN.md"]
+  },
+  {
+    "id": "spec-and-plan-pos-03",
+    "skill": "spec-and-plan",
+    "category": "positive-obvious",
+    "prompt": "We have the ticket for recurring invoices. Before anyone writes code, write the spec with acceptance criteria and a plan of the work.",
+    "expected_activation": true,
+    "required_behaviors": ["writes acceptance criteria in given/when/then form with concrete values", "describes schema and interface changes and where in the codebase they live"],
+    "forbidden_behaviors": ["acceptance criteria like 'works correctly' that can't be tested"],
+    "expected_artifacts": ["SPEC.md", "PLAN.md"]
+  },
+  {
+    "id": "spec-and-plan-pos-04",
+    "skill": "spec-and-plan",
+    "category": "positive-obvious",
+    "prompt": "Product signed off on this brief for audit logs. Just split it up into tasks, skip the spec, we start Monday.",
+    "expected_activation": true,
+    "required_behaviors": ["still surfaces open questions that change the design before finalising the plan", "produces vertical slices with sizes and done criteria"],
+    "forbidden_behaviors": ["silently resolving ambiguities in the brief"],
+    "expected_artifacts": ["SPEC.md", "PLAN.md"]
+  },
+  {
+    "id": "spec-and-plan-pos-05",
+    "skill": "spec-and-plan",
+    "category": "positive-obvious",
+    "prompt": "Plan the implementation of this feature brief for usage-based billing: what are the tasks, risks, and what order should we do them in?",
+    "expected_activation": true,
+    "required_behaviors": ["identifies risks and names a spike that retires each unknown", "orders slices by dependency and risk, riskiest first"],
+    "forbidden_behaviors": ["writing implementation code during planning"],
+    "expected_artifacts": ["SPEC.md", "PLAN.md"]
+  },
+  {
+    "id": "spec-and-plan-amb-01",
+    "skill": "spec-and-plan",
+    "category": "positive-ambiguous",
+    "prompt": "The ticket for SAML login is approved. How should we approach building it, and how big is it?",
+    "expected_activation": true,
+    "required_behaviors": ["produces a technical approach and a sized task breakdown rather than starting implementation"],
+    "expected_artifacts": ["SPEC.md", "PLAN.md"],
+    "notes": "No 'spec' or 'tasks' keyword; 'how should we approach' plus 'how big' on an approved ticket is a planning ask, not an implementation request (feature-to-production) or architecture review."
+  },
+  {
+    "id": "spec-and-plan-amb-02",
+    "skill": "spec-and-plan",
+    "category": "positive-ambiguous",
+    "prompt": "Here's the brief for offline mode. I need something the three of us can divide up and start on this week.",
+    "expected_activation": true,
+    "required_behaviors": ["breaks the brief into independently mergeable slices with parallel markers"],
+    "expected_artifacts": ["PLAN.md"],
+    "notes": "Phrased as a team-coordination need, not a request for a document."
+  },
+  {
+    "id": "spec-and-plan-neg-01",
+    "skill": "spec-and-plan",
+    "category": "negative",
+    "route_to": "product-manager",
+    "prompt": "Users keep asking for some kind of team feature. Help me figure out what the MVP should be and write the PRD.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["producing an engineering task plan for an idea that hasn't been scoped yet"],
+    "notes": "Deciding what to build and writing the PRD belongs to product-manager; spec-and-plan starts after that."
+  },
+  {
+    "id": "spec-and-plan-neg-02",
+    "skill": "spec-and-plan",
+    "category": "negative",
+    "route_to": "feature-to-production",
+    "prompt": "The plan is done and approved. Implement the CSV export feature, add tests, and get it shipped.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["re-planning work that is already planned instead of implementing it"],
+    "notes": "Implementation and shipping belong to feature-to-production."
+  },
+  {
+    "id": "spec-and-plan-neg-03",
+    "skill": "spec-and-plan",
+    "category": "negative",
+    "prompt": "What is a story point and how is it different from an hour estimate?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["producing SPEC.md or PLAN.md for a conceptual question"],
+    "notes": "Conceptual question; answer directly."
+  }
+]

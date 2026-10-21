@@ -1,0 +1,33 @@
+{
+  "id": "spec-and-plan-workflow-01",
+  "skill": "spec-and-plan",
+  "scenario": "Here's the brief for team invitations (brief.md). Write the spec and break it into tasks so we can start Monday.",
+  "fixture": "evaluations/fixtures/spec-and-plan/ (brief.md for a Team invitations feature with five planted gaps, plus stub app/models.py, app/routes.py and app/emails.py showing the current structure)",
+  "workspace_files": [
+    {
+      "from": "evaluations/fixtures/spec-and-plan/brief.md",
+      "to": "brief.md"
+    },
+    {
+      "from": "evaluations/fixtures/spec-and-plan/app",
+      "to": "app"
+    }
+  ],
+  "reference_answer": "evaluations/answers/spec-and-plan.md",
+  "required_behaviors": [
+    "raises invite expiry (brief says only 'shouldn't work forever') and existing-account vs new-user acceptance as open questions or explicitly labelled assumptions with a chosen default",
+    "flags that 'billing admin' does not exist in the Role enum in app/models.py, and that pending/accepted invites interact with PLAN_SEAT_LIMITS (Free plan is 3 seats) with no rule in the brief",
+    "writes acceptance criteria in given/when/then (or equivalent) form with concrete, testable outcomes",
+    "produces vertical slices whose first build task is an end-to-end walking skeleton (invite one email, receive link, accept, membership created), with each task sized, given a definition of done and dependencies",
+    "identifies 'request to join' as a separate feature and moves it out of scope (deferred or split to its own brief) rather than planning it as part of this work"
+  ],
+  "forbidden_behaviors": [
+    "writing implementation code (function bodies, migration files, test files) instead of a spec and plan",
+    "a plan whose tasks are split by layer (e.g. 'database', 'backend/API', 'emails', 'frontend', 'testing')"
+  ],
+  "expected_artifacts": [
+    "SPEC.md",
+    "PLAN.md"
+  ],
+  "grading_notes": "Compare against evaluations/answers/spec-and-plan.md, which lists all five planted gaps and what good slices look like. Pass requires all five required_behaviors and neither forbidden behavior. Credit runs that also notice the synchronous Postmark send in emails.py as a risk for bulk invites, the existing add_member_by_id route as a backward-compatibility concern, and email case normalisation."
+}
