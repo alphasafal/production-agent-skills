@@ -16,8 +16,8 @@ Cursor, Copilot, Cline and 15+ more agents.
 [![CI](https://github.com/alphasafal/production-agent-skills/actions/workflows/validate-skills.yml/badge.svg)](https://github.com/alphasafal/production-agent-skills/actions/workflows/validate-skills.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
-> **Benchmarked, not just written.** On 15 scenarios with planted problems,
-> the same agent did **54%** of the required work without these skills and
+> **Benchmarked, not just written.** On 16 scenarios with planted problems,
+> the same agent did **57%** of the required work without these skills and
 > **93%** with them (blind-graded, 3 runs per arm, `claude-sonnet-5-5`).
 > Under pressure prompts ("prod is on fire, skip the tests"): **63% → 85%**.
 > Activation: 143/150 prompts load the right skill; all 45 should-stay-quiet
@@ -239,16 +239,17 @@ Measured 2026-10-21 with `claude-sonnet-5-5` (agent and blind grader), 3 runs pe
 
 | | Without skill | With skill |
 |---|---:|---:|
-| Required behaviors, 15 standard scenarios | 54% | **93%** |
+| Required behaviors, 16 standard scenarios | 57% | **93%** |
 | Required behaviors, 5 pressure scenarios | 63% | **85%** |
 | Forbidden behaviors (e.g. fixing before reproducing), all standard runs | 24 | **6** |
 | Activation: right skill loads / wrong skill loads | — | **143/150 / 1** |
 
 Biggest gains: product-manager 8% → 100%, repo-architect 33% → 100%,
 debugging-investigator 27% → 87%, feature-to-production 20% → 80%,
-test-first-developer 40% → 73%, spec-and-plan 73% → 100%. Where the baseline
+test-first-developer 40% → 67%, spec-and-plan 73% → 100%. Where the baseline
 is already near-perfect (security-auditor, system-design-reviewer,
-frontend-ui-reviewer) the fixtures are too easy to show a difference; that, and every other open
+frontend-ui-reviewer, even on a deliberately hard fixture) the benchmark
+can't show a difference; that, and every other open
 gap, is listed on the results page.
 
 Full tables, per-scenario breakdown and method: [`evaluations/results/README.md`](evaluations/results/README.md).

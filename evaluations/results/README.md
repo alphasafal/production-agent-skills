@@ -6,7 +6,7 @@ Every number on this page comes from a recorded run of
 | | |
 |---|---|
 | Date | 2026-10-21 |
-| Agent and grader model | `claude-sonnet-5-5` (all 632 transcripts, rounds 1–3), Claude Code 2.1.306 |
+| Agent and grader model | `claude-sonnet-5-5` (all transcripts, rounds 1–3b), Claude Code 2.1.306 |
 | Runs | Workflows: 3 per arm per scenario. Activation: 1 per prompt (2 for the round-3 re-checks). |
 | Raw output | `evaluations/results/runs/` (gitignored; run IDs listed below) |
 
@@ -14,7 +14,7 @@ Every number on this page comes from a recorded run of
 
 | | Without skill | With skill |
 |---|---:|---:|
-| Required behaviors observed — 15 standard scenarios | 54% | **93%** |
+| Required behaviors observed — 16 standard scenarios (15 skills) | 57% | **93%** |
 | Required behaviors observed — 5 pressure scenarios | 63% | **85%** |
 | Forbidden behaviors — standard scenarios, all runs | 24 | **6** |
 
@@ -63,10 +63,11 @@ Every number on this page comes from a recorded run of
 | `security-auditor-workflow-01` | 100% | **100%** | +0 pts | 0 → 0 | 3/3 | round 1 |
 | `system-design-reviewer-workflow-01` | 83% | **83%** | +0 pts | 0 → 0 | 3/3 | round 2 (round 1: 83% with skill, loaded 3/3) |
 | `threat-modeler-workflow-01` | 60% | **100%** | +40 pts | 0 → 0 | 3/3 | round 1 |
-| `test-first-developer-workflow-01` | 40% | **73%** | +33 pts | 3 → 1 | 3/3 | round 3 |
+| `test-first-developer-workflow-01` | 40% | **67%** | +27 pts | 3 → 1 | 3/3 | round 3b, after the wrong-value change (round 3: 40% → 73%) |
 | `spec-and-plan-workflow-01` | 73% | **100%** | +27 pts | 3 → 0 | 3/3 | round 3 |
-| `frontend-ui-reviewer-workflow-01` | 93% | **93%** | +0 pts | 0 → 0 | 3/3 | round 3 |
-| **Mean** | **54%** | **93%** | **+39 pts** | | | |
+| `frontend-ui-reviewer-workflow-01` | 93% | **100%** | +7 pts | 0 → 0 | 3/3 | round 3b (round 3: 93% → 93%) |
+| `frontend-ui-reviewer-workflow-02` (hard) | 100% | **100%** | +0 pts | 0 → 0 | 3/3 | round 3b |
+| **Mean** | **57%** | **93%** | **+36 pts** | | | |
 
 ### Pressure scenarios (the prompt argues for skipping the workflow)
 
@@ -166,15 +167,37 @@ each benchmarked the same way (3 runs per arm, blind grader).
   it was measured and rejected: spec-and-plan's ambiguous prompts fell from
   4/4 to 0/4 (runs `20261021-060850` vs `20261021-073551`).
 
+## Round 3b: attempts to close the round-3 gaps
+
+Two changes, each re-measured with 3 runs per arm on the same model.
+
+- **A harder frontend scenario** (`frontend-ui-reviewer-workflow-02`): an
+  account-settings screen whose delete dialog passes a standard checklist but
+  deletes without the typed confirmation, double-fires a non-idempotent
+  delete, is hidden from screen readers by `aria-hidden` on its own root,
+  doesn't restore focus and mounts its live region with the message.
+  **The baseline scored 100%.** The grader wasn't lenient: all 3 baseline
+  runs quoted the exact lines, including the cross-file no-portal trap.
+  Conclusion: on planted-defect UI review, the base model is already strong,
+  and this benchmark can't show what the skill adds there. On the original
+  scenario the skill now scores 100% vs. 93% without it (+7 pts).
+- **test-first-developer: a "wrong-implementation value" per case.** Step 4
+  now asks for the result a plausible wrong implementation would give, and
+  requires it to differ. This fixed what it targeted: 2 of 3 runs chose
+  ordering inputs that separate the two orders (35.93 vs 36.43), and every run
+  logged the wrong values. The overall score didn't move (67% vs. 73% before,
+  10 vs. 11 of 15 behaviors, within noise). Rounding cases were still not
+  discriminating, and some runs wrote several tests before seeing any fail.
+
 ## Known gaps (honest list)
 
-- **`frontend-ui-reviewer` shows no measurable gain** (93% → 93%). The fixture
-  is too easy for the baseline and needs subtler issues (focus restore order,
-  `aria-live` timing, CLS from late-loading fonts).
-- **`test-first-developer` reaches 73%, not 100%.** The consistent miss is
-  weak boundary cases: ordering tests with values that can't tell the two
-  orders apart, and no rounding test. The skill's `references/test-design-patterns.md`
-  should push harder on choosing values that make a wrong implementation fail.
+- **`frontend-ui-reviewer` adds little on planted-defect fixtures.** +7 pts on
+  the original scenario, +0 on the hard one, because the baseline already
+  finds everything. Its value would have to be measured differently (e.g.
+  building UI, not reviewing it).
+- **`test-first-developer` is at 67–73%, not 100%.** Ordering cases now
+  discriminate; rounding cases still don't, and some runs batch several new
+  tests before the first red run.
 - **`product-manager-pos-04`** sometimes misroutes to `spec-and-plan` (1 of 3
   runs) and otherwise loads nothing.
 
@@ -204,6 +227,8 @@ each benchmarked the same way (3 runs per arm, blind grader).
 | `20261021-042315-activation` | Round 2: all 120 activation prompts |
 | `20261021-055002`, `-055132`, `-055432` (workflow) | Round 3: test-first-developer, spec-and-plan, frontend-ui-reviewer |
 | `20261021-055604-activation` | Round 3: all 150 activation prompts, 15 skills installed |
+| `20261021-082817-workflow` | Round 3b: frontend-ui-reviewer, both scenarios |
+| `20261021-083122-workflow` | Round 3b: test-first-developer after the wrong-value change |
 | `20261021-060653`, `-060850`, `-073551`, `-073904` (activation) | Round 3: 2-run re-checks of product-manager and spec-and-plan, tried vs. original wording |
 | `20261021-043053`, `-043226`, `-043354`, `-044646` (workflow) | Round 2: feature-to-production, debugging-investigator, data-scientist, system-design-reviewer |
 
