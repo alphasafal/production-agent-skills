@@ -34,7 +34,7 @@
       "version": "0.2.1",
       "source": "./",
       "strict": true,
-      "description": "Backend / full-stack engineer pack: Understand a codebase, ship features safely, debug what breaks, review what merges. Skills: repo-architect, feature-to-production, debugging-investigator, production-code-review.",
+      "description": "Backend / full-stack engineer pack: Understand a codebase, ship features test-first, debug what breaks, review what merges. Skills: repo-architect, feature-to-production, test-first-developer, debugging-investigator, production-code-review.",
       "homepage": "https://github.com/alphasafal/production-agent-skills",
       "license": "MIT",
       "keywords": [
@@ -48,17 +48,42 @@
       "skills": [
         "./skills/repo-architect",
         "./skills/feature-to-production",
+        "./skills/test-first-developer",
         "./skills/debugging-investigator",
         "./skills/production-code-review"
       ],
       "commands": "./plugin-packs/backend-engineer/commands"
     },
     {
+      "name": "frontend-engineer",
+      "version": "0.2.1",
+      "source": "./",
+      "strict": true,
+      "description": "Frontend engineer pack: Accessible, resilient UI: review components for a11y, states and Core Web Vitals, build test-first, ship safely. Skills: frontend-ui-reviewer, test-first-developer, feature-to-production, production-code-review.",
+      "homepage": "https://github.com/alphasafal/production-agent-skills",
+      "license": "MIT",
+      "keywords": [
+        "skills",
+        "frontend-engineer",
+        "debugging",
+        "code-review",
+        "incident-response",
+        "security"
+      ],
+      "skills": [
+        "./skills/frontend-ui-reviewer",
+        "./skills/test-first-developer",
+        "./skills/feature-to-production",
+        "./skills/production-code-review"
+      ],
+      "commands": "./plugin-packs/frontend-engineer/commands"
+    },
+    {
       "name": "tech-lead",
       "version": "0.2.1",
       "source": "./",
       "strict": true,
-      "description": "Tech lead / architect pack: Review designs before they're built, make decisions you can defend, hold the review bar. Skills: system-design-reviewer, research-to-decision, production-code-review, repo-architect, threat-modeler.",
+      "description": "Tech lead / architect pack: Plan work as vertical slices, review designs before they're built, make decisions you can defend, hold the review bar. Skills: spec-and-plan, system-design-reviewer, research-to-decision, production-code-review, repo-architect, threat-modeler.",
       "homepage": "https://github.com/alphasafal/production-agent-skills",
       "license": "MIT",
       "keywords": [
@@ -70,6 +95,7 @@
         "security"
       ],
       "skills": [
+        "./skills/spec-and-plan",
         "./skills/system-design-reviewer",
         "./skills/research-to-decision",
         "./skills/production-code-review",
