@@ -6,24 +6,24 @@ Every number on this page comes from a recorded run of
 | | |
 |---|---|
 | Date | 2026-10-21 |
-| Agent and grader model | `claude-sonnet-5-5` (all 424 transcripts), Claude Code 2.1.306 |
-| Runs | Workflows: 3 per arm per scenario. Activation: 1 per prompt. |
+| Agent and grader model | `claude-sonnet-5-5` (all 632 transcripts, rounds 1–3), Claude Code 2.1.306 |
+| Runs | Workflows: 3 per arm per scenario. Activation: 1 per prompt (2 for the round-3 re-checks). |
 | Raw output | `evaluations/results/runs/` (gitignored; run IDs listed below) |
 
 ## Headline
 
 | | Without skill | With skill |
 |---|---:|---:|
-| Required behaviors observed — 12 standard scenarios | 51% | **94%** |
+| Required behaviors observed — 15 standard scenarios | 54% | **93%** |
 | Required behaviors observed — 5 pressure scenarios | 63% | **85%** |
-| Forbidden behaviors — standard scenarios, all runs | 18 | **5** |
+| Forbidden behaviors — standard scenarios, all runs | 24 | **6** |
 
 | Activation (all 12 skills installed together) | |
 |---|---:|
-| Obvious prompts that load the right skill | **57/60** |
-| Ambiguous prompts that load the right skill | **22/24** |
-| Negative prompts where the skill correctly stays quiet | **36/36** |
-| Times the *wrong* skill was loaded | **0** |
+| Obvious prompts that load the right skill | **71/75** |
+| Ambiguous prompts that load the right skill | **27/30** |
+| Negative prompts where the skill correctly stays quiet | **45/45** |
+| Times the *wrong* skill was loaded | **1** (not reproduced on 2 re-runs; see round 3) |
 
 ## Method
 
@@ -63,7 +63,10 @@ Every number on this page comes from a recorded run of
 | `security-auditor-workflow-01` | 100% | **100%** | +0 pts | 0 → 0 | 3/3 | round 1 |
 | `system-design-reviewer-workflow-01` | 83% | **83%** | +0 pts | 0 → 0 | 3/3 | round 2 (round 1: 83% with skill, loaded 3/3) |
 | `threat-modeler-workflow-01` | 60% | **100%** | +40 pts | 0 → 0 | 3/3 | round 1 |
-| **Mean** | **51%** | **94%** | **+43 pts** | | | |
+| `test-first-developer-workflow-01` | 40% | **73%** | +33 pts | 3 → 1 | 3/3 | round 3 |
+| `spec-and-plan-workflow-01` | 73% | **100%** | +27 pts | 3 → 0 | 3/3 | round 3 |
+| `frontend-ui-reviewer-workflow-01` | 93% | **93%** | +0 pts | 0 → 0 | 3/3 | round 3 |
+| **Mean** | **54%** | **93%** | **+39 pts** | | | |
 
 ### Pressure scenarios (the prompt argues for skipping the workflow)
 
@@ -87,23 +90,29 @@ below; the round-1 figure is kept beside it.
 | debugging-investigator | 5/5 | 2/2 | 3/3 | 5/5 |
 | deploy-pipeline-reviewer | 5/5 | 2/2 | 3/3 | 5/5 |
 | feature-to-production | 5/5 | 2/2 | 3/3 | 2/5 |
-| incident-responder | 5/5 | 2/2 | 3/3 | 4/5 |
-| product-manager | 5/5 | 2/2 | 3/3 | 4/5 |
-| production-code-review | 4/5 | 2/2 | 3/3 | 4/5 |
+| frontend-ui-reviewer | 5/5 | 1/2 | 3/3 | — |
+| incident-responder | 4/5 | 2/2 | 3/3 | 4/5 |
+| product-manager | 4/5 | 2/2 | 3/3 | 4/5 |
+| production-code-review | 5/5 | 2/2 | 3/3 | 4/5 |
 | repo-architect | 5/5 | 1/2 | 3/3 | 5/5 |
 | research-to-decision | 5/5 | 2/2 | 3/3 | 5/5 |
 | security-auditor | 5/5 | 2/2 | 3/3 | 5/5 |
-| system-design-reviewer | 5/5 | 1/2 | 3/3 | 0/5 |
+| spec-and-plan | 5/5 | 2/2 | 3/3 | — |
+| system-design-reviewer | 5/5 | 2/2 | 3/3 | 0/5 |
+| test-first-developer | 4/5 | 2/2 | 3/3 | — |
 | threat-modeler | 5/5 | 2/2 | 3/3 | 5/5 |
-| **Total** | **57/60** | **22/24** | **36/36** | 49/60 |
+| **Total** | **70/75** | **28/30** | **45/45** | 49/60 |
 
-Remaining misses (every one is "loaded nothing", never a wrong skill):
+Activation table above is round 3: all 150 prompts, all 15 skills installed together (run `20261021-055604-activation`).
+Remaining misses in that run:
 
 - `data-scientist-pos-02`: expected `data-scientist`, loaded nothing
 - `data-scientist-pos-03`: expected `data-scientist`, loaded nothing
-- `production-code-review-pos-01`: expected `production-code-review`, loaded nothing
+- `frontend-ui-reviewer-amb-02`: expected `frontend-ui-reviewer`, loaded nothing
+- `incident-responder-pos-04`: expected `incident-responder`, loaded nothing
+- `product-manager-pos-04`: expected `product-manager`, loaded spec-and-plan
 - `repo-architect-amb-02`: expected `repo-architect`, loaded nothing
-- `system-design-reviewer-amb-01`: expected `system-design-reviewer`, loaded nothing
+- `test-first-developer-pos-05`: expected `test-first-developer`, loaded nothing
 
 ## What round 1 found, and what changed
 
@@ -131,7 +140,43 @@ surfaced three problems. Round 2 re-measured after fixing them.
    rationalization for exactly that were added; with the skill now loading,
    the standard scenario went **27% → 80%**.
 
+## Round 3: three new skills
+
+Added `test-first-developer`, `spec-and-plan` and `frontend-ui-reviewer`,
+each benchmarked the same way (3 runs per arm, blind grader).
+
+- **spec-and-plan 73% → 100%**, forbidden behaviors 3 → 0. Without the
+  skill, the agent split work by layer and silently resolved ambiguities in
+  the brief. With it, it raised open questions and produced vertical slices.
+- **test-first-developer 40% → 73%.** All 3 baseline runs edited the code
+  and the tests in a single step and never saw a test fail. With the skill,
+  2 of 3 runs went red before every rule. Not yet 100%: the boundary tests
+  were weak in all 3 with-skill runs. The ordering test used amounts where
+  both orders give the same rounded total, so it can't catch the bug it
+  targets, and rounding wasn't tested. One run also skipped the red step for
+  some rules.
+- **frontend-ui-reviewer 93% → 93%.** The baseline already finds almost
+  every planted issue in this fixture, so it can't show what the skill adds.
+  It needs a harder fixture (see gaps).
+- **The first wrong-skill load.** Round-3 activation loaded `spec-and-plan`
+  on `product-manager-pos-04` ("turn this rough feature idea into something
+  our engineering team can actually build"). Two follow-up runs of that
+  prompt loaded nothing, never the wrong skill, so it's a sometimes-misroute
+  rather than a systematic one. A description reword that tried to prevent
+  it was measured and rejected: spec-and-plan's ambiguous prompts fell from
+  4/4 to 0/4 (runs `20261021-060850` vs `20261021-073551`).
+
 ## Known gaps (honest list)
+
+- **`frontend-ui-reviewer` shows no measurable gain** (93% → 93%). The fixture
+  is too easy for the baseline and needs subtler issues (focus restore order,
+  `aria-live` timing, CLS from late-loading fonts).
+- **`test-first-developer` reaches 73%, not 100%.** The consistent miss is
+  weak boundary cases: ordering tests with values that can't tell the two
+  orders apart, and no rounding test. The skill's `references/test-design-patterns.md`
+  should push harder on choosing values that make a wrong implementation fail.
+- **`product-manager-pos-04`** sometimes misroutes to `spec-and-plan` (1 of 3
+  runs) and otherwise loads nothing.
 
 - **data-scientist under sunk-cost pressure doesn't load the skill** (0/3).
   The agent still scores 92% vs. 75% without it, but that comes from the
@@ -157,6 +202,9 @@ surfaced three problems. Round 2 re-measured after fixing them.
 | `20261021-041549-activation` | Round 1: all 120 activation prompts |
 | `20261021-041928`, `-041959`, `-042105`, `-042143` (activation) | Harness checks on two skills: fixed harness with old descriptions |
 | `20261021-042315-activation` | Round 2: all 120 activation prompts |
+| `20261021-055002`, `-055132`, `-055432` (workflow) | Round 3: test-first-developer, spec-and-plan, frontend-ui-reviewer |
+| `20261021-055604-activation` | Round 3: all 150 activation prompts, 15 skills installed |
+| `20261021-060653`, `-060850`, `-073551`, `-073904` (activation) | Round 3: 2-run re-checks of product-manager and spec-and-plan, tried vs. original wording |
 | `20261021-043053`, `-043226`, `-043354`, `-044646` (workflow) | Round 2: feature-to-production, debugging-investigator, data-scientist, system-design-reviewer |
 
 ## Reproduce

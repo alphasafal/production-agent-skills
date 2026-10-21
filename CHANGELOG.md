@@ -3,6 +3,31 @@
 All notable changes to this project are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.3.0] — 2026-10-21
+
+### Added
+
+- **Three everyday skills**, built and benchmarked the same way as the others:
+  - `test-first-developer`: discover the repo's test runner, see each new test
+    fail before writing the code, refactor on green, end with the full suite.
+    Benchmark: 40% → 73%.
+  - `spec-and-plan`: scoped ticket → spec with open questions, labelled
+    assumptions and testable acceptance criteria → ordered vertical-slice
+    task plan. Benchmark: 73% → 100%.
+  - `frontend-ui-reviewer`: keyboard and screen-reader paths, every UI state,
+    contrast, mobile layout, layout shift and bundle bloat, ranked P0–P3.
+    Benchmark: 93% → 93% (fixture too easy; listed as a gap).
+- **`frontend-engineer` role pack.** `test-first-developer` joins the backend
+  pack and `spec-and-plan` joins the tech-lead pack.
+- Slash commands `/test-first`, `/plan`, `/ui-review` (15 in total).
+- Round-3 benchmark results for the full 15-skill catalog: 54% → 93% of
+  required behaviors, activation 143/150, 45/45 negatives quiet.
+
+### Changed
+
+- `system-design-reviewer` description reworded so it says when to use it
+  in plain terms (it was the only skill the validator flagged).
+
 ## [0.2.1] — 2026-10-21
 
 ### Fixed
