@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "alphasafal-skills",
+  "description": "Evaluated, portable Agent Skills for engineering, data and product workflows.",
+  "owner": {
+    "name": "Safal",
+    "url": "https://github.com/alphasafal"
+  },
+  "plugins": [
+    {
+      "name": "production-agent-skills",
+      "version": "0.2.0",
+      "source": "./",
+      "description": "Eight evaluated Agent Skills: debugging, code review, repo mapping, system design review, data science, decisions/ADRs, PRDs, feature-to-production.",
+      "homepage": "https://github.com/alphasafal/production-agent-skills",
+      "license": "MIT",
+      "keywords": ["skills", "debugging", "code-review", "system-design", "data-science", "prd", "adr"]
+    }
+  ]
+}
