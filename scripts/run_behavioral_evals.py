@@ -55,6 +55,13 @@ AGENT_TOOLS = ["Bash", "Read", "Write", "Edit", "Glob", "Grep", "Skill", "WebSea
 TRANSCRIPT_CHAR_BUDGET = 60_000
 TOOL_RESULT_CHARS = 1_500
 ARTIFACT_CHARS = 8_000
+ACTIVATION_MAX_TURNS = 6
+# Activation workspaces are empty, so prompts like "review our proposed architecture"
+# refer to material that isn't there; a careful agent then just asks for it and never
+# needs a skill. The same neutral line goes on EVERY activation prompt (positive and
+# negative alike) so the measurement is about routing, not about missing files.
+ACTIVATION_SUFFIX = ("\n\n(Work with what's available. If something I mention isn't here, "
+                     "proceed on reasonable, clearly stated assumptions.)")
 
 
 # --------------------------------------------------------------------------- loading
@@ -321,9 +328,12 @@ def run_workflow(case: dict, arm: str, n: int, args, out_dir: Path) -> dict:
 def run_activation(case: dict, all_skills: list[str], n: int, args, out_dir: Path) -> dict:
     ws = build_workspace(None, all_skills)
     try:
-        # Activation is decided in the first turn or two; Read lets clients that
-        # load skills by reading SKILL.md do so.
-        cmd = claude_cmd(case["prompt"], args.model, 2, ["Skill", "Read"])
+        # Agents often look around first ("is the RFC in the repo?") and load the
+        # skill a turn or two later, so allow a few turns. Only read-only tools are
+        # available: activation runs must not edit anything.
+        cmd = claude_cmd(case["prompt"] + ACTIVATION_SUFFIX, args.model, ACTIVATION_MAX_TURNS,
+                         ["Skill", "Read", "Glob", "Grep"])
+        cmd += ["--disallowedTools", "Bash,Write,Edit,NotebookEdit,WebSearch,WebFetch"]
         events, err = run_claude(cmd, ws, args.timeout)
     finally:
         shutil.rmtree(ws, ignore_errors=True)
