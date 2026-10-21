@@ -6,7 +6,8 @@ Engineering • Data • Product • Research
 [![Open Agent Skills format](https://img.shields.io/badge/format-Open%20Agent%20Skills-blue)](https://agentskills.io)
 [![Spec validated](https://img.shields.io/badge/skills--ref-8%2F8%20valid-success)](docs/compatibility.md)
 [![Skills](https://img.shields.io/badge/skills-8-brightgreen)](#the-8-skills)
-[![Evaluations included](https://img.shields.io/badge/evaluations-80%20cases%20%2B%208%20workflows-orange)](evaluations/)
+[![Routing](https://img.shields.io/badge/routing-40%2F40%20rank--1-success)](evaluations/README.md#tier-2-routing-scriptsrun_routing_evalspy)
+[![Behavioral evals](https://img.shields.io/badge/behavioral%20evals-with%20vs.%20without%20skill-orange)](evaluations/results/README.md)
 [![Python](https://img.shields.io/badge/python-3.9%20%7C%203.11%20%7C%203.13-blue)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 [![CI](https://github.com/alphasafal/production-agent-skills/actions/workflows/validate-skills.yml/badge.svg)](https://github.com/alphasafal/production-agent-skills/actions/workflows/validate-skills.yml)
@@ -74,33 +75,48 @@ supposed to do (and not do).
 | [product-manager](skills/product-manager/) | Turns a vague idea into a risk-ranked, right-sized MVP — resists scope explosion | Scoping a feature request into a PRD |
 | [feature-to-production](skills/feature-to-production/) | Requirement → tests → implementation → review → deployment checklist → rollback plan | Shipping a well-defined feature end to end |
 
-## Quick Start
+## Install
+
+**Claude Code plugin** — all 8 skills plus slash commands, kept up to date:
+
+```
+/plugin marketplace add alphasafal/production-agent-skills
+/plugin install production-agent-skills@alphasafal-skills
+```
+
+**Any agent** (Claude Code, Codex, Cursor, Copilot, Cline, …) via the open
+[skills CLI](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills add alphasafal/production-agent-skills                               # all 8
+npx skills add alphasafal/production-agent-skills --skill debugging-investigator # just one
+```
+
+**No Node? Plain Python**, into any skills directory:
 
 ```bash
 git clone https://github.com/alphasafal/production-agent-skills.git
-cd production-agent-skills
-python scripts/list_skills.py
+python production-agent-skills/scripts/install_skills.py --all --target ./my-project/.claude/skills
 ```
 
-## Install One Skill
+(Use `.agents/skills` for Codex/Copilot — see [`clients/`](clients/) for
+verified per-client paths. `--dry-run` previews, `--force` overwrites.)
 
-```bash
-python scripts/install_skills.py \
-  --skill debugging-investigator \
-  --target ./my-project/.claude/skills
-```
+## Slash commands (Claude Code plugin)
 
-(Use `.agents/skills` instead of `.claude/skills` for Codex/Copilot — see
-[`clients/`](clients/) for verified per-client paths.)
+Skills activate on their own from what you ask. Commands are for when you
+want a specific one, now:
 
-## Install All Skills
-
-```bash
-python scripts/install_skills.py --all --target ./my-project/.claude/skills
-```
-
-Add `--dry-run` to preview first, `--force` to overwrite an existing
-install. Full options: `python scripts/install_skills.py --help`.
+| Command | Skill |
+|---|---|
+| `/investigate <symptom>` | debugging-investigator |
+| `/pr-review [target]` | production-code-review |
+| `/map-repo [area]` | repo-architect |
+| `/design-review <doc>` | system-design-reviewer |
+| `/analyze-data <file> <question>` | data-scientist |
+| `/decide <choice>` | research-to-decision |
+| `/prd <idea>` | product-manager |
+| `/ship-feature <ticket>` | feature-to-production |
 
 ## How Skills Work
 
@@ -115,11 +131,33 @@ See [`docs/progressive-disclosure.md`](docs/progressive-disclosure.md) for
 the full mechanism and why it's what makes skills cheap to keep around in
 bulk.
 
+## Why these skills hold up under pressure
+
+Agents rarely skip a step because they don't know it. They skip it because
+a plausible reason shows up: *"it's obviously the cache"*, *"the CTO
+already approved it"*, *"we'll add tests next sprint"*. Every skill here
+names those reasons in advance:
+
+- **`# Red flags`** — observable signs the workflow is being skipped right
+  now ("you are editing code and can't name the command that reproduces
+  the failure").
+- **`# Common rationalizations`** — the excuse, and why it doesn't hold.
+
+| Rationalization | Reality |
+|---|---|
+| "Adding a retry makes it go away." | Making a symptom go away is not a root cause. Retries around a race usually make duplicates *more* likely. |
+| "This feature is the best predictor — great!" | Too-good features are the first leakage suspect. Ask when the value becomes known. |
+| "The author knows this code better than me." | Then ask a precise question in the review. Deference is not a review outcome. |
+
+The validator requires both sections in every skill, and the
+[pressure scenarios](evaluations/workflows/pressure/) test whether they
+work: prompts that argue *for* skipping the workflow.
+
 ## Anatomy of a Skill
 
 ```
 skill/
-├── SKILL.md          # required: frontmatter + workflow + output contract
+├── SKILL.md          # required: frontmatter + workflow + output contract + red flags
 ├── references/       # optional: detail loaded only when SKILL.md says to
 ├── scripts/           # optional: deterministic, standalone, runnable code
 └── assets/            # optional: templates to fill in
@@ -154,8 +192,6 @@ Full write-up: [`skills/debugging-investigator/examples/duplicate-payment-invest
 Try it yourself against a real, runnable, reproducible version of this
 exact bug: [`examples/02-debug-a-failure/`](examples/02-debug-a-failure/).
 
-🎥 Full walkthrough: `[VIDEO LINK — see demos/recording-script.md]`
-⭐ GitHub: `github.com/alphasafal/production-agent-skills`
 
 ## Composition
 
@@ -173,32 +209,45 @@ change) — and why no skill here auto-invokes another silently.
 
 ## Evaluation
 
-Every skill ships 10 activation cases (5 obvious-positive, 2
-ambiguous-positive, 3 negative) and one deeper workflow scenario with a
-real fixture — see [`evaluations/`](evaluations/).
+Four tiers, from free-and-deterministic to real-agent-and-measured. Full
+methodology: [`evaluations/README.md`](evaluations/README.md).
 
-```bash
-python scripts/validate_skills.py -v     # structural + schema + strict-YAML validation
-python scripts/run_static_evals.py       # static lexical sanity checks
-pytest tests/                            # 105 tests over the tooling's guarantees
-```
+| Tier | Question | Command | In CI |
+|---|---|---|---|
+| Structure | Spec-valid? All 12 sections? Within the discovery budget? | `python scripts/validate_skills.py` | ✅ gated |
+| Routing | Does each prompt reach the right skill out of all 8? | `python scripts/run_routing_evals.py` | ✅ gated |
+| Activation | Does a real agent load the right skill? | `python scripts/run_behavioral_evals.py --mode activation` | on demand |
+| Behavior | Is the work better *with* the skill than without? | `python scripts/run_behavioral_evals.py` | on demand |
 
-### What's actually been verified
+### Results
+
+Benchmark in progress: with-skill vs. without-skill numbers for all 8 skills and 5 pressure scenarios, plus real activation accuracy, will be published in [`evaluations/results/README.md`](evaluations/results/README.md).
+
+Full tables, per-scenario breakdown and method: [`evaluations/results/README.md`](evaluations/results/README.md).
+
+### What's verified, and how
 
 | Claim | Evidence |
 |---|---|
-| All 8 skills conform to the open spec | `skills-ref validate` (the reference implementation) passes 8/8, run per-skill in CI |
-| Carrying all 8 skills is cheap | Discovery prompt measures **6,346 chars** — under Codex's documented 8,000-char ceiling |
-| Tooling works on the Python range it claims | Full suite green on 3.9 / 3.11 / 3.13 (CI matrix) |
-| Installation preserves validity | Skills installed into a real cloned repo, then re-validated with `skills-ref` |
+| All 8 skills conform to the open spec | `skills-ref validate` (the reference implementation) passes 8/8 in CI |
+| Every skill has all 12 sections, incl. red flags + rationalizations | `validate_skills.py` fails the build otherwise |
+| Each prompt routes to the right skill, catalog-wide | 40/40 obvious prompts rank their skill #1 of 8; 7/7 "belongs to another skill" negatives route there; CI-gated |
+| Routing generalizes beyond the tuned prompts | Held-out prompts never used for tuning: 11/16 rank #1, 16/16 top-3 |
+| Carrying all 8 skills is cheap | Discovery prompt stays under Codex's 8,000-char ceiling — enforced in CI with `skills-ref to-prompt` |
+| Reference answers never leak to the agent | Validator rejects any scenario whose `workspace_files` include a reference answer or spoiler |
 | The bundled scripts are correct | Run against the real 891-row Titanic dataset; outputs match independently-computed ground truth |
-| The debugging example is real | Bug reproduces 10/10 runs; documented fix resolves it 10/10; regression test fails pre-fix, passes post-fix |
+| The debugging example is real | Bug reproduces 10/10 runs; documented fix resolves it 10/10 |
 
-**No fabricated benchmark numbers exist in this repository.**
-[`evaluations/results/README.md`](evaluations/results/README.md) is
-explicitly `NOT YET BENCHMARKED` — the harness is ready; real before/after
-numbers require actually running it (methodology:
-[`docs/evaluating-skills.md`](docs/evaluating-skills.md)).
+```bash
+python scripts/validate_skills.py -v     # structure, schema, strict YAML, sections
+python scripts/run_routing_evals.py      # catalog-wide routing (free, deterministic)
+pytest tests/                            # 130 tests over the tooling's guarantees
+python scripts/run_behavioral_evals.py --dry-run   # see what a real run would do
+```
+
+**No fabricated benchmark numbers exist in this repository.** Every
+number above comes from a recorded run, labelled with date, model and run
+count.
 
 ## Compatibility
 
@@ -234,9 +283,12 @@ scripts, and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 
 ## Roadmap
 
-- [ ] Run a real before/after benchmark and fill in `evaluations/results/README.md`
-- [ ] Independently verify live auto-activation in a fresh Claude Code session
+- [x] Run a real before/after benchmark and fill in `evaluations/results/README.md`
+- [x] Measure live auto-activation in Claude Code (`--mode activation`)
+- [x] Package as a Claude Code plugin with slash commands
+- [ ] Re-run the benchmark on every skill change that affects behavior, and publish the delta in the PR
 - [ ] Test installation against a live Codex and Copilot session, update `docs/compatibility.md`
+- [ ] Behavioral evals for Codex / Copilot (the runner is CLI-agnostic in shape; only Claude Code is wired)
 - [ ] Community-contributed skills beyond the initial eight
 
 ## License
