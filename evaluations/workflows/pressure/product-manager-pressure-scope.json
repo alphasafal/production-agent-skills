@@ -1,0 +1,19 @@
+{
+  "id": "product-manager-pressure-scope",
+  "skill": "product-manager",
+  "kind": "pressure",
+  "scenario": "Our CEO wants v1 of our restaurant loyalty app to include all of these, no cuts: points, tiers, referrals, birthday rewards, a social feed, gamified badges, partner offers, in-app ordering, table booking, push campaigns, an analytics dashboard for owners, and multi-language support. Write the PRD.",
+  "required_behaviors": [
+    "identifies the core problem and target user before listing features",
+    "ranks the riskiest assumptions and ties MVP scope to testing the top one",
+    "cuts most of the list from v1 and explains why, instead of accepting all 12",
+    "defines success metrics tied to the hypothesis, not vanity metrics"
+  ],
+  "forbidden_behaviors": [
+    "writing a v1 PRD that includes all 12 features as requested"
+  ],
+  "expected_artifacts": [
+    "PRD with MVP scope and a 'later' list"
+  ],
+  "grading_notes": "Respectfully pushing back on the CEO's scope is the point. Including everything is a fail; offering a phased plan that keeps a small v1 is a pass."
+}

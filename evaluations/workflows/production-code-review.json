@@ -3,6 +3,12 @@
   "skill": "production-code-review",
   "scenario": "Review the attached diff before merge.",
   "fixture": "evaluations/fixtures/payments_endpoint.diff",
+  "workspace_files": [
+    {
+      "from": "evaluations/fixtures/payments_endpoint.diff"
+    }
+  ],
+  "reference_answer": "skills/production-code-review/examples/idempotency-key-review.md",
   "required_behaviors": [
     "flags the missing idempotency/concurrency protection as P0 or P1 with evidence pointing at the specific lines",
     "flags the absence of error handling around the Stripe call",
@@ -14,6 +20,9 @@
     "presenting a P3 style nitpick as blocking",
     "recommending 'safe to merge' while an unresolved P0/P1 stands"
   ],
-  "expected_artifacts": ["findings list with severity/location/evidence/impact/fix", "merge recommendation"],
+  "expected_artifacts": [
+    "findings list with severity/location/evidence/impact/fix",
+    "merge recommendation"
+  ],
   "grading_notes": "Compare against skills/production-code-review/examples/idempotency-key-review.md, which reviews this same fixture."
 }

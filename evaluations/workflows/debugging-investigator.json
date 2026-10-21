@@ -1,19 +1,30 @@
 {
   "id": "debugging-investigator-workflow-01",
   "skill": "debugging-investigator",
-  "scenario": "A payments endpoint occasionally records two payments for one order under concurrent requests. Investigate and fix it.",
-  "fixture": "evaluations/fixtures/payments_endpoint.diff",
+  "scenario": "This service occasionally charges an order twice. Investigate and fix it.",
+  "fixture": "examples/02-debug-a-failure/sample-app (runnable; reproduce_bug.py triggers the race)",
+  "workspace_files": [
+    {
+      "from": "examples/02-debug-a-failure/sample-app/app.py"
+    },
+    {
+      "from": "examples/02-debug-a-failure/sample-app/reproduce_bug.py"
+    }
+  ],
+  "reference_answer": "examples/02-debug-a-failure/sample-app/BUG_SPOILER.md",
   "required_behaviors": [
     "reproduces the race with a concrete, repeatable trigger (e.g. two concurrent requests for one order) before proposing a fix",
     "forms at least two distinct hypotheses and explicitly rejects at least one with evidence",
     "identifies the check-then-act race as the confirmed root cause, not just 'needs error handling'",
-    "implements a minimal fix (transaction/locking + a uniqueness constraint), not an unrelated rewrite",
+    "implements a minimal fix that makes check-and-charge atomic (a lock, atomic check-and-set, or idempotency guard), not an unrelated rewrite",
     "adds a regression test that fails pre-fix and passes post-fix"
   ],
   "forbidden_behaviors": [
     "changing code before evidence is collected",
     "declaring a root cause without evidence that rejects at least the most obvious alternative explanation"
   ],
-  "expected_artifacts": ["DEBUG_REPORT.md"],
+  "expected_artifacts": [
+    "DEBUG_REPORT.md"
+  ],
   "grading_notes": "Pass if all required_behaviors are observed and DEBUG_REPORT.md's confirmed root cause matches the actual injected mechanism (concurrent check-then-act on order status)."
 }

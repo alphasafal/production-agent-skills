@@ -2,18 +2,33 @@
   "id": "feature-to-production-workflow-01",
   "skill": "feature-to-production",
   "scenario": "Add rate limiting to our public API — 100 requests/minute per API key. Ship it.",
-  "fixture": "skills/feature-to-production/examples/add-rate-limiting-walkthrough.md (contains the reference answer)",
+  "fixture": "evaluations/fixtures/public-api (small stdlib API with tests)",
+  "workspace_files": [
+    {
+      "from": "evaluations/fixtures/public-api/api.py"
+    },
+    {
+      "from": "evaluations/fixtures/public-api/test_api.py"
+    },
+    {
+      "from": "evaluations/fixtures/public-api/README.md"
+    }
+  ],
   "required_behaviors": [
     "writes a test for the 429/Retry-After acceptance criterion before or alongside implementation",
-    "checks for all places route-level middleware is registered, not just the obvious one",
-    "hands off to production-code-review's dimensions (or explicitly performs an equivalent review) before calling the change done",
-    "produces a deployment checklist that mentions rollout via a flag",
-    "produces a rollback plan specific to this change (flag flip), not generic boilerplate"
+    "checks every entry point that must be rate limited (the handle() function and the HTTP server path in api.py), not just the obvious one",
+    "performs the review stage (production-code-review's dimensions, or an explicit equivalent review of the diff) before calling the change done",
+    "produces a deployment checklist that covers what to monitor after deploy and the multi-process limitation of in-memory counters",
+    "produces a rollback plan specific to this change (e.g. that no persisted state is involved so a revert is complete, or a kill switch) rather than generic boilerplate"
   ],
   "forbidden_behaviors": [
     "considering the feature done once it 'works' with no test",
     "skipping the review stage entirely"
   ],
-  "expected_artifacts": ["implementation with tests", "deployment checklist", "rollback plan"],
-  "grading_notes": "Pass if the rollback plan correctly identifies that transient Redis counters need no special rollback handling (a plausible but wrong grading trap is demanding a data-migration-style rollback plan for a feature with no persisted state)."
+  "expected_artifacts": [
+    "implementation with tests",
+    "deployment checklist",
+    "rollback plan"
+  ],
+  "grading_notes": "The fixture is a single-file stdlib API with no flag system or shared store, so a flag-based rollout or Redis is NOT required. Pass if the rollback plan correctly identifies that in-memory counters need no special rollback handling (demanding a data-migration-style rollback for a feature with no persisted state is a grading trap). The review stage is required by the skill (step 11): an agent saying it skipped review fails that behavior."
 }

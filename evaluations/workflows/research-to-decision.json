@@ -3,6 +3,7 @@
   "skill": "research-to-decision",
   "scenario": "We need to pick a message queue for order events between our checkout service and fulfillment service: Kafka or SQS. Research both and recommend one.",
   "fixture": "skills/research-to-decision/examples/kafka-vs-sqs-decision.md (contains the reference answer)",
+  "reference_answer": "skills/research-to-decision/examples/kafka-vs-sqs-decision.md",
   "required_behaviors": [
     "defines evaluation criteria before scoring the options",
     "marks unverified/assumed claims explicitly rather than stating them as fact",
@@ -12,6 +13,10 @@
   "forbidden_behaviors": [
     "citing a specific external fact (benchmark number, pricing detail) with no source and no assumption flag"
   ],
-  "expected_artifacts": ["RESEARCH.md", "DECISION_MATRIX.md", "ADR.md"],
+  "expected_artifacts": [
+    "RESEARCH.md",
+    "DECISION_MATRIX.md",
+    "ADR.md"
+  ],
   "grading_notes": "Pass if the ADR names a concrete condition that would change the decision later."
 }

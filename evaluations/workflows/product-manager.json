@@ -3,6 +3,7 @@
   "skill": "product-manager",
   "scenario": "Our users keep asking for collaborative playlists, can you spec this out?",
   "fixture": "skills/product-manager/examples/collaborative-playlist-prd.md (contains the reference answer)",
+  "reference_answer": "skills/product-manager/examples/collaborative-playlist-prd.md",
   "required_behaviors": [
     "identifies the riskiest, least-validated assumption (that users will actually invite collaborators) before scoping",
     "states a falsifiable hypothesis tied to that assumption",
@@ -12,6 +13,11 @@
   "forbidden_behaviors": [
     "scoping v1 to include every feature the request could plausibly justify"
   ],
-  "expected_artifacts": ["PRD", "user stories", "success metrics", "decision log entry for what was cut"],
+  "expected_artifacts": [
+    "PRD",
+    "user stories",
+    "success metrics",
+    "decision log entry for what was cut"
+  ],
   "grading_notes": "Pass if the decision log names a specific cut feature and ties the reasoning to the unproven assumption."
 }

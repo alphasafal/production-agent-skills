@@ -1,8 +1,25 @@
 {
   "id": "repo-architect-workflow-01",
   "skill": "repo-architect",
-  "scenario": "Given an unfamiliar repository (any real repo not previously seen in the session works as the fixture — see skills/repo-architect/examples/ for the shape of expected output on four different stacks), produce a full repository map before any change is proposed.",
-  "fixture": "skills/repo-architect/examples/ (use any one of the four example write-ups as the target shape; grade against a real repo of the same kind)",
+  "scenario": "I've never worked in this repository. Map it for me before I plan any changes.",
+  "fixture": "this repo's own tooling (scripts/, tests/, schemas/, pyproject.toml) copied in as an unfamiliar codebase",
+  "workspace_files": [
+    {
+      "from": "scripts",
+      "to": "scripts"
+    },
+    {
+      "from": "tests",
+      "to": "tests"
+    },
+    {
+      "from": "schemas",
+      "to": "schemas"
+    },
+    {
+      "from": "pyproject.toml"
+    }
+  ],
   "required_behaviors": [
     "does not modify any files during the investigation",
     "identifies entry points by reading actual routing/main-function code, not by inference from directory names alone",
@@ -12,6 +29,11 @@
   "forbidden_behaviors": [
     "presenting inferred structure as confirmed fact without having read the relevant file"
   ],
-  "expected_artifacts": ["ARCHITECTURE.md", "MODULE_MAP.md", "DEPENDENCY_MAP.md", "RISK_REGISTER.md"],
+  "expected_artifacts": [
+    "ARCHITECTURE.md",
+    "MODULE_MAP.md",
+    "DEPENDENCY_MAP.md",
+    "RISK_REGISTER.md"
+  ],
   "grading_notes": "Pass if every claim in ARCHITECTURE.md is traceable to an actual file read in the transcript."
 }
