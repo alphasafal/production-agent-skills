@@ -70,6 +70,7 @@
     "id": "production-code-review-neg-02",
     "skill": "production-code-review",
     "category": "negative",
+    "route_to": "repo-architect",
     "prompt": "Give me an overall health assessment of this entire codebase, there's no specific PR.",
     "expected_activation": false,
     "forbidden_behaviors": ["treating a whole-codebase health request as a diff review"],
