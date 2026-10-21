@@ -1,5 +1,5 @@
 {
-  "_readme": "Held-out routing prompts. Written AFTER descriptions were last tuned and never used to tune them. Do not edit a description to fix a miss here — that turns this into a training set. If a miss reveals a real gap, add a NEW case to evaluations/activation/ and fix against that.",
+  "_readme": "Held-out routing prompts. Written AFTER descriptions were last tuned and never used to tune them. Do not edit a description to fix a miss here — that turns this into a training set. If a miss reveals a real gap, add a NEW case to evaluations/activation/ and fix against that. Batch 2 (4 SRE/security skills) added 2026-10-21 after those skills' descriptions were finalized.",
   "cases": [
     {
       "skill": "debugging-investigator",
@@ -64,6 +64,38 @@
     {
       "skill": "data-scientist",
       "prompt": "Our model's accuracy looks great but I don't trust it, can you evaluate it properly?"
+    },
+    {
+      "skill": "incident-responder",
+      "prompt": "Payments are failing for everyone since about ten minutes ago. What do we do right now?"
+    },
+    {
+      "skill": "incident-responder",
+      "prompt": "Our API latency went from 200ms to 9 seconds after lunch and customers are emailing support."
+    },
+    {
+      "skill": "deploy-pipeline-reviewer",
+      "prompt": "Can you check our GitHub Actions release workflow before we give it production credentials?"
+    },
+    {
+      "skill": "deploy-pipeline-reviewer",
+      "prompt": "We wrote a Helm chart and a rollout script for the new service, anything dangerous in there?"
+    },
+    {
+      "skill": "threat-modeler",
+      "prompt": "Before we build the public API keys feature, what could an attacker do with it?"
+    },
+    {
+      "skill": "threat-modeler",
+      "prompt": "We're adding SSO and tenant invites next quarter. Where are the security holes in this plan?"
+    },
+    {
+      "skill": "security-auditor",
+      "prompt": "Go through our Django codebase and find vulnerabilities before the pentest next month."
+    },
+    {
+      "skill": "security-auditor",
+      "prompt": "Is our existing login and password reset code actually secure?"
     }
   ]
 }

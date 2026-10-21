@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "alphasafal-skills",
-  "description": "Evaluated, portable Agent Skills for engineering, data and product workflows.",
+  "description": "Evaluated, portable Agent Skills for engineering, SRE, security, data and product roles. Install everything, or just your role's pack.",
   "owner": {
     "name": "Safal",
     "url": "https://github.com/alphasafal"
@@ -11,10 +11,187 @@
       "name": "production-agent-skills",
       "version": "0.2.0",
       "source": "./",
-      "description": "Eight evaluated Agent Skills: debugging, code review, repo mapping, system design review, data science, decisions/ADRs, PRDs, feature-to-production.",
+      "description": "Twelve evaluated Agent Skills for engineering, SRE, security, data and product work: debugging, code review, incident response, deploy pipeline review, threat modeling, security audits, repo mapping, system design review, data science, decisions with ADRs, PRDs and shipping features.",
       "homepage": "https://github.com/alphasafal/production-agent-skills",
       "license": "MIT",
-      "keywords": ["skills", "debugging", "code-review", "system-design", "data-science", "prd", "adr"]
+      "keywords": [
+        "skills",
+        "debugging",
+        "code-review",
+        "incident-response",
+        "security",
+        "threat-modeling",
+        "devops",
+        "data-science",
+        "prd",
+        "evals"
+      ]
+    },
+    {
+      "name": "backend-engineer",
+      "version": "0.2.0",
+      "source": "./",
+      "strict": false,
+      "description": "Backend / full-stack engineer pack: Understand a codebase, ship features safely, debug what breaks, review what merges. Skills: repo-architect, feature-to-production, debugging-investigator, production-code-review.",
+      "homepage": "https://github.com/alphasafal/production-agent-skills",
+      "license": "MIT",
+      "keywords": [
+        "skills",
+        "backend-engineer",
+        "debugging",
+        "code-review",
+        "incident-response",
+        "security"
+      ],
+      "skills": [
+        "./skills/repo-architect",
+        "./skills/feature-to-production",
+        "./skills/debugging-investigator",
+        "./skills/production-code-review"
+      ],
+      "commands": [
+        "./commands/investigate.md",
+        "./commands/map-repo.md",
+        "./commands/pr-review.md",
+        "./commands/ship-feature.md"
+      ]
+    },
+    {
+      "name": "tech-lead",
+      "version": "0.2.0",
+      "source": "./",
+      "strict": false,
+      "description": "Tech lead / architect pack: Review designs before they're built, make decisions you can defend, hold the review bar. Skills: system-design-reviewer, research-to-decision, production-code-review, repo-architect, threat-modeler.",
+      "homepage": "https://github.com/alphasafal/production-agent-skills",
+      "license": "MIT",
+      "keywords": [
+        "skills",
+        "tech-lead",
+        "debugging",
+        "code-review",
+        "incident-response",
+        "security"
+      ],
+      "skills": [
+        "./skills/system-design-reviewer",
+        "./skills/research-to-decision",
+        "./skills/production-code-review",
+        "./skills/repo-architect",
+        "./skills/threat-modeler"
+      ],
+      "commands": [
+        "./commands/decide.md",
+        "./commands/design-review.md",
+        "./commands/map-repo.md",
+        "./commands/pr-review.md",
+        "./commands/threat-model.md"
+      ]
+    },
+    {
+      "name": "sre",
+      "version": "0.2.0",
+      "source": "./",
+      "strict": false,
+      "description": "SRE / DevOps pack: Run incidents, keep the deploy pipeline safe, find root causes after the fire is out. Skills: incident-responder, deploy-pipeline-reviewer, debugging-investigator.",
+      "homepage": "https://github.com/alphasafal/production-agent-skills",
+      "license": "MIT",
+      "keywords": [
+        "skills",
+        "sre",
+        "debugging",
+        "code-review",
+        "incident-response",
+        "security"
+      ],
+      "skills": [
+        "./skills/incident-responder",
+        "./skills/deploy-pipeline-reviewer",
+        "./skills/debugging-investigator"
+      ],
+      "commands": [
+        "./commands/incident.md",
+        "./commands/investigate.md",
+        "./commands/pipeline-review.md"
+      ]
+    },
+    {
+      "name": "security",
+      "version": "0.2.0",
+      "source": "./",
+      "strict": false,
+      "description": "Security engineer pack: Threat-model designs before they're built, audit code before it launches, review risky diffs. Skills: threat-modeler, security-auditor, production-code-review.",
+      "homepage": "https://github.com/alphasafal/production-agent-skills",
+      "license": "MIT",
+      "keywords": [
+        "skills",
+        "security",
+        "debugging",
+        "code-review",
+        "incident-response",
+        "security"
+      ],
+      "skills": [
+        "./skills/threat-modeler",
+        "./skills/security-auditor",
+        "./skills/production-code-review"
+      ],
+      "commands": [
+        "./commands/pr-review.md",
+        "./commands/security-audit.md",
+        "./commands/threat-model.md"
+      ]
+    },
+    {
+      "name": "data-scientist",
+      "version": "0.2.0",
+      "source": "./",
+      "strict": false,
+      "description": "Data scientist / analyst pack: Rigorous analysis and modeling with leakage checks and baselines; decisions backed by evidence. Skills: data-scientist, research-to-decision.",
+      "homepage": "https://github.com/alphasafal/production-agent-skills",
+      "license": "MIT",
+      "keywords": [
+        "skills",
+        "data-scientist",
+        "debugging",
+        "code-review",
+        "incident-response",
+        "security"
+      ],
+      "skills": [
+        "./skills/data-scientist",
+        "./skills/research-to-decision"
+      ],
+      "commands": [
+        "./commands/analyze-data.md",
+        "./commands/decide.md"
+      ]
+    },
+    {
+      "name": "product-manager",
+      "version": "0.2.0",
+      "source": "./",
+      "strict": false,
+      "description": "Product manager pack: Turn vague ideas into right-sized MVPs and PRDs, decide with evidence, read the data. Skills: product-manager, research-to-decision, data-scientist.",
+      "homepage": "https://github.com/alphasafal/production-agent-skills",
+      "license": "MIT",
+      "keywords": [
+        "skills",
+        "product-manager",
+        "debugging",
+        "code-review",
+        "incident-response",
+        "security"
+      ],
+      "skills": [
+        "./skills/product-manager",
+        "./skills/research-to-decision",
+        "./skills/data-scientist"
+      ],
+      "commands": [
+        "./commands/analyze-data.md",
+        "./commands/decide.md",
+        "./commands/prd.md"
+      ]
     }
   ]
 }
