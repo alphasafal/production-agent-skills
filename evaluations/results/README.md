@@ -38,7 +38,7 @@ simulated, or assumed numbers — only numbers from an actual recorded run.
 for that skill's workflow scenario (e.g. fraction of `required_behaviors`
 observed, or a human 1-5 quality score) — pick one metric per skill and
 state it above the table when you fill this in, since a single global
-metric doesn't fit all 8 workflows equally well.
+metric doesn't fit every workflow equally well.
 
 ## How to fill this in
 

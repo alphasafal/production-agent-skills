@@ -84,7 +84,7 @@ you can narrate confidently without reading it on camera.
 ## 3:50–4:30 — Show the other skills
 
 Quick `python scripts/list_skills.py` in the terminal, scrolling through
-all 8 one-liners. Optionally `python scripts/inspect_skill.py data-scientist`
+all 12 one-liners. Optionally `python scripts/inspect_skill.py data-scientist`
 to show the resource/eval-coverage report.
 
 ## 4:30–5:10 — Composition

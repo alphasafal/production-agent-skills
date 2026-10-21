@@ -1,122 +1,122 @@
 # Production Agent Skills
 
-Reusable workflows for AI agents.
-Engineering • Data • Product • Research
+**Evaluated, production-grade skills for AI coding agents — organized by role.**
+Debugging, code review, incident response, deploy pipelines, threat modeling,
+security audits, system design, data science, decisions and PRDs: each a
+procedure a senior engineer would follow, packaged as a portable
+[Agent Skill](https://agentskills.io) that works in Claude Code, Codex,
+Cursor, Copilot, Cline and 15+ more agents.
 
-[![Open Agent Skills format](https://img.shields.io/badge/format-Open%20Agent%20Skills-blue)](https://agentskills.io)
-[![Spec validated](https://img.shields.io/badge/skills--ref-8%2F8%20valid-success)](docs/compatibility.md)
-[![Skills](https://img.shields.io/badge/skills-8-brightgreen)](#the-8-skills)
-[![Routing](https://img.shields.io/badge/routing-40%2F40%20rank--1-success)](evaluations/README.md#tier-2-routing-scriptsrun_routing_evalspy)
-[![Behavioral evals](https://img.shields.io/badge/behavioral%20evals-with%20vs.%20without%20skill-orange)](evaluations/results/README.md)
-[![Python](https://img.shields.io/badge/python-3.9%20%7C%203.11%20%7C%203.13-blue)](pyproject.toml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
+[![Skills](https://img.shields.io/badge/skills-12-brightgreen)](#the-12-skills)
+[![Role packs](https://img.shields.io/badge/role%20packs-6-blue)](#pick-your-role)
+[![Spec validated](https://img.shields.io/badge/skills--ref-12%2F12%20valid-success)](docs/compatibility.md)
+[![Routing](https://img.shields.io/badge/routing-60%2F60%20rank--1-success)](evaluations/README.md#tier-2-routing-scriptsrun_routing_evalspy)
+[![Behavioral evals](https://img.shields.io/badge/benchmarked-with%20vs.%20without%20skill-orange)](evaluations/results/README.md)
 [![CI](https://github.com/alphasafal/production-agent-skills/actions/workflows/validate-skills.yml/badge.svg)](https://github.com/alphasafal/production-agent-skills/actions/workflows/validate-skills.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
-> Agents already know a lot.
-> The hard part is getting them to follow your process reliably.
->
-> This repository turns repeated workflows into portable Agent Skills.
+> **Benchmarked, not just written.** Each skill is run against the same agent *without* it on scenarios with planted problems, blind-graded. Results: [`evaluations/results/`](evaluations/results/README.md).
 
+## Pick your role
+
+Install only what your job needs — each pack is small enough for every
+agent's skill budget.
+
+| Role | Skills | Claude Code |
+|---|---|---|
+| **Backend / full-stack engineer** | [repo-architect](skills/repo-architect/), [feature-to-production](skills/feature-to-production/), [debugging-investigator](skills/debugging-investigator/), [production-code-review](skills/production-code-review/) | `/plugin install backend-engineer@alphasafal-skills` |
+| **Tech lead / architect** | [system-design-reviewer](skills/system-design-reviewer/), [research-to-decision](skills/research-to-decision/), [production-code-review](skills/production-code-review/), [repo-architect](skills/repo-architect/), [threat-modeler](skills/threat-modeler/) | `/plugin install tech-lead@alphasafal-skills` |
+| **SRE / DevOps** | [incident-responder](skills/incident-responder/), [deploy-pipeline-reviewer](skills/deploy-pipeline-reviewer/), [debugging-investigator](skills/debugging-investigator/) | `/plugin install sre@alphasafal-skills` |
+| **Security engineer** | [threat-modeler](skills/threat-modeler/), [security-auditor](skills/security-auditor/), [production-code-review](skills/production-code-review/) | `/plugin install security@alphasafal-skills` |
+| **Data scientist / analyst** | [data-scientist](skills/data-scientist/), [research-to-decision](skills/research-to-decision/) | `/plugin install data-scientist@alphasafal-skills` |
+| **Product manager** | [product-manager](skills/product-manager/), [research-to-decision](skills/research-to-decision/), [data-scientist](skills/data-scientist/) | `/plugin install product-manager@alphasafal-skills` |
+
+First time in Claude Code? Add the marketplace once:
+`/plugin marketplace add alphasafal/production-agent-skills` — then install
+a role above, or everything with
+`/plugin install production-agent-skills@alphasafal-skills`.
+
+<details>
+<summary><b>Any other agent</b> (Codex, Cursor, Copilot, Cline, Gemini CLI, …) — one command per role</summary>
+
+```bash
+# Backend / full-stack engineer
+npx skills add alphasafal/production-agent-skills --skill repo-architect --skill feature-to-production --skill debugging-investigator --skill production-code-review
+# Tech lead / architect
+npx skills add alphasafal/production-agent-skills --skill system-design-reviewer --skill research-to-decision --skill production-code-review --skill repo-architect --skill threat-modeler
+# SRE / DevOps
+npx skills add alphasafal/production-agent-skills --skill incident-responder --skill deploy-pipeline-reviewer --skill debugging-investigator
+# Security engineer
+npx skills add alphasafal/production-agent-skills --skill threat-modeler --skill security-auditor --skill production-code-review
+# Data scientist / analyst
+npx skills add alphasafal/production-agent-skills --skill data-scientist --skill research-to-decision
+# Product manager
+npx skills add alphasafal/production-agent-skills --skill product-manager --skill research-to-decision --skill data-scientist
+
+# Everything
+npx skills add alphasafal/production-agent-skills
 ```
-                 GENERAL AGENT
-                       │
-                Skill discovery
-                       │
-       ┌───────────────┼───────────────┐
-       ↓               ↓               ↓
- ENGINEERING          DATA           PRODUCT
-       │               │               │
- repo-architect    data-scientist   product-manager
- debugging-       research-to-      feature-to-
- investigator      decision          production
- production-code-
- review
- system-design-
- reviewer
-```
 
-- **PROMPT** — what I want right now.
-- **TOOL** — something the agent can do (read a file, run a shell command).
-- **MCP** — how the agent connects to external systems and data.
-- **SUBAGENT** — an isolated worker the agent delegates a bounded task to.
-- **SKILL** — reusable procedural knowledge for *how* the work should be done.
-
-Skills don't replace any of the above — they direct how an agent uses them.
-See [`docs/skills-vs-tools.md`](docs/skills-vs-tools.md),
-[`docs/skills-vs-mcp.md`](docs/skills-vs-mcp.md), and
-[`docs/skills-vs-subagents.md`](docs/skills-vs-subagents.md) for the full
-distinctions.
+No Node? `python scripts/install_skills.py --pack sre --target ./.claude/skills`
+(see [`clients/`](clients/) for each agent's skills directory).
+</details>
 
 ## Why this exists
 
-Ask an agent to debug a production issue and, without guardrails, it will
-often jump straight to a plausible-looking fix — because nothing forces it
-to reproduce the bug and gather evidence first. Ask it to review a diff and
-you'll get generic style comments unless something makes it actually check
-for concurrency bugs, leaked secrets, or a missing idempotency key. General
-capability isn't the bottleneck; a repeatable **procedure** is.
+Ask an agent to debug a production issue and it will often jump straight
+to a plausible-looking fix, because nothing makes it reproduce the bug
+first. Ask it to review a deploy pipeline and you get YAML style notes
+while `pull_request_target` hands your secrets to any fork. General
+capability isn't the bottleneck; a repeatable **procedure** is — one that
+holds when the prompt says *"prod is on fire, skip the tests."*
 
-This repo packages eight such procedures as portable
-[Agent Skills](https://agentskills.io) — an open format, not a
-Claude-specific or Anthropic-specific one — each with a defined workflow,
-output contract, and its own evaluation cases proving what it's actually
-supposed to do (and not do).
+Every skill here has a defined workflow, an output contract, red flags and
+rationalizations that keep it on track under pressure, and its own
+evaluation suite — including a benchmark against the same agent *without*
+the skill.
 
-## The 8 Skills
+## The 12 skills
 
-| Skill | What it does | Best used for |
+| Skill | Role | What it makes the agent do |
 |---|---|---|
-| [repo-architect](skills/repo-architect/) | Maps an unfamiliar repo's structure, dependencies, and risks — without touching code | Onboarding to a new codebase before planning a change |
-| [debugging-investigator](skills/debugging-investigator/) | Evidence-driven debugging: reproduce → evidence → hypotheses → confirmed root cause → minimal fix → regression test | Bugs, crashes, intermittent failures, production incidents |
-| [production-code-review](skills/production-code-review/) | Senior-level review across 12 dimensions, findings ranked P0-P3, FACT vs. LIKELY RISK vs. OPTIONAL IMPROVEMENT | Reviewing a diff/PR before merge |
-| [system-design-reviewer](skills/system-design-reviewer/) | Stress-tests a proposed architecture — failure modes, scaling, consistency, cost — before implementation starts | Reviewing an RFC or design doc |
-| [data-scientist](skills/data-scientist/) | End-to-end tabular workflow: leakage/missingness checks, naive baseline before modeling, error/slice analysis | Analyzing a dataset or building a predictive model |
-| [research-to-decision](skills/research-to-decision/) | Turns research into an auditable decision — sourced evidence, a decision matrix, an ADR | Build-vs-buy and technology-choice decisions |
-| [product-manager](skills/product-manager/) | Turns a vague idea into a risk-ranked, right-sized MVP — resists scope explosion | Scoping a feature request into a PRD |
-| [feature-to-production](skills/feature-to-production/) | Requirement → tests → implementation → review → deployment checklist → rollback plan | Shipping a well-defined feature end to end |
+| [debugging-investigator](skills/debugging-investigator/) | Engineering | Reproduce → evidence → competing hypotheses → confirmed root cause → minimal fix → regression test |
+| [production-code-review](skills/production-code-review/) | Engineering | Review a diff across 12 dimensions; findings ranked P0–P3, FACT vs. LIKELY RISK, and a merge verdict |
+| [feature-to-production](skills/feature-to-production/) | Engineering | Acceptance criteria → tests → smallest change → review → deployment checklist → rollback plan |
+| [repo-architect](skills/repo-architect/) | Engineering | Map an unfamiliar codebase — entry points, data flow, risks — without touching code |
+| [system-design-reviewer](skills/system-design-reviewer/) | Tech lead | Stress-test an RFC: failure modes, scaling, consistency, caching, cost — before anything is built |
+| [research-to-decision](skills/research-to-decision/) | Tech lead / PM | Sourced evidence, explicit criteria, trade-offs, and an ADR you can defend |
+| [incident-responder](skills/incident-responder/) | SRE | Live incident: measure impact, correlate changes, **mitigate first**, status updates, blameless postmortem |
+| [deploy-pipeline-reviewer](skills/deploy-pipeline-reviewer/) | DevOps | Review CI/CD, Dockerfiles, migrations and rollout before they touch prod; go/no-go with fixes |
+| [threat-modeler](skills/threat-modeler/) | Security | Trust boundaries, STRIDE threats as concrete attacks, ranked mitigations as testable requirements |
+| [security-auditor](skills/security-auditor/) | Security | Audit existing code; every finding traced from input to sink, ranked by exploitability, with a fix |
+| [data-scientist](skills/data-scientist/) | Data | Leakage and missingness checks, naive baseline first, error and slice analysis |
+| [product-manager](skills/product-manager/) | Product | Vague idea → risk-ranked assumptions → right-sized MVP → PRD; resists scope explosion |
 
-## Install
+## Slash commands (Claude Code)
 
-**Claude Code plugin** — all 8 skills plus slash commands, kept up to date:
+Skills activate on their own from what you ask. Commands run one now:
 
-```
-/plugin marketplace add alphasafal/production-agent-skills
-/plugin install production-agent-skills@alphasafal-skills
-```
+| Command | Skill | | Command | Skill |
+|---|---|---|---|---|
+| `/investigate` | debugging-investigator | | `/incident` | incident-responder |
+| `/pr-review` | production-code-review | | `/pipeline-review` | deploy-pipeline-reviewer |
+| `/ship-feature` | feature-to-production | | `/threat-model` | threat-modeler |
+| `/map-repo` | repo-architect | | `/security-audit` | security-auditor |
+| `/design-review` | system-design-reviewer | | `/analyze-data` | data-scientist |
+| `/decide` | research-to-decision | | `/prd` | product-manager |
 
-**Any agent** (Claude Code, Codex, Cursor, Copilot, Cline, …) via the open
-[skills CLI](https://github.com/vercel-labs/skills):
+## What a skill is (and isn't)
 
-```bash
-npx skills add alphasafal/production-agent-skills                               # all 8
-npx skills add alphasafal/production-agent-skills --skill debugging-investigator # just one
-```
+- **PROMPT** — what you want right now.
+- **TOOL** — something the agent can do (read a file, run a command).
+- **MCP** — how the agent reaches external systems and data.
+- **SUBAGENT** — an isolated worker for a bounded task.
+- **SKILL** — reusable procedural knowledge for *how* the work should be done.
 
-**No Node? Plain Python**, into any skills directory:
-
-```bash
-git clone https://github.com/alphasafal/production-agent-skills.git
-python production-agent-skills/scripts/install_skills.py --all --target ./my-project/.claude/skills
-```
-
-(Use `.agents/skills` for Codex/Copilot — see [`clients/`](clients/) for
-verified per-client paths. `--dry-run` previews, `--force` overwrites.)
-
-## Slash commands (Claude Code plugin)
-
-Skills activate on their own from what you ask. Commands are for when you
-want a specific one, now:
-
-| Command | Skill |
-|---|---|
-| `/investigate <symptom>` | debugging-investigator |
-| `/pr-review [target]` | production-code-review |
-| `/map-repo [area]` | repo-architect |
-| `/design-review <doc>` | system-design-reviewer |
-| `/analyze-data <file> <question>` | data-scientist |
-| `/decide <choice>` | research-to-decision |
-| `/prd <idea>` | product-manager |
-| `/ship-feature <ticket>` | feature-to-production |
+Skills don't replace the others — they direct how an agent uses them. See
+[`docs/skills-vs-tools.md`](docs/skills-vs-tools.md),
+[`docs/skills-vs-mcp.md`](docs/skills-vs-mcp.md) and
+[`docs/skills-vs-subagents.md`](docs/skills-vs-subagents.md).
 
 ## How Skills Work
 
@@ -215,13 +215,13 @@ methodology: [`evaluations/README.md`](evaluations/README.md).
 | Tier | Question | Command | In CI |
 |---|---|---|---|
 | Structure | Spec-valid? All 12 sections? Within the discovery budget? | `python scripts/validate_skills.py` | ✅ gated |
-| Routing | Does each prompt reach the right skill out of all 8? | `python scripts/run_routing_evals.py` | ✅ gated |
+| Routing | Does each prompt reach the right skill out of all 12? | `python scripts/run_routing_evals.py` | ✅ gated |
 | Activation | Does a real agent load the right skill? | `python scripts/run_behavioral_evals.py --mode activation` | on demand |
 | Behavior | Is the work better *with* the skill than without? | `python scripts/run_behavioral_evals.py` | on demand |
 
 ### Results
 
-Benchmark in progress: with-skill vs. without-skill numbers for all 8 skills and 5 pressure scenarios, plus real activation accuracy, will be published in [`evaluations/results/README.md`](evaluations/results/README.md).
+With-skill vs. without-skill results for all 12 skills and the 5 pressure scenarios, plus measured activation accuracy, are in [`evaluations/results/README.md`](evaluations/results/README.md).
 
 Full tables, per-scenario breakdown and method: [`evaluations/results/README.md`](evaluations/results/README.md).
 
@@ -229,11 +229,11 @@ Full tables, per-scenario breakdown and method: [`evaluations/results/README.md`
 
 | Claim | Evidence |
 |---|---|
-| All 8 skills conform to the open spec | `skills-ref validate` (the reference implementation) passes 8/8 in CI |
+| All 12 skills conform to the open spec | `skills-ref validate` (the reference implementation) passes 12/12 in CI |
 | Every skill has all 12 sections, incl. red flags + rationalizations | `validate_skills.py` fails the build otherwise |
-| Each prompt routes to the right skill, catalog-wide | 40/40 obvious prompts rank their skill #1 of 8; 7/7 "belongs to another skill" negatives route there; CI-gated |
-| Routing generalizes beyond the tuned prompts | Held-out prompts never used for tuning: 11/16 rank #1, 16/16 top-3 |
-| Carrying all 8 skills is cheap | Discovery prompt stays under Codex's 8,000-char ceiling — enforced in CI with `skills-ref to-prompt` |
+| Each prompt routes to the right skill, catalog-wide | 60/60 obvious prompts rank their skill #1 of 12; 15/15 "belongs to another skill" negatives route there; CI-gated |
+| Routing generalizes beyond the tuned prompts | 24 held-out prompts never used for tuning: 15/24 rank #1, 24/24 top-3 |
+| Every role pack is cheap to carry | Largest pack's discovery prompt is 4,607 bytes, under Codex's 8,000 ceiling — enforced per pack in CI with `skills-ref to-prompt` |
 | Reference answers never leak to the agent | Validator rejects any scenario whose `workspace_files` include a reference answer or spoiler |
 | The bundled scripts are correct | Run against the real 891-row Titanic dataset; outputs match independently-computed ground truth |
 | The debugging example is real | Bug reproduces 10/10 runs; documented fix resolves it 10/10 |
@@ -241,7 +241,7 @@ Full tables, per-scenario breakdown and method: [`evaluations/results/README.md`
 ```bash
 python scripts/validate_skills.py -v     # structure, schema, strict YAML, sections
 python scripts/run_routing_evals.py      # catalog-wide routing (free, deterministic)
-pytest tests/                            # 130 tests over the tooling's guarantees
+pytest tests/                            # 186 tests over the tooling's guarantees
 python scripts/run_behavioral_evals.py --dry-run   # see what a real run would do
 ```
 
@@ -289,7 +289,8 @@ scripts, and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 - [ ] Re-run the benchmark on every skill change that affects behavior, and publish the delta in the PR
 - [ ] Test installation against a live Codex and Copilot session, update `docs/compatibility.md`
 - [ ] Behavioral evals for Codex / Copilot (the runner is CLI-agnostic in shape; only Claude Code is wired)
-- [ ] Community-contributed skills beyond the initial eight
+- [ ] More roles: frontend (accessibility + Core Web Vitals), QA/test strategy, ML engineering
+- [ ] Community-contributed skills (see [CONTRIBUTING.md](CONTRIBUTING.md))
 
 ## License
 
