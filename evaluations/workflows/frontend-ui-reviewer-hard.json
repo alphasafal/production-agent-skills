@@ -1,0 +1,36 @@
+{
+  "id": "frontend-ui-reviewer-workflow-02",
+  "skill": "frontend-ui-reviewer",
+  "scenario": "Review the account settings screen and its delete-account dialog before release (AccountSettings.jsx, DeleteAccountDialog.jsx, settings.css). The dialog already passed our dialog checklist last sprint.",
+  "fixture": "evaluations/fixtures/frontend-ui-reviewer-hard (React settings page plus a delete dialog that passes a surface checklist but has behavior-level defects; three decoys implemented correctly)",
+  "workspace_files": [
+    {
+      "from": "evaluations/fixtures/frontend-ui-reviewer-hard/AccountSettings.jsx"
+    },
+    {
+      "from": "evaluations/fixtures/frontend-ui-reviewer-hard/DeleteAccountDialog.jsx"
+    },
+    {
+      "from": "evaluations/fixtures/frontend-ui-reviewer-hard/settings.css"
+    },
+    {
+      "from": "evaluations/fixtures/frontend-ui-reviewer-hard/README.md"
+    }
+  ],
+  "reference_answer": "evaluations/answers/frontend-ui-reviewer-hard.md",
+  "required_behaviors": [
+    "flags that the Delete button is only aria-disabled, so its onClick still runs: the account can be deleted without typing DELETE and a second click during the request sends a second non-idempotent delete; ranks it P0",
+    "flags that aria-hidden is set on #app-root while the dialog renders inside #app-root (no portal), hiding the dialog from screen readers",
+    "flags that focus is not returned to the Delete account trigger when the dialog closes",
+    "flags that the error toast's aria-live region is mounted together with its message, so the save failure is likely not announced",
+    "flags at least two of: aria-describedby pointing at a non-existent id (emailError vs email-error); outline removed on all .btn with a focus-visible replacement only on .btn-primary; layout shift from the late verify banner or missing font-display; the 20x20px dismiss button — each with file:line and a concrete fix"
+  ],
+  "forbidden_behaviors": [
+    "reporting the always-mounted role=\"status\" save message, the tabIndex={-1} dialog heading, or the labelled Dismiss icon button's accessible name as a defect",
+    "approving the screen or the dialog to ship as-is because it passed the dialog checklist"
+  ],
+  "expected_artifacts": [
+    "UI_REVIEW.md"
+  ],
+  "grading_notes": "This is the hard companion to workflow-01: the obvious checklist items are all present, so every gated issue needs tracing behavior across files (the README's no-portal note for #2) or across time (the click still firing for #1). Pass if all required_behaviors are observed in UI_REVIEW.md, the verdict is not ship-as-is, and no decoy is reported as a defect. Compare against evaluations/answers/frontend-ui-reviewer-hard.md."
+}

@@ -80,8 +80,12 @@ nothing in the code or docs decides it.
 4. **Write the case list.** Turn each rule into concrete input → expected
    output cases: the normal case, each boundary (at, just below, just above
    the limit), invalid input, error paths, ordering and interaction between
-   rules, and rounding or precision where numbers are involved. Put the list
-   in `TEST_LOG.md` before writing any test.
+   rules, and rounding or precision where numbers are involved. For every
+   case, also write the result a plausible *wrong* implementation would give
+   (rules applied in the other order, rounding per step instead of once, `<`
+   instead of `<=`). If the wrong result equals the expected one, the input
+   can't catch that bug: change the input until they differ. Put the list,
+   with both values per case, in `TEST_LOG.md` before writing any test.
 5. **Red.** Write ONE test for the next case, through the public interface
    (the function, endpoint or CLI callers use). Run only that test. It must
    fail with an assertion about behavior — wrong value, missing exception.
@@ -125,8 +129,9 @@ The code change and its tests, plus `TEST_LOG.md` with these sections:
 - **Test command** — the full-suite and single-test commands, and where
   they came from (README, CI file, config).
 - **Baseline** — full-suite result before any change.
-- **Cases** — the numbered case list, each with input, expected output and
-  the rule it comes from; assumptions for ambiguous rules marked.
+- **Cases** — the numbered case list, each with input, expected output, the
+  value a plausible wrong implementation would give (which must differ),
+  and the rule it comes from; assumptions for ambiguous rules marked.
 - **Red → green log** — per case: test name, the red failure line, the
   green result, and the full-suite result after green.
 - **Refactors** — what changed and the suite result after each.
@@ -159,6 +164,8 @@ Stop and correct course if any of these are true:
 - You are deleting, skipping or relaxing an existing assertion (`assertEqual`
   to `assertAlmostEqual`, exact to `>=`) so the suite goes green.
 - You typed `pytest` or `npm test` without checking the repo uses it.
+- An ordering, rounding or limit case has no "wrong implementation gives"
+  value in the log, or that value equals the expected one.
 
 # Common rationalizations
 
@@ -173,6 +180,7 @@ Excuses that come up for skipping this workflow, and why they don't hold:
 | "Coverage is already 80%." | Coverage counts lines executed, not rules checked. The new branch you are adding is in the other 20% until a test hits it. |
 | "This old test conflicts with the new code, I'll delete it." | That test is the spec for an existing rule. Change it only when the ticket changes that rule, and record which line says so. |
 | "The test failed, that counts as red." | It counts only if it failed on the behavior. A missing import fails every time and proves nothing about the code. |
+| "I have an ordering test, so ordering is covered." | Only if a wrong order would fail it. With 10% and a fixed 5 off some totals, both orders round to the same cent. Compute the wrong answer and make sure it differs. |
 
 # Edge cases
 
