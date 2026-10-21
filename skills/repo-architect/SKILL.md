@@ -6,10 +6,11 @@ description: >
   risks — before any code is changed. Use when starting work in a codebase you
   haven't worked in before, onboarding to a new repo, preparing to plan a
   non-trivial change, or when asked to "understand this codebase", "explain the
-  architecture", "map how the existing system works", or document a codebase's
-  module structure and dependencies. Do not use for a codebase you already
-  understand well, for a single well-scoped file edit, or as a substitute for
-  actually implementing a change (it produces a map, not a fix).
+  architecture", "map how the existing system works", document a codebase's
+  module structure and dependencies, or assess the overall health of an entire
+  codebase. Do not use for a codebase you already understand well, for a single
+  well-scoped file edit, or as a substitute for actually implementing a change
+  (it produces a map, not a fix).
 license: MIT
 compatibility: Needs filesystem read access to the repository. No network required.
 metadata:

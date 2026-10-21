@@ -6,11 +6,11 @@ description: >
   engineering, model comparison against the baseline, and error/slice analysis.
   Use when asked to analyze a dataset, CSV, or spreadsheet; predict an outcome
   such as which users will convert or churn; build or evaluate a predictive
-  model; or dig into a data quality issue in tabular data. Do not use for pure
-  data engineering/ETL with no analysis or modeling question, for unstructured
-  data (images/audio/free text at scale) without a tabular framing, or when the
-  task is answerable by a single summary statistic with no need for the full
-  workflow — say so and just answer it.
+  model; review or write up a model's results, or dig into a data quality issue
+  in tabular data. Do not use for pure data engineering/ETL with no analysis or
+  modeling question, for unstructured data (images/audio/free text at scale)
+  without a tabular framing, or when the task is answerable by a single summary
+  statistic with no need for the full workflow — say so and just answer it.
 license: MIT
 compatibility: >
   Scripts require Python with pandas/numpy installed (see pyproject.toml's

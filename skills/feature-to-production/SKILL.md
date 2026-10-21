@@ -5,12 +5,12 @@ description: >
   to production readiness: acceptance criteria, repository understanding,
   smallest-viable design, tests, implementation, verification, review,
   security/performance checks, documentation, and a deployment/rollback plan.
-  Use when asked to build, add, implement, or ship a feature end to end —
-  including implementing a fully specified ticket or spec, adding a capability
-  to an API or app, or taking work "all the way to done" — not just write a
-  snippet. Do not use for a one-line fix (use debugging-investigator if it's a
-  bug) or when the requirement itself is still vague (use product-manager first
-  to scope it).
+  Load it first whenever asked to build, add, implement or ship a feature or
+  capability in a codebase, before reading the code, including small features, a
+  fully specified ticket or spec, adding something to an API or app, taking work
+  all the way to done, and rushed ship-it-today or skip-the-tests requests. Do
+  not use for a one-line fix (use debugging-investigator if it's a bug) or when
+  the requirement itself is still vague (use product-manager first to scope it).
 license: MIT
 compatibility: Needs filesystem/shell access to implement and test. No network required beyond what the project's own tests/build need.
 metadata:

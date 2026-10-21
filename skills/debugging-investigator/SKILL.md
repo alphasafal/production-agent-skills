@@ -8,10 +8,11 @@ description: >
   thrown, crashes, memory leaks or OOMs, hangs, failing or flaky tests, wrong or
   mismatched numbers, users being logged out,
   works-locally-but-not-in-production, intermittent errors, production
-  incidents, or performance regressions — whenever asked to investigate why. Do
-  not use for writing new features, general code review with no reported
-  failure, or answering conceptual questions about how something works (e.g.
-  "what is a stack trace" or "explain this error type").
+  incidents, or performance regressions — whenever asked to investigate why,
+  including urgent just-push-a-quick-fix requests. Do not use for writing new
+  features, general code review with no reported failure, or answering
+  conceptual questions about how something works (e.g. "what is a stack trace"
+  or "explain this error type").
 license: MIT
 compatibility: >
   Needs shell/filesystem access to reproduce and run tests. Log/metrics/tracing

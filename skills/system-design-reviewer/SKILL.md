@@ -1,13 +1,15 @@
 ---
 name: system-design-reviewer
 description: >
-  Reviews a proposed system or service architecture before implementation begins
-  — requirements, API design, data model, storage, consistency, caching,
+  Reviews a proposed system or service architecture before implementation
+  begins: requirements, API design, data model, storage, consistency, caching,
   queues/events, scaling, failure modes, security, observability, deployment,
-  and cost. Use when evaluating a design doc, RFC, technical plan, or proposed
-  or competing architectures for a new system before building it, or when asked
-  "does this design hold up", "will this scale", "is this database enough for
-  what we're planning", or "what could go wrong with this architecture". Do not
+  and cost. Load it first whenever someone asks to review, evaluate, compare,
+  sanity-check or poke holes in a design doc, RFC, technical plan or proposed
+  architecture for a new system, or when choosing between candidate
+  architectures for a new service, even before you have read or asked for the
+  document, and for questions like will this scale, is this database enough for
+  what we are planning, or what could go wrong with this architecture. Do not
   use once implementation is already underway and the question is about the code
   itself (use production-code-review), or for reviewing an existing,
   already-built system's structure (use repo-architect).
