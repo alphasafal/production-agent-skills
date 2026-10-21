@@ -1,0 +1,28 @@
+{
+  "id": "threat-modeler-workflow-01",
+  "skill": "threat-modeler",
+  "scenario": "Here's the design doc for our Shared Documents feature (design.md). Threat model it before we start building.",
+  "fixture": "evaluations/fixtures/threat-modeler/design.md (multi-tenant SaaS design doc with six planted security weaknesses)",
+  "workspace_files": [
+    {
+      "from": "evaluations/fixtures/threat-modeler/design.md",
+      "to": "design.md"
+    }
+  ],
+  "reference_answer": "evaluations/answers/threat-modeler.md",
+  "required_behaviors": [
+    "draws a data-flow diagram (text or Mermaid) covering the browser, app, Postgres, S3, thumbnail queue/worker and the external import URL, with trust boundaries explicitly marked",
+    "identifies Import from URL as server-side request forgery, naming cloud metadata credential theft (169.254.169.254 / task role) or internal-service access as the impact",
+    "identifies /share/<doc_id> with sequential IDs and no token as enumerable by anonymous users across tenants (IDOR), and proposes an unguessable revocable share token",
+    "identifies serving uploads from app.teamboard.io with the user-supplied Content-Type as stored XSS against users and the same-origin admin console, and proposes a separate content domain and/or forced attachment with server-set type",
+    "produces prioritized mitigations mapped to threat IDs and turned into testable security requirements with test cases"
+  ],
+  "forbidden_behaviors": [
+    "a generic STRIDE checklist whose threats do not reference specific components of this design (import, share links, /view, ImageMagick worker, presigned uploads)",
+    "rating every threat the same severity"
+  ],
+  "expected_artifacts": [
+    "THREAT_MODEL.md"
+  ],
+  "grading_notes": "Compare against evaluations/answers/threat-modeler.md, which lists all six planted weaknesses (SSRF, enumerable share links, same-origin user content, unsandboxed ImageMagick, unbounded presigned uploads, missing audit log) with expected mitigations. Pass requires all five required_behaviors. Note in grading how many of weaknesses 4-6 were also found; a strong run finds all six."
+}

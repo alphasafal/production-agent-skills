@@ -1,0 +1,97 @@
+[
+  {
+    "id": "threat-modeler-pos-01",
+    "skill": "threat-modeler",
+    "category": "positive-obvious",
+    "prompt": "Can you threat model this design doc for our new file upload feature before we start building?",
+    "expected_activation": true,
+    "required_behaviors": ["draws a data-flow diagram with trust boundaries marked", "covers the file-processing path explicitly"],
+    "forbidden_behaviors": ["listing STRIDE category names with no concrete attack"],
+    "expected_artifacts": ["THREAT_MODEL.md"]
+  },
+  {
+    "id": "threat-modeler-pos-02",
+    "skill": "threat-modeler",
+    "category": "positive-obvious",
+    "prompt": "Run a STRIDE analysis on the architecture for our partner API.",
+    "expected_activation": true,
+    "required_behaviors": ["writes each threat as an attack sentence naming actor, element and result", "rates threats by likelihood and impact with justification"],
+    "expected_artifacts": ["THREAT_MODEL.md"]
+  },
+  {
+    "id": "threat-modeler-pos-03",
+    "skill": "threat-modeler",
+    "category": "positive-obvious",
+    "prompt": "What are the attack vectors and abuse cases for this feature that lets users share documents with people outside their workspace?",
+    "expected_activation": true,
+    "required_behaviors": ["checks share links for guessability and enumeration", "lists abuse cases"],
+    "expected_artifacts": ["THREAT_MODEL.md"]
+  },
+  {
+    "id": "threat-modeler-pos-04",
+    "skill": "threat-modeler",
+    "category": "positive-obvious",
+    "prompt": "We're planning an 'import from URL' option where our server downloads the file. How could an attacker abuse that, and what security requirements do we need?",
+    "expected_activation": true,
+    "required_behaviors": ["identifies SSRF risk on server-side fetch", "produces testable security requirements traced to threats"],
+    "expected_artifacts": ["THREAT_MODEL.md"]
+  },
+  {
+    "id": "threat-modeler-pos-05",
+    "skill": "threat-modeler",
+    "category": "positive-obvious",
+    "prompt": "Before we build multi-tenant SSO, how could an attacker abuse it? I want a proper threat model with mitigations.",
+    "expected_activation": true,
+    "required_behaviors": ["includes another-tenant and insider actors", "maps each significant threat to a specific mitigation"],
+    "expected_artifacts": ["THREAT_MODEL.md"]
+  },
+  {
+    "id": "threat-modeler-amb-01",
+    "skill": "threat-modeler",
+    "category": "positive-ambiguous",
+    "prompt": "Our security team wants sign-off on this RFC before we write any code. What would they push back on?",
+    "expected_activation": true,
+    "required_behaviors": ["treats this as a pre-implementation threat model rather than a general architecture review"],
+    "expected_artifacts": ["THREAT_MODEL.md"],
+    "notes": "No 'threat model' or 'STRIDE' keyword; the security-team sign-off on a pre-code RFC is the signal."
+  },
+  {
+    "id": "threat-modeler-amb-02",
+    "skill": "threat-modeler",
+    "category": "positive-ambiguous",
+    "prompt": "If someone malicious signed up for a free account, what's the worst they could do with the import and preview features we're planning?",
+    "expected_activation": true,
+    "required_behaviors": ["enumerates concrete attacker paths through import and preview (SSRF, file parsing, resource abuse)"],
+    "expected_artifacts": ["THREAT_MODEL.md"],
+    "notes": "Phrased as a worst-case question from an attacker's point of view, not a request for a document."
+  },
+  {
+    "id": "threat-modeler-neg-01",
+    "skill": "threat-modeler",
+    "category": "negative",
+    "route_to": "system-design-reviewer",
+    "prompt": "Review this design doc for our notifications service: will it scale to 10x, and is the queue setup going to hold up?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["producing a STRIDE threat model for a scaling and reliability review"],
+    "notes": "General architecture review with no security ask belongs to system-design-reviewer."
+  },
+  {
+    "id": "threat-modeler-neg-02",
+    "skill": "threat-modeler",
+    "category": "negative",
+    "route_to": "production-code-review",
+    "prompt": "Review this pull request that adds the upload endpoint before I merge it.",
+    "expected_activation": false,
+    "forbidden_behaviors": ["threat modeling a whole design when asked to review a specific diff"],
+    "notes": "A code diff ready to merge is production-code-review's job, even though uploads are security-relevant. Auditing existing code for vulnerabilities would be security-auditor."
+  },
+  {
+    "id": "threat-modeler-neg-03",
+    "skill": "threat-modeler",
+    "category": "negative",
+    "prompt": "What does the E in STRIDE stand for?",
+    "expected_activation": false,
+    "forbidden_behaviors": ["producing a THREAT_MODEL.md for a conceptual question with no design"],
+    "notes": "Conceptual question; answer directly."
+  }
+]
