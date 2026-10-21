@@ -11,9 +11,9 @@ See each `clients/*.md` file for exactly what was checked and how.
 
 | Check | Status |
 |---|---|
-| All 12 skills pass the official `skills-ref validate` (reference implementation of the open spec) | ✅ verified — run per skill in CI |
+| All 15 skills pass the official `skills-ref validate` (reference implementation of the open spec) | ✅ verified — run per skill in CI |
 | Frontmatter satisfies the spec's strict YAML subset (no flow collections, anchors, or duplicate keys) | ✅ verified — enforced by `scripts/validate_skills.py` and `tests/test_spec_strictness.py` |
-| Discovery cost per role pack (`skills-ref to-prompt`) | ✅ measured — largest pack (tech-lead) **4,747 bytes**, every pack under Codex's documented 8,000-char skill-list ceiling; enforced per pack in CI. All 12 together: 11194 bytes (fine for Claude Code; Codex users install by pack) |
+| Discovery cost per role pack (`skills-ref to-prompt`) | ✅ measured — largest pack (tech-lead) **5,629 bytes**, every pack under Codex's documented 8,000-char skill-list ceiling; enforced per pack in CI. All 15 together: 13,826 bytes (fine for Claude Code; Codex users install by pack) |
 | Tooling runs on the declared `requires-python = ">=3.9"` range | ✅ verified — full suite passes on 3.9, 3.11, and 3.13 (CI matrix) |
 | Installed copies (not just source) remain spec-valid | ✅ verified — `skills-ref validate` run against skills installed into a real cloned repository |
 
@@ -26,7 +26,7 @@ See each `clients/*.md` file for exactly what was checked and how.
 | Explicit invocation (`/name` or equivalent) | ✅ documented (`/skill-name`) | 🟡 documented (`$name` CLI / `@name` ChatGPT) | ❓ not verified |
 | Scripts (`scripts/*.py`) executable by the agent | ✅ (this repo's `data-scientist` scripts run via a normal shell-tool call — no client-specific mechanism needed) | ❓ sandbox/permission model not verified | ❓ not verified |
 | Filesystem access available | ✅ | 🟡 (assumed for a coding agent; not verified per-surface) | 🟡 (assumed for coding-focused surfaces; not verified for e.g. Copilot code review) |
-| Network required | ❌ not required by any of the 12 skills (research-to-decision benefits from it if available) | ❌ not required | ❌ not required |
+| Network required | ❌ not required by any of the 15 skills (research-to-decision benefits from it if available) | ❌ not required | ❌ not required |
 | MCP/app dependency | ❌ none hard-required (optional enrichment only, see `docs/skills-vs-mcp.md`) | ❌ none hard-required | ❌ none hard-required |
 | Installer target path used | `.claude/skills/` or `~/.claude/skills/` | `.agents/skills/` (repo or user scope) | `.agents/skills/`, `.claude/skills/`, or `.github/skills/` |
 | Tested status (overall) | ✅ install + structure | ❓ not tested | ❓ not tested |

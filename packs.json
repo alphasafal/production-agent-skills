@@ -3,33 +3,71 @@
   "packs": {
     "backend-engineer": {
       "title": "Backend / full-stack engineer",
-      "description": "Understand a codebase, ship features safely, debug what breaks, review what merges.",
-      "skills": ["repo-architect", "feature-to-production", "debugging-investigator", "production-code-review"]
+      "description": "Understand a codebase, ship features test-first, debug what breaks, review what merges.",
+      "skills": [
+        "repo-architect",
+        "feature-to-production",
+        "test-first-developer",
+        "debugging-investigator",
+        "production-code-review"
+      ]
+    },
+    "frontend-engineer": {
+      "title": "Frontend engineer",
+      "description": "Accessible, resilient UI: review components for a11y, states and Core Web Vitals, build test-first, ship safely.",
+      "skills": [
+        "frontend-ui-reviewer",
+        "test-first-developer",
+        "feature-to-production",
+        "production-code-review"
+      ]
     },
     "tech-lead": {
       "title": "Tech lead / architect",
-      "description": "Review designs before they're built, make decisions you can defend, hold the review bar.",
-      "skills": ["system-design-reviewer", "research-to-decision", "production-code-review", "repo-architect", "threat-modeler"]
+      "description": "Plan work as vertical slices, review designs before they're built, make decisions you can defend, hold the review bar.",
+      "skills": [
+        "spec-and-plan",
+        "system-design-reviewer",
+        "research-to-decision",
+        "production-code-review",
+        "repo-architect",
+        "threat-modeler"
+      ]
     },
     "sre": {
       "title": "SRE / DevOps",
       "description": "Run incidents, keep the deploy pipeline safe, find root causes after the fire is out.",
-      "skills": ["incident-responder", "deploy-pipeline-reviewer", "debugging-investigator"]
+      "skills": [
+        "incident-responder",
+        "deploy-pipeline-reviewer",
+        "debugging-investigator"
+      ]
     },
     "security": {
       "title": "Security engineer",
       "description": "Threat-model designs before they're built, audit code before it launches, review risky diffs.",
-      "skills": ["threat-modeler", "security-auditor", "production-code-review"]
+      "skills": [
+        "threat-modeler",
+        "security-auditor",
+        "production-code-review"
+      ]
     },
     "data-scientist": {
       "title": "Data scientist / analyst",
       "description": "Rigorous analysis and modeling with leakage checks and baselines; decisions backed by evidence.",
-      "skills": ["data-scientist", "research-to-decision"]
+      "skills": [
+        "data-scientist",
+        "research-to-decision"
+      ]
     },
     "product-manager": {
       "title": "Product manager",
       "description": "Turn vague ideas into right-sized MVPs and PRDs, decide with evidence, read the data.",
-      "skills": ["product-manager", "research-to-decision", "data-scientist"]
+      "skills": [
+        "product-manager",
+        "research-to-decision",
+        "data-scientist"
+      ]
     }
   }
 }

@@ -1,7 +1,7 @@
 # Demo Prompts
 
 Copy-pasteable prompts for demonstrating each skill, ordered to match the
-root README's "12 skills" table. Each is a `positive-obvious` case pulled
+root README's "15 skills" table. Each is a `positive-obvious` case pulled
 directly from that skill's `evaluations/activation/<skill>.json`, so it's
 guaranteed to be a legitimate, tested trigger — not a cherry-picked demo
 that doesn't reflect real usage.

@@ -4,15 +4,15 @@ description: >
   Reviews a proposed system or service architecture before implementation
   begins: requirements, API design, data model, storage, consistency, caching,
   queues/events, scaling, failure modes, security, observability, deployment,
-  and cost. Load it first whenever someone asks to review, evaluate, compare,
-  sanity-check or poke holes in a design doc, RFC, technical plan or proposed
-  architecture for a new system, or when choosing between candidate
-  architectures for a new service, even before you have read or asked for the
-  document, and for questions like will this scale, is this database enough for
-  what we are planning, or what could go wrong with this architecture. Do not
-  use once implementation is already underway and the question is about the code
-  itself (use production-code-review), or for reviewing an existing,
-  already-built system's structure (use repo-architect).
+  and cost. Use when someone asks to review, evaluate, compare, sanity-check or
+  poke holes in a design doc, RFC, technical plan or proposed architecture for a
+  new system, or is choosing between candidate architectures for a new service;
+  load it first, before reading or asking for the document. Also use for
+  questions like will this scale, is this database enough for what we are
+  planning, or what could go wrong with this architecture. Do not use once
+  implementation is already underway and the question is about the code itself
+  (use production-code-review), or for reviewing an existing, already-built
+  system's structure (use repo-architect).
 license: MIT
 compatibility: Text/diagram-based review. No filesystem or network access required unless the design doc lives in a connected tool.
 metadata:
