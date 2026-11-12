@@ -32,7 +32,10 @@ install can serve Copilot alongside Codex or Claude Code without
 duplication:
 
 ```bash
-python scripts/install_skills.py --all --target ./.agents/skills
+# no clone needed
+curl -fsSL https://raw.githubusercontent.com/alphasafal/production-agent-skills/main/install.sh | sh -s -- --pack backend-engineer --agent copilot
+# from a clone
+python scripts/install_skills.py --all --agent copilot
 ```
 
 GitHub CLI can also discover/install skills directly from a repository via

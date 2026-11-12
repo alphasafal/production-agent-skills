@@ -35,9 +35,13 @@ Codex scans, in priority order:
 Install with:
 
 ```bash
-python scripts/install_skills.py --skill debugging-investigator --target ./.agents/skills
-python scripts/install_skills.py --all --target ./.agents/skills
+# no clone needed; install by pack to stay inside Codex's skill-list budget
+curl -fsSL https://raw.githubusercontent.com/alphasafal/production-agent-skills/main/install.sh | sh -s -- --pack backend-engineer --agent codex
+# from a clone
+python scripts/install_skills.py --pack backend-engineer --agent codex
 ```
+
+Add `--global` for `~/.agents/skills`.
 
 Note: Codex does not merge skills that share a `name` across scopes — both
 appear in skill selectors, so avoid installing the same skill at two

@@ -39,15 +39,20 @@ Claude-specific and would reduce portability):
 | Nested | `<subdir>/.claude/skills/<name>/SKILL.md` | Sessions in/below that subdirectory |
 | Plugin | `<plugin>/skills/<name>/SKILL.md` | Wherever the plugin is enabled |
 
-Install with:
+The plugin marketplace is the shortest route and the only one that also
+adds the slash commands (`/plugin marketplace add alphasafal/production-agent-skills`,
+then `/plugin install <role>@alphasafal-skills`). To copy plain skill
+directories instead:
 
 ```bash
-python scripts/install_skills.py --skill debugging-investigator --target ./.claude/skills
-# or, for every skill:
-python scripts/install_skills.py --all --target ./.claude/skills
+# no clone needed
+curl -fsSL https://raw.githubusercontent.com/alphasafal/production-agent-skills/main/install.sh | sh -s -- --pack backend-engineer --agent claude
+# from a clone
+python scripts/install_skills.py --skill debugging-investigator --agent claude
+python scripts/install_skills.py --all --agent claude
 ```
 
-For personal (cross-project) install, target `~/.claude/skills` instead.
+Add `--global` to install into `~/.claude/skills` for all your projects.
 
 ## Verifying discovery
 

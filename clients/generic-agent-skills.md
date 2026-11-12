@@ -73,11 +73,15 @@ installed.
 
 ## Where clients look for skills
 
-There's no single universal path — every client defines its own discovery
-directory (see `clients/claude-code.md`, `clients/codex.md`,
-`clients/github-copilot.md`). `scripts/install_skills.py` copies a skill
-from this repo's `skills/` into whatever target directory you point it at,
-rather than assuming one "correct" path.
+Every client defines its own discovery directories, but they overlap:
+Codex, GitHub Copilot, Cursor and Gemini CLI all document `.agents/skills/`
+(and `~/.agents/skills/` per user), while Claude Code reads
+`.claude/skills/`. See the per-client files in this directory for each
+vendor's full list and its source.
+
+`install.sh` and `scripts/install_skills.py` take `--agent NAME` for those
+five and `--target DIR` for anything else; neither assumes a path that a
+vendor has not documented.
 
 ## How to install these skills into an unlisted client
 

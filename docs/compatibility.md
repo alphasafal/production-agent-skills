@@ -31,6 +31,27 @@ See each `clients/*.md` file for exactly what was checked and how.
 | Installer target path used | `.claude/skills/` or `~/.claude/skills/` | `.agents/skills/` (repo or user scope) | `.agents/skills/`, `.claude/skills/`, or `.github/skills/` |
 | Tested status (overall) | ✅ install + structure | ❓ not tested | ❓ not tested |
 
+## More clients, from their own documentation
+
+| | Cursor | Gemini CLI | Claude desktop and web apps |
+|---|---|---|---|
+| Where skills are read from | `.agents/skills/`, `.cursor/skills/` (and `.claude/skills/`, `.codex/skills/` for compatibility); the same under `~` per user | `.agents/skills/`, `.gemini/skills/`; the same under `~` per user | Uploaded as a zip in Customize > Skills |
+| What to run or download | `install.sh --agent cursor` | `install.sh --agent gemini` | `claude-app-<skill>.zip` from a release |
+| Tested status | 🟡 per docs, not tested | 🟡 per docs, not tested | 🟡 archives checked against the documented upload rules on every build; upload itself not tested |
+
+Sources and details: [`clients/cursor.md`](../clients/cursor.md),
+[`clients/gemini-cli.md`](../clients/gemini-cli.md),
+[`clients/claude-apps.md`](../clients/claude-apps.md).
+
+## Installers
+
+| Check | Status |
+|---|---|
+| `install.sh` installs, skips, updates and uninstalls correctly | ✅ verified — `tests/test_install_sh.py`, plus a CI job on Linux (GNU tools) and macOS (BSD tools) |
+| `install.sh` works piped from stdin with a real download | ✅ verified — CI installs the commit under test that way on every push |
+| `install.sh` and `install_skills.py` agree on every agent's directory | ✅ verified — parity test over each agent, project and `--global` |
+| `install.sh` on Windows (Git Bash, WSL) | ❓ not tested — use `npx skills add` or `python scripts/install_skills.py` there |
+
 ## What "tested" actually means here
 
 For Claude Code: `python scripts/install_skills.py` was run against real
