@@ -52,6 +52,23 @@ explicitly, `--global` installs for all your projects, `--force` updates,
 /plugin install backend-engineer@alphasafal-skills
 ```
 
+<details>
+<summary>One step instead of two, on Claude Code 2.1.275 or later</summary>
+
+```
+/plugin install production-agent-skills --marketplace alphasafal/production-agent-skills
+/plugin install backend-engineer --marketplace alphasafal/production-agent-skills
+/plugin install frontend-engineer --marketplace alphasafal/production-agent-skills
+/plugin install tech-lead --marketplace alphasafal/production-agent-skills
+/plugin install sre --marketplace alphasafal/production-agent-skills
+/plugin install security --marketplace alphasafal/production-agent-skills
+/plugin install data-scientist --marketplace alphasafal/production-agent-skills
+/plugin install product-manager --marketplace alphasafal/production-agent-skills
+```
+
+The first line installs everything; the others install one role pack.
+</details>
+
 **No terminal, or an offline machine:** download `pack-<role>.zip` or
 `all-skills.zip` from the [latest release](https://github.com/alphasafal/production-agent-skills/releases/latest)
 and unzip it into your skills directory. **Claude desktop or web app:** the

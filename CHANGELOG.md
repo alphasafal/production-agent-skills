@@ -3,6 +3,15 @@
 All notable changes to this project are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+
+- Plugin icon at `.claude-plugin/icon.png` (source: `docs/images/plugin-icon.svg`),
+  which the plugin directory requires for a listing.
+- README: one-step `/plugin install <name> --marketplace ...` lines for the
+  full plugin and every role pack.
+
 ## [0.4.0] — 2026-11-12
 
 Nothing about what the skills do changed in this release; it is about

@@ -49,3 +49,19 @@ def test_relative_links_in_top_level_docs_resolve():
         path = REPO_ROOT / doc
         for target in link.findall(path.read_text(encoding="utf-8")):
             assert (path.parent / target).exists(), f"{doc}: broken link to {target}"
+
+
+def test_readme_has_a_one_step_plugin_install_line_for_every_plugin():
+    # `claude plugin validate` asks for one per plugin the marketplace lists.
+    for name in ["production-agent-skills", *load_packs()]:
+        line = f"/plugin install {name} --marketplace alphasafal/production-agent-skills"
+        assert line in README, f"README is missing: {line}"
+
+
+def test_plugin_icon_is_a_square_png_the_directory_accepts():
+    import struct
+    data = (REPO_ROOT / ".claude-plugin" / "icon.png").read_bytes()
+    assert data[:8] == b"\x89PNG\r\n\x1a\n"
+    width, height = struct.unpack(">II", data[16:24])
+    assert width == height and 512 <= width <= 2048
+    assert len(data) < 2 * 1024 * 1024
