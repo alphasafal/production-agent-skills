@@ -1,6 +1,8 @@
 """install_skills.py: copies whole skill directories, never overwrites without --force."""
 import importlib
 
+import pytest
+
 from _lib import discover_skills
 
 install_skills = importlib.import_module("install_skills")
@@ -79,3 +81,52 @@ def test_install_one_force_overwrites(tmp_path):
 
     assert installed_again
     assert not (tmp_path / FIRST_SKILL.name / "SENTINEL").exists()
+
+
+def _run_main(monkeypatch, *argv):
+    monkeypatch.setattr("sys.argv", ["install_skills.py", *argv])
+    return install_skills.main()
+
+
+def test_agent_flag_installs_into_that_agents_project_directory(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    assert _run_main(monkeypatch, "--skill", FIRST_SKILL.name, "--agent", "claude", "--agent", "cursor") == 0
+    assert (tmp_path / ".claude" / "skills" / FIRST_SKILL.name / "SKILL.md").is_file()
+    assert (tmp_path / ".agents" / "skills" / FIRST_SKILL.name / "SKILL.md").is_file()
+
+
+def test_global_flag_installs_under_the_home_directory(tmp_path, monkeypatch):
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
+    monkeypatch.chdir(tmp_path)
+    assert _run_main(monkeypatch, "--skill", FIRST_SKILL.name, "--agent", "claude", "--global") == 0
+    assert (tmp_path / ".claude" / "skills" / FIRST_SKILL.name / "SKILL.md").is_file()
+
+
+def test_uninstall_removes_the_skill_and_nothing_else(tmp_path, monkeypatch):
+    install_skills.install_one(FIRST_SKILL, tmp_path, dry_run=False, force=False)
+    (tmp_path / "keep-me").mkdir()
+
+    assert _run_main(monkeypatch, "--skill", FIRST_SKILL.name, "--target", str(tmp_path), "--uninstall") == 0
+
+    assert [p.name for p in tmp_path.iterdir()] == ["keep-me"]
+
+
+def test_uninstall_dry_run_touches_nothing(tmp_path):
+    install_skills.install_one(FIRST_SKILL, tmp_path, dry_run=False, force=False)
+    assert install_skills.uninstall_one(FIRST_SKILL, tmp_path, dry_run=True)
+    assert (tmp_path / FIRST_SKILL.name / "SKILL.md").is_file()
+
+
+def test_uninstall_refuses_a_directory_without_skill_md(tmp_path):
+    impostor = tmp_path / FIRST_SKILL.name
+    impostor.mkdir()
+    (impostor / "notes.txt").write_text("not a skill")
+    with pytest.raises(SystemExit):
+        install_skills.uninstall_one(FIRST_SKILL, tmp_path, dry_run=False)
+    assert (impostor / "notes.txt").is_file()
+
+
+def test_target_and_agent_together_are_rejected(tmp_path, monkeypatch):
+    with pytest.raises(SystemExit):
+        _run_main(monkeypatch, "--all", "--target", str(tmp_path), "--agent", "claude")

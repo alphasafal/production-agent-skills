@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Copy one or more canonical skills/ into a client's skills directory.
 
-This does not hard-code a "correct" target path for any vendor — pass
-whatever directory your client reads skills from (see clients/*.md for the
-paths each client documents). Examples:
+Name your agent and the installer uses the directory that agent's own
+documentation gives (see clients/*.md for each source), or pass --target for
+any other directory. Examples:
 
     python scripts/install_skills.py --list
+
+    python scripts/install_skills.py --pack sre --agent claude
+
+    python scripts/install_skills.py --all --agent cursor --global
 
     python scripts/install_skills.py --pack sre --target ./my-project/.claude/skills
 
@@ -18,11 +22,16 @@ paths each client documents). Examples:
         --target ./my-project/.agents/skills \\
         --dry-run
 
+    python scripts/install_skills.py --pack sre --agent claude --uninstall
+
 Safety:
     - Never overwrites an existing skill directory unless --force is given.
     - --dry-run prints the plan without touching the filesystem.
     - Copies the full skill directory (SKILL.md + references/scripts/assets/examples),
       never a partial copy.
+    - --uninstall only removes a directory that contains a SKILL.md.
+
+The same options work without cloning the repository: see install.sh.
 """
 from __future__ import annotations
 
@@ -44,6 +53,41 @@ def print_available(skills) -> None:
         print("\nRole packs (--pack NAME):")
         for name, spec in packs.items():
             print(f"  {name:<18} {spec['title']}: {', '.join(spec['skills'])}")
+
+
+# Where each agent reads skills from: (inside a project, for every project of
+# the user). Each path is taken from that vendor's documentation, cited in
+# clients/*.md. install.sh implements the same table; tests/test_install_sh.py
+# checks the two agree.
+AGENT_DIRS = {
+    "claude": (".claude/skills", "~/.claude/skills"),
+    "codex": (".agents/skills", "~/.agents/skills"),
+    "copilot": (".agents/skills", "~/.agents/skills"),
+    "cursor": (".agents/skills", "~/.agents/skills"),
+    "gemini": (".agents/skills", "~/.agents/skills"),
+    "universal": (".agents/skills", "~/.agents/skills"),
+}
+
+
+def agent_target(agent: str, global_scope: bool) -> Path:
+    project, user = AGENT_DIRS[agent]
+    return Path(user).expanduser() if global_scope else Path(project)
+
+
+def uninstall_one(skill, target_root: Path, dry_run: bool) -> bool:
+    """Returns True if the skill was (or would be) removed, False if it wasn't there."""
+    dest = target_root / skill.name
+    if not dest.exists():
+        print(f"SKIP  {skill.name}: not installed in {target_root}")
+        return False
+    if not (dest / "SKILL.md").is_file():
+        raise SystemExit(f"ERROR: {dest} has no SKILL.md, refusing to delete it")
+    if dry_run:
+        print(f"DRY-RUN {skill.name}: would remove {dest}")
+        return True
+    shutil.rmtree(dest)
+    print(f"OK    {skill.name}: removed {dest}")
+    return True
 
 
 def install_one(skill, target_root: Path, dry_run: bool, force: bool) -> bool:
@@ -82,7 +126,12 @@ def main() -> int:
     parser.add_argument("--pack", action="append", default=[],
                         help="install a role pack from packs.json (repeatable); see --list")
     parser.add_argument("--all", action="store_true", help="install every skill")
-    parser.add_argument("--target", type=Path, help="destination skills directory")
+    parser.add_argument("--agent", action="append", default=[], choices=sorted(AGENT_DIRS),
+                        help="install where this agent reads skills (repeatable); see clients/")
+    parser.add_argument("--global", dest="global_scope", action="store_true",
+                        help="with --agent: install for all of your projects (home directory)")
+    parser.add_argument("--target", type=Path, help="any other destination skills directory")
+    parser.add_argument("--uninstall", action="store_true", help="remove the selected skills instead")
     parser.add_argument("--dry-run", action="store_true", help="print what would happen without doing it")
     parser.add_argument("--force", action="store_true", help="overwrite an existing installed skill")
     args = parser.parse_args()
@@ -96,13 +145,18 @@ def main() -> int:
     if not args.all and not args.skill and not args.pack:
         parser.error("pass --skill NAME, --pack NAME (both repeatable), --all, or --list")
 
-    if args.target is None:
-        parser.error("--target is required unless using --list")
+    if args.target is not None and (args.agent or args.global_scope):
+        parser.error("pass either --target or --agent/--global, not both")
+    if args.target is None and not args.agent:
+        parser.error("say where to install: --agent NAME (repeatable) or --target DIR")
 
-    target_root = args.target
-    if target_root.exists() and not target_root.is_dir():
-        print(f"ERROR: --target {target_root} exists and is not a directory")
-        return 1
+    targets = [args.target] if args.target is not None else list(
+        dict.fromkeys(agent_target(a, args.global_scope) for a in args.agent)
+    )
+    for target_root in targets:
+        if target_root.exists() and not target_root.is_dir():
+            print(f"ERROR: target {target_root} exists and is not a directory")
+            return 1
 
     # Resolve the selection before touching the filesystem, so a typo'd skill
     # name doesn't leave an empty target directory behind.
@@ -126,21 +180,28 @@ def main() -> int:
                 return 1
             selected.append(by_name[name])
 
-    if not target_root.exists():
-        if args.dry_run:
-            print(f"DRY-RUN: would create target directory {target_root}")
-        else:
-            target_root.mkdir(parents=True, exist_ok=True)
-            print(f"Created target directory {target_root}")
+    for target_root in targets:
+        if args.uninstall:
+            removed = sum(uninstall_one(skill, target_root, args.dry_run) for skill in selected)
+            print(f"\n{removed}/{len(selected)} skill(s) {'would be ' if args.dry_run else ''}"
+                  f"removed from {target_root}")
+            continue
 
-    installed = 0
-    for skill in selected:
-        if install_one(skill, target_root, args.dry_run, args.force):
-            installed += 1
+        if not target_root.exists():
+            if args.dry_run:
+                print(f"DRY-RUN: would create target directory {target_root}")
+            else:
+                target_root.mkdir(parents=True, exist_ok=True)
+                print(f"Created target directory {target_root}")
 
-    print(f"\n{installed}/{len(selected)} skill(s) {'would be ' if args.dry_run else ''}installed to {target_root}")
+        installed = 0
+        for skill in selected:
+            if install_one(skill, target_root, args.dry_run, args.force):
+                installed += 1
+
+        print(f"\n{installed}/{len(selected)} skill(s) {'would be ' if args.dry_run else ''}"
+              f"installed to {target_root}")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
