@@ -3,6 +3,65 @@
 All notable changes to this project are documented here. Format loosely
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.0] — 2026-11-12
+
+Nothing about what the skills do changed in this release; it is about
+getting them onto a machine and knowing what to type.
+
+### Added
+
+- **`install.sh`: install with one command, no clone.**
+  `curl -fsSL https://raw.githubusercontent.com/alphasafal/production-agent-skills/main/install.sh | sh -s -- --pack sre`.
+  Needs only `sh`, `tar` and `curl` or `wget`. `--pack`, `--skill` and `--all`
+  select; `--agent claude|codex|copilot|cursor|gemini` and `--global` choose
+  where; with neither it uses `.claude/skills/` when the project has a
+  `.claude` folder and the shared `.agents/skills/` otherwise. `--force`
+  updates, `--uninstall` removes, `--dry-run` previews, `--ref` pins a tag.
+  CI runs it on Linux and macOS, including a piped install of the commit
+  under test.
+- **`install_skills.py --agent`, `--global`, `--uninstall`**, so the Python
+  installer no longer needs you to know each agent's directory.
+- **Release archives.** Every release now carries `pack-<role>.zip`,
+  `all-skills.zip` and `SHA256SUMS`, built by `scripts/package_skills.py`
+  and attached by a new release workflow. For machines with no terminal or
+  no network.
+- **Archives for the Claude desktop and web apps:** one
+  `claude-app-<skill>.zip` per skill, laid out for "Upload a skill". Built
+  to Anthropic's documented rules and checked against them on every build;
+  the upload itself has not been tested yet (see `clients/claude-apps.md`).
+- **`metadata.short_description`** on every skill: a what-and-when line of
+  at most 200 characters, used in the Claude-app archives. Required and
+  length-checked by the validator.
+- **[Prompt cheatsheet](docs/prompt-cheatsheet.md):** for each skill, what
+  to type, its slash command, the files it writes and which requests it
+  hands to another skill. Generated from the activation eval suite by
+  `scripts/build_catalog.py`, and checked in CI.
+- **[FAQ](docs/faq.md)**, and client pages for **Cursor**, **Gemini CLI**
+  and the **Claude apps** with each vendor's documented skill directories.
+- `tests/test_docs_sync.py`: the README's skills, counts, role table and
+  slash commands are checked against the catalog.
+
+### Changed
+
+- The README starts with installation and four prompts to try, instead of
+  a table of plugin commands.
+- `SECURITY.md` describes exactly what `install.sh` does (one download,
+  copy, clean up) and how to install without piping a script. It previously
+  said no script in the repository makes network calls.
+- `install_skills.py` accepts `--agent` in place of `--target` and rejects
+  the two together.
+
+### Fixed
+
+- CI: the Python 3.9 job failed at setup because the newest runner image
+  has no 3.9 build; it now runs on `ubuntu-24.04`.
+
+### Not changed
+
+- Skill workflows, main descriptions, routing and the discovery budget.
+  The benchmark numbers in `evaluations/results/` still describe these
+  skills; no new benchmark was run for this release.
+
 ## [0.3.0] — 2026-10-21
 
 ### Added
