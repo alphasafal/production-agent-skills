@@ -1,0 +1,72 @@
+name: Release
+
+# Pushing a tag vX.Y.Z builds the downloadable archives and attaches them to
+# that tag's GitHub Release, with the notes taken from CHANGELOG.md. Run it by
+# hand (workflow_dispatch) to rebuild the archives of an existing tag.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to build archives for, e.g. v0.4.0"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -e '.[dev]'
+
+      - name: Tag matches the version in pyproject.toml and plugin.json
+        run: |
+          VERSION="${TAG#v}"
+          python - "$VERSION" <<'PY'
+          import json, re, sys
+          version = sys.argv[1]
+          pyproject = re.search(r'^version = "(.+)"$', open("pyproject.toml").read(), re.M).group(1)
+          plugin = json.load(open(".claude-plugin/plugin.json"))["version"]
+          if not (version == pyproject == plugin):
+              sys.exit(f"tag {version} != pyproject {pyproject} / plugin.json {plugin}")
+          PY
+
+      - name: Tests and validation
+        run: |
+          pytest tests/ -q
+          python scripts/validate_skills.py
+          python scripts/build_marketplace.py --check
+          python scripts/build_catalog.py --check
+
+      - name: Build archives
+        run: python scripts/package_skills.py --out dist
+
+      - name: Release notes from CHANGELOG.md
+        run: |
+          VERSION="${TAG#v}"
+          awk -v v="$VERSION" 'index($0, "## [" v "]") == 1 { on = 1; next } /^## \[/ { on = 0 } on' CHANGELOG.md > notes.md
+          test -s notes.md || { echo "::error::no CHANGELOG.md section for $VERSION"; exit 1; }
+          cat notes.md
+
+      - name: Create the release, or update its archives if it exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" dist/* --clobber
+          else
+            gh release create "$TAG" dist/* --title "$TAG" --notes-file notes.md --verify-tag
+          fi

@@ -37,6 +37,12 @@ jobs:
       - name: Plugin marketplace is in sync with packs.json
         run: python scripts/build_marketplace.py --check
 
+      - name: Install index and prompt cheatsheet are in sync with their sources
+        run: python scripts/build_catalog.py --check
+
+      - name: Release archives build and pass their own upload-rule checks
+        run: python scripts/package_skills.py --out "$RUNNER_TEMP/dist"
+
       - name: Run routing evals (catalog-wide, deterministic)
         run: python scripts/run_routing_evals.py
 
@@ -86,6 +92,60 @@ jobs:
           echo "::warning::skills-ref could not be installed (network/registry issue) — \
           spec validation was skipped. scripts/validate_skills.py still enforces the \
           same strict-YAML rules locally."
+
+  # install.sh is what most people run first, on whatever machine they have, so
+  # it is exercised with both GNU (Linux) and BSD (macOS) userlands and with a
+  # real download, not only through the unit tests above.
+  installer:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    name: install.sh (${{ matrix.os }})
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: shellcheck
+        if: runner.os == 'Linux'
+        run: shellcheck install.sh
+
+      - name: Install a pack into an empty project, update it, remove it
+        run: |
+          set -e
+          SCRIPT="$PWD/install.sh"
+          mkdir "$RUNNER_TEMP/project" && cd "$RUNNER_TEMP/project"
+          sh "$SCRIPT" --pack sre
+          for s in incident-responder deploy-pipeline-reviewer debugging-investigator; do
+            test -f ".agents/skills/$s/SKILL.md"
+          done
+          diff -r "$GITHUB_WORKSPACE/skills/incident-responder" .agents/skills/incident-responder
+          sh "$SCRIPT" --pack sre | grep -q "skip"
+          sh "$SCRIPT" --pack sre --force | grep -q "Installed 3, skipped 0"
+          sh "$SCRIPT" --pack sre --uninstall
+          test -z "$(ls -A .agents/skills)"
+
+      - name: Claude Code projects are detected, --global goes to the home directory
+        run: |
+          set -e
+          SCRIPT="$PWD/install.sh"
+          mkdir -p "$RUNNER_TEMP/claude-project/.claude" && cd "$RUNNER_TEMP/claude-project"
+          sh "$SCRIPT" --skill repo-architect
+          test -f .claude/skills/repo-architect/SKILL.md
+          HOME="$RUNNER_TEMP/fake home" sh "$SCRIPT" --all --agent cursor --global
+          test "$(ls "$RUNNER_TEMP/fake home/.agents/skills" | wc -l | tr -d " ")" = "$(ls "$GITHUB_WORKSPACE/skills" | wc -l | tr -d " ")"
+
+      # The path a new user takes: piped from stdin, nothing on disk, downloading
+      # this exact commit. Skipped on pull requests, whose merge commit may not be
+      # downloadable.
+      - name: Piped install downloads and installs this commit
+        if: github.event_name == 'push'
+        run: |
+          set -e
+          cp install.sh "$RUNNER_TEMP/piped.sh"
+          mkdir "$RUNNER_TEMP/piped" && cd "$RUNNER_TEMP/piped"
+          sh -s -- --pack security --ref "$GITHUB_SHA" < "$RUNNER_TEMP/piped.sh"
+          diff -r "$GITHUB_WORKSPACE/skills/threat-modeler" .agents/skills/threat-modeler
 
   # The bundled data-scientist scripts are the only executable skill content in
   # the repo, so they get exercised against a real fixture rather than only

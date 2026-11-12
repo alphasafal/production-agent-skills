@@ -117,7 +117,7 @@ if [ -n "${PAS_SOURCE_DIR:-}" ]; then
 else
   case "$0" in
     install.sh|*/install.sh)
-      here=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+      here=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)
       [ -f "$here/install-index.tsv" ] && [ -d "$here/skills" ] && SRC="$here"
       ;;
   esac
