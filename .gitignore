@@ -16,3 +16,6 @@ evaluations/results/runs/
 
 # Local agent worktrees
 .claude/worktrees/
+
+# Release archives built by scripts/package_skills.py
+dist/
