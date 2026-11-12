@@ -10,6 +10,7 @@ Cursor, Copilot, Cline and 15+ more agents.
 
 [![Skills](https://img.shields.io/badge/skills-15-brightgreen)](#the-15-skills)
 [![Role packs](https://img.shields.io/badge/role%20packs-7-blue)](#pick-your-role)
+[![Install](https://img.shields.io/badge/install-one%20line-blue)](#install)
 [![Spec validated](https://img.shields.io/badge/skills--ref-15%2F15%20valid-success)](docs/compatibility.md)
 [![Routing](https://img.shields.io/badge/routing-75%2F75%20rank--1-success)](evaluations/README.md#tier-2-routing-scriptsrun_routing_evalspy)
 [![Behavioral evals](https://img.shields.io/badge/benchmarked-with%20vs.%20without%20skill-orange)](evaluations/results/README.md)
@@ -23,28 +24,79 @@ Cursor, Copilot, Cline and 15+ more agents.
 > Activation: 143/150 prompts load the right skill; all 45 should-stay-quiet
 > prompts stay quiet. [Full results and known gaps →](evaluations/results/README.md)
 
+## Install
+
+Free and MIT licensed. No account, no API key: a skill is a folder of
+Markdown your agent reads from disk.
+
+**Any agent — one line, from your project folder** (Claude Code, Codex,
+Cursor, Copilot, Gemini CLI):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/alphasafal/production-agent-skills/main/install.sh | sh -s -- --pack backend-engineer
+```
+
+Swap `backend-engineer` for [your role](#pick-your-role), or use `--all`.
+It needs only `sh`, `tar` and `curl`; nothing to clone, no Node, no Python.
+It puts the skills in `.claude/skills/` if the project has a `.claude`
+folder and in the shared `.agents/skills/` otherwise, and tells you which.
+`--agent cursor` (or `claude`, `codex`, `copilot`, `gemini`) chooses
+explicitly, `--global` installs for all your projects, `--force` updates,
+`--uninstall` removes, `--dry-run` shows the plan.
+[What the script does, and how to install without piping it](SECURITY.md).
+
+**Claude Code — as a plugin, with slash commands:**
+
+```
+/plugin marketplace add alphasafal/production-agent-skills
+/plugin install backend-engineer@alphasafal-skills
+```
+
+**No terminal, or an offline machine:** download `pack-<role>.zip` or
+`all-skills.zip` from the [latest release](https://github.com/alphasafal/production-agent-skills/releases/latest)
+and unzip it into your skills directory. **Claude desktop or web app:** the
+same release has a `claude-app-<skill>.zip` per skill to upload under
+Customize > Skills ([steps and caveats](clients/claude-apps.md)).
+
+Then restart your agent and just describe the task. You never have to name
+a skill:
+
+| Say this | The agent loads |
+|---|---|
+| "This test was passing yesterday and is now failing in CI, no idea why." | `debugging-investigator` |
+| "Review this PR before I merge it." | `production-code-review` |
+| "I just got paged: checkout 5xx rate is at 12% and climbing." | `incident-responder` |
+| "Should we use Kafka or SQS for our order events? Research both and recommend one." | `research-to-decision` |
+
+More phrasings for all 15 skills, and the files each one writes:
+[prompt cheatsheet](docs/prompt-cheatsheet.md). Questions (updating,
+Windows, where files go, why a skill did not load): [FAQ](docs/faq.md).
+
 ## Pick your role
 
 Install only what your job needs — each pack is small enough for every
 agent's skill budget.
 
-| Role | Skills | Claude Code |
+| Role | Pack | Skills |
 |---|---|---|
-| **Backend / full-stack engineer** | [repo-architect](skills/repo-architect/), [feature-to-production](skills/feature-to-production/), [test-first-developer](skills/test-first-developer/), [debugging-investigator](skills/debugging-investigator/), [production-code-review](skills/production-code-review/) | `/plugin install backend-engineer@alphasafal-skills` |
-| **Frontend engineer** | [frontend-ui-reviewer](skills/frontend-ui-reviewer/), [test-first-developer](skills/test-first-developer/), [feature-to-production](skills/feature-to-production/), [production-code-review](skills/production-code-review/) | `/plugin install frontend-engineer@alphasafal-skills` |
-| **Tech lead / architect** | [spec-and-plan](skills/spec-and-plan/), [system-design-reviewer](skills/system-design-reviewer/), [research-to-decision](skills/research-to-decision/), [production-code-review](skills/production-code-review/), [repo-architect](skills/repo-architect/), [threat-modeler](skills/threat-modeler/) | `/plugin install tech-lead@alphasafal-skills` |
-| **SRE / DevOps** | [incident-responder](skills/incident-responder/), [deploy-pipeline-reviewer](skills/deploy-pipeline-reviewer/), [debugging-investigator](skills/debugging-investigator/) | `/plugin install sre@alphasafal-skills` |
-| **Security engineer** | [threat-modeler](skills/threat-modeler/), [security-auditor](skills/security-auditor/), [production-code-review](skills/production-code-review/) | `/plugin install security@alphasafal-skills` |
-| **Data scientist / analyst** | [data-scientist](skills/data-scientist/), [research-to-decision](skills/research-to-decision/) | `/plugin install data-scientist@alphasafal-skills` |
-| **Product manager** | [product-manager](skills/product-manager/), [research-to-decision](skills/research-to-decision/), [data-scientist](skills/data-scientist/) | `/plugin install product-manager@alphasafal-skills` |
+| **Backend / full-stack engineer** | `backend-engineer` | [repo-architect](skills/repo-architect/), [feature-to-production](skills/feature-to-production/), [test-first-developer](skills/test-first-developer/), [debugging-investigator](skills/debugging-investigator/), [production-code-review](skills/production-code-review/) |
+| **Frontend engineer** | `frontend-engineer` | [frontend-ui-reviewer](skills/frontend-ui-reviewer/), [test-first-developer](skills/test-first-developer/), [feature-to-production](skills/feature-to-production/), [production-code-review](skills/production-code-review/) |
+| **Tech lead / architect** | `tech-lead` | [spec-and-plan](skills/spec-and-plan/), [system-design-reviewer](skills/system-design-reviewer/), [research-to-decision](skills/research-to-decision/), [production-code-review](skills/production-code-review/), [repo-architect](skills/repo-architect/), [threat-modeler](skills/threat-modeler/) |
+| **SRE / DevOps** | `sre` | [incident-responder](skills/incident-responder/), [deploy-pipeline-reviewer](skills/deploy-pipeline-reviewer/), [debugging-investigator](skills/debugging-investigator/) |
+| **Security engineer** | `security` | [threat-modeler](skills/threat-modeler/), [security-auditor](skills/security-auditor/), [production-code-review](skills/production-code-review/) |
+| **Data scientist / analyst** | `data-scientist` | [data-scientist](skills/data-scientist/), [research-to-decision](skills/research-to-decision/) |
+| **Product manager** | `product-manager` | [product-manager](skills/product-manager/), [research-to-decision](skills/research-to-decision/), [data-scientist](skills/data-scientist/) |
 
-First time in Claude Code? Add the marketplace once:
-`/plugin marketplace add alphasafal/production-agent-skills` — then install
-a role above, or everything with
-`/plugin install production-agent-skills@alphasafal-skills`.
+The pack name works everywhere: `--pack sre` with `install.sh`,
+`/plugin install sre@alphasafal-skills` in Claude Code (or
+`production-agent-skills@alphasafal-skills` for everything), and
+`pack-sre.zip` on the releases page.
 
 <details>
-<summary><b>Any other agent</b> (Codex, Cursor, Copilot, Cline, Gemini CLI, …) — one command per role</summary>
+<summary><b>Other ways to install</b>: <code>npx skills</code>, Windows, from a clone</summary>
+
+With Node, the [`skills`](https://github.com/vercel-labs/skills) CLI works
+on every platform, Windows included:
 
 ```bash
 # Backend / full-stack engineer
@@ -66,8 +118,16 @@ npx skills add alphasafal/production-agent-skills --skill product-manager --skil
 npx skills add alphasafal/production-agent-skills
 ```
 
-No Node? `python scripts/install_skills.py --pack sre --target ./.claude/skills`
-(see [`clients/`](clients/) for each agent's skills directory).
+From a clone, with Python (also works on Windows):
+
+```bash
+python scripts/install_skills.py --pack sre --agent claude            # or codex, copilot, cursor, gemini
+python scripts/install_skills.py --pack sre --agent claude --global   # all your projects
+python scripts/install_skills.py --pack sre --target ./any/skills/dir
+```
+
+`install.sh` needs a POSIX shell and is tested on Linux and macOS only.
+See [`clients/`](clients/) for where each agent reads skills from.
 </details>
 
 ## Why this exists
@@ -106,7 +166,9 @@ the skill.
 
 ## Slash commands (Claude Code)
 
-Skills activate on their own from what you ask. Commands run one now:
+Skills activate on their own from what you ask. Commands run one now.
+They come with the plugin; installed any other way, a skill is still
+invocable by its own name, e.g. `/debugging-investigator`:
 
 | Command | Skill | | Command | Skill |
 |---|---|---|---|---|
@@ -264,6 +326,8 @@ Full tables, per-scenario breakdown and method: [`evaluations/results/README.md`
 | Skills change what the agent does | Blind-graded with-vs-without benchmark across 3 rounds, 162 workflow runs; see Results above |
 | Routing generalizes beyond the tuned prompts | 24 held-out prompts never used for tuning: 14/24 rank #1, 23/24 top-3 |
 | Every role pack is cheap to carry | Largest pack's discovery prompt is 5,629 bytes, under Codex's 8,000 ceiling — enforced per pack in CI with `skills-ref to-prompt` |
+| The one-line installer works on a clean machine | CI runs `install.sh` on Linux and macOS: install, skip, update, uninstall, and a piped install that downloads the commit under test |
+| Release archives are what the repository contains | `package_skills.py` output is compared file by file with `skills/`; the Claude-app archives are checked against the documented upload rules; checksums are reproducible |
 | Reference answers never leak to the agent | Validator rejects any scenario whose `workspace_files` include a reference answer or spoiler |
 | The bundled scripts are correct | Run against the real 891-row Titanic dataset; outputs match independently-computed ground truth |
 | The debugging example is real | Bug reproduces 10/10 runs; documented fix resolves it 10/10 |
@@ -271,7 +335,8 @@ Full tables, per-scenario breakdown and method: [`evaluations/results/README.md`
 ```bash
 python scripts/validate_skills.py -v     # structure, schema, strict YAML, sections
 python scripts/run_routing_evals.py      # catalog-wide routing (free, deterministic)
-pytest tests/                            # 222 tests over the tooling's guarantees
+pytest tests/                            # the tooling's guarantees, installers and archives included
+python scripts/build_catalog.py --check  # install index and prompt cheatsheet match their sources
 python scripts/run_behavioral_evals.py --dry-run   # see what a real run would do
 ```
 
@@ -281,10 +346,15 @@ count.
 
 ## Compatibility
 
-| | Claude Code | OpenAI Codex | GitHub Copilot |
-|---|---|---|---|
-| Status | ✅ install/structure tested | 🟡 expected per docs | 🟡 expected per docs |
-| Skill path | `.claude/skills/` | `.agents/skills/` | `.agents/skills/`, `.claude/skills/`, or `.github/skills/` |
+| | Claude Code | Codex | GitHub Copilot | Cursor | Gemini CLI |
+|---|---|---|---|---|---|
+| Status | ✅ install/structure tested | 🟡 per docs | 🟡 per docs | 🟡 per docs | 🟡 per docs |
+| Project skills directory | `.claude/skills/` | `.agents/skills/` | `.agents/skills/` | `.agents/skills/` | `.agents/skills/` |
+| `install.sh --agent` | `claude` | `codex` | `copilot` | `cursor` | `gemini` |
+
+🟡 means the path comes from that vendor's documentation and has not been
+tested here in a live session. The Claude desktop and web apps take
+uploaded zips; see [`clients/claude-apps.md`](clients/claude-apps.md).
 
 Full matrix (discovery, script execution, filesystem/network, MCP
 dependency, per-row tested status): [`docs/compatibility.md`](docs/compatibility.md).
@@ -317,9 +387,13 @@ scripts, and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 - [x] Measure live auto-activation in Claude Code (`--mode activation`)
 - [x] Package as a Claude Code plugin with slash commands
 - [ ] Re-run the benchmark on every skill change that affects behavior, and publish the delta in the PR
-- [ ] Test installation against a live Codex and Copilot session, update `docs/compatibility.md`
+- [ ] Test installation against live Codex, Copilot, Cursor and Gemini CLI sessions, update `docs/compatibility.md`
 - [ ] Behavioral evals for Codex / Copilot (the runner is CLI-agnostic in shape; only Claude Code is wired)
-- [ ] More roles: frontend (accessibility + Core Web Vitals), QA/test strategy, ML engineering
+- [x] One-line installer with agent detection, update and uninstall (`install.sh`)
+- [x] Downloadable archives on every release, including ones laid out for the Claude apps
+- [ ] Upload the Claude-app archives in the desktop and web apps and record the result in `clients/claude-apps.md`
+- [ ] A PowerShell installer, and `install.sh` tested under Git Bash and WSL
+- [ ] More roles: QA/test strategy, ML engineering
 - [ ] Community-contributed skills (see [CONTRIBUTING.md](CONTRIBUTING.md))
 
 ## License
