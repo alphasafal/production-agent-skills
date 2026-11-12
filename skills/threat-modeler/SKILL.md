@@ -15,6 +15,10 @@ license: MIT
 compatibility: Text-based analysis of a design doc or description. No filesystem or network access required unless the design lives in a repo or connected tool.
 metadata:
   category: security
+  short_description: >
+    Threat-models a design before it is built: trust boundaries, STRIDE
+    threats as concrete attacks, ranked mitigations and testable security
+    requirements. Use when asked to threat model a design.
   composes_with:
     - system-design-reviewer
     - feature-to-production

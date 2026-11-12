@@ -15,6 +15,10 @@ license: MIT
 compatibility: Needs read access to the diff/PR and enough surrounding code to judge impact. No network required.
 metadata:
   category: engineering
+  short_description: >
+    Reviews a diff or pull request for correctness, security, concurrency,
+    compatibility and tests, with findings ranked P0-P3 and a merge verdict.
+    Use when asked to review a change before it merges.
   composes_with:
     - feature-to-production
     - debugging-investigator

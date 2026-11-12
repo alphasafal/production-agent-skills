@@ -46,6 +46,7 @@ from _lib import (  # noqa: E402
     count_bullets,
     count_table_rows,
     DISCOVERY_BUDGET_CHARS,
+    SHORT_DESCRIPTION_MAX_CHARS,
     discover_skills,
     estimate_discovery_chars,
     load_packs,
@@ -110,6 +111,25 @@ def check_frontmatter(skill: Skill, schema: dict, report: Report) -> None:
         report.warn(
             f"{skill.dir.name}: description should explicitly say when to use the skill"
         )
+
+
+def check_short_description(skill: Skill, report: Report) -> None:
+    short = skill.short_description
+    if not short:
+        report.error(
+            f"{skill.dir.name}: missing metadata.short_description (≤{SHORT_DESCRIPTION_MAX_CHARS} chars; "
+            f"used in the zips built for upload to the Claude apps)"
+        )
+        return
+    if len(short) > SHORT_DESCRIPTION_MAX_CHARS:
+        report.error(
+            f"{skill.dir.name}: metadata.short_description is {len(short)} chars "
+            f"(max {SHORT_DESCRIPTION_MAX_CHARS})"
+        )
+    if "<" in short or ">" in short:
+        report.error(f"{skill.dir.name}: metadata.short_description must not contain angle brackets")
+    if "use " not in short.lower():
+        report.warn(f"{skill.dir.name}: metadata.short_description should also say when to use the skill")
 
 
 def check_strict_yaml(skill: Skill, report: Report) -> None:
@@ -380,6 +400,7 @@ def main() -> int:
     for skill in skills:
         check_frontmatter(skill, schema, report)
         check_strict_yaml(skill, report)
+        check_short_description(skill, report)
         check_body_length(skill, report)
         check_required_sections(skill, report)
         check_references_exist(skill, report)

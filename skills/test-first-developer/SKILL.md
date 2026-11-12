@@ -15,6 +15,10 @@ license: MIT
 compatibility: Needs filesystem and shell access to edit code and run the project's test suite. No network required beyond what the project's own tests need.
 metadata:
   category: engineering
+  short_description: >
+    Test-driven development: find the repo's test runner, watch each new test
+    fail, write minimal code to pass, refactor on green, run the full suite.
+    Use when asked for TDD or tests first.
   composes_with:
     - feature-to-production
     - debugging-investigator

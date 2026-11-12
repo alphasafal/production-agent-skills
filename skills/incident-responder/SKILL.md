@@ -18,6 +18,10 @@ compatibility: >
   is optional.
 metadata:
   category: sre
+  short_description: >
+    Runs a live incident: measure impact, set severity, mitigate first,
+    verify, post status updates, write a blameless postmortem. Use when paged,
+    during an outage, or for a rollback call.
   composes_with:
     - debugging-investigator
     - feature-to-production

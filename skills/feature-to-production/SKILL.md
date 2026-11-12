@@ -15,6 +15,10 @@ license: MIT
 compatibility: Needs filesystem/shell access to implement and test. No network required beyond what the project's own tests/build need.
 metadata:
   category: engineering
+  short_description: >
+    Takes a feature from requirement to production-ready: acceptance criteria,
+    tests, smallest change, review, deployment checklist, rollback plan. Use
+    when asked to build, add or ship a feature.
   composes_with:
     - repo-architect
     - production-code-review

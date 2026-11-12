@@ -15,6 +15,10 @@ license: MIT
 compatibility: Read access to the brief and the repository it changes. No shell or network access required.
 metadata:
   category: engineering
+  short_description: >
+    Turns a scoped ticket or brief into a tech spec with open questions and
+    testable acceptance criteria, then an ordered vertical-slice task plan.
+    Use when asked for a spec or a task breakdown.
   composes_with:
     - product-manager
     - feature-to-production

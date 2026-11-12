@@ -17,6 +17,10 @@ license: MIT
 compatibility: Text/diagram-based review. No filesystem or network access required unless the design doc lives in a connected tool.
 metadata:
   category: engineering
+  short_description: >
+    Stress-tests a proposed architecture or RFC before it is built: failure
+    modes, scaling, consistency, caching, security and cost. Use when asked to
+    review a design doc or whether it will scale.
   composes_with:
     - repo-architect
     - feature-to-production

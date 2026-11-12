@@ -18,6 +18,10 @@ compatibility: >
   fabricating citations.
 metadata:
   category: research
+  short_description: >
+    Turns a technical or product choice into a defensible decision: sourced
+    evidence, explicit criteria, trade-offs, a decision matrix and an ADR. Use
+    when choosing between tools, vendors or designs.
   composes_with:
     - product-manager
     - data-scientist

@@ -15,6 +15,10 @@ license: MIT
 compatibility: Needs read access to the workflow, container, deploy-script, manifest, IaC and migration files. No network or cloud access required.
 metadata:
   category: devops
+  short_description: >
+    Reviews CI/CD workflows, Dockerfiles, deploy scripts, manifests and
+    migrations before they reach production, with P0-P3 findings and a
+    go/no-go. Use to review, audit or harden a pipeline.
   composes_with:
     - production-code-review
     - feature-to-production

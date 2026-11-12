@@ -17,6 +17,10 @@ compatibility: >
   `data-scientist` extra). Needs filesystem access to the dataset file(s).
 metadata:
   category: data
+  short_description: >
+    Rigorous tabular data analysis and modeling: leakage and missingness
+    checks, a naive baseline first, error and slice analysis. Use to analyze a
+    dataset or build or evaluate a predictive model.
   composes_with:
     - product-manager
     - research-to-decision

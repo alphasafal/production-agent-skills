@@ -14,6 +14,10 @@ license: MIT
 compatibility: Text-based planning skill. No filesystem/network access required beyond reading any existing product docs the user provides.
 metadata:
   category: product
+  short_description: >
+    Turns a vague product idea into a right-sized plan: problem, target user,
+    risk-ranked assumptions, MVP scope, success metrics and a PRD. Use to
+    scope a feature, define an MVP or write a PRD.
   composes_with:
     - data-scientist
     - research-to-decision

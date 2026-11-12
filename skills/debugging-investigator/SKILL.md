@@ -20,6 +20,10 @@ compatibility: >
   cases but not required for local reproduction.
 metadata:
   category: engineering
+  short_description: >
+    Evidence-driven debugging: reproduce, rank hypotheses, confirm the root
+    cause, minimal fix, regression test. Use when something is broken, failing
+    or flaky and the cause is unknown.
   composes_with:
     - production-code-review
     - repo-architect

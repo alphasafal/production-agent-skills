@@ -15,6 +15,10 @@ license: MIT
 compatibility: Needs read access to the whole codebase and its dependency manifests. Shell access helps for running local scanners; network optional (dependency advisories).
 metadata:
   category: security
+  short_description: >
+    Audits existing code for vulnerabilities, tracing every finding from
+    untrusted input to the risky operation and ranking it with a fix. Use for
+    a security audit of a service before launch.
   composes_with:
     - production-code-review
     - debugging-investigator

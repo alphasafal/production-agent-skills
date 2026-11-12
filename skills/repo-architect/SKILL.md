@@ -15,6 +15,10 @@ license: MIT
 compatibility: Needs filesystem read access to the repository. No network required.
 metadata:
   category: engineering
+  short_description: >
+    Maps an unfamiliar codebase without changing it: entry points, modules,
+    data flow, dependencies and risks. Use when asked how a repository is
+    structured or before planning a change in new code.
   composes_with:
     - feature-to-production
     - system-design-reviewer

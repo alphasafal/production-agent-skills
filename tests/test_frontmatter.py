@@ -2,7 +2,7 @@
 import jsonschema
 import pytest
 
-from _lib import discover_skills, load_schema
+from _lib import SHORT_DESCRIPTION_MAX_CHARS, discover_skills, load_schema
 
 SKILLS = discover_skills()
 SCHEMA = load_schema("skill-manifest.schema.json")
@@ -29,3 +29,12 @@ def test_description_present_and_bounded(skill):
 def test_no_duplicate_skill_names():
     names = [s.name for s in SKILLS]
     assert len(names) == len(set(names)), f"duplicate skill names: {names}"
+
+
+@pytest.mark.parametrize("skill", SKILLS, ids=lambda s: s.name)
+def test_short_description_fits_the_claude_app_limit(skill):
+    short = skill.short_description
+    assert short, "metadata.short_description is required"
+    assert len(short) <= SHORT_DESCRIPTION_MAX_CHARS
+    assert "<" not in short and ">" not in short
+    assert "use " in short.lower(), "say when to use the skill, not only what it does"

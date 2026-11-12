@@ -22,6 +22,11 @@ PACKS_FILE = REPO_ROOT / "packs.json"
 # larger. Each role pack must fit the smaller one so any client can carry it.
 DISCOVERY_BUDGET_CHARS = 8000
 
+# The Claude apps' skill upload documents a 200-character description limit
+# (support.claude.com, "How to create custom skills"), far below the open spec's
+# 1024. Every skill carries a second, short description for that surface.
+SHORT_DESCRIPTION_MAX_CHARS = 200
+
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n?(.*)$", re.DOTALL)
 
 
@@ -43,6 +48,12 @@ class Skill:
     @property
     def description(self) -> str:
         return self.frontmatter.get("description", "")
+
+    @property
+    def short_description(self) -> str:
+        """`metadata.short_description`: the description used where a client caps it at 200 chars."""
+        value = (self.frontmatter.get("metadata") or {}).get("short_description", "")
+        return " ".join(str(value).split())
 
     def resource_files(self, subdir: str) -> list[Path]:
         path = self.dir / subdir

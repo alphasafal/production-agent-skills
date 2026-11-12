@@ -14,6 +14,10 @@ license: MIT
 compatibility: Needs read access to the component, style and asset files. A browser, dev server or test runner (Playwright, Testing Library, axe) is optional and used for verification when present.
 metadata:
   category: frontend
+  short_description: >
+    Reviews UI code for keyboard and screen-reader access, every UI state,
+    contrast, mobile layout and Core Web Vitals, with P0-P3 fixes. Use to
+    review a component, form or screen before it ships.
   composes_with:
     - production-code-review
     - feature-to-production
