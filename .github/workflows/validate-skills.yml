@@ -7,12 +7,20 @@ on:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         # Brackets the range declared in pyproject.toml (requires-python = ">=3.9").
-        python-version: ["3.9", "3.11", "3.13"]
+        # setup-python has no 3.9 build for the newest runner image, so the
+        # oldest supported version runs on the last image that has one.
+        include:
+          - python-version: "3.9"
+            os: ubuntu-24.04
+          - python-version: "3.11"
+            os: ubuntu-latest
+          - python-version: "3.13"
+            os: ubuntu-latest
     name: validate (py${{ matrix.python-version }})
     steps:
       - uses: actions/checkout@v4
